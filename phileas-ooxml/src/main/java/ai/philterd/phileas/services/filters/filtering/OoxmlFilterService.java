@@ -94,6 +94,11 @@ public class OoxmlFilterService extends BinaryFilterService {
         this(phileasConfiguration, contextService, vectorService, new SecureRandom(), httpClient, OoxmlRedactionOptions.defaults());
     }
 
+    /**
+     * A service with per-call options. Of {@code options}, only the worksheet, fully redacted columns, and header
+     * context are used: the Word and Excel settings come from each call's policy ({@code config.word} and
+     * {@code config.excel}).
+     */
     public OoxmlFilterService(final PhileasConfiguration phileasConfiguration,
                               final ContextService contextService,
                               final VectorService vectorService,
@@ -175,8 +180,8 @@ public class OoxmlFilterService extends BinaryFilterService {
         final ColumnRules columnRules = columnRules(policy, contextService, vectorService, context, incrementalRedactions, tokens);
 
         final OoxmlRedactionResult result = type == OoxmlDocumentType.DOCX
-                ? WordDocumentRedactor.redact(input, textFilter, options, columnRules)
-                : XlsxRedactor.redact(input, textFilter, options, columnRules);
+                ? WordDocumentRedactor.redact(input, textFilter, callOptions(policy), columnRules)
+                : XlsxRedactor.redact(input, textFilter, callOptions(policy), columnRules);
 
         for (final String warning : result.warnings()) {
             LOGGER.warn(warning);
@@ -231,8 +236,8 @@ public class OoxmlFilterService extends BinaryFilterService {
 
         final byte[] redacted = redaction.document();
         final List<OfficeRedactionSpan> detected = type == OoxmlDocumentType.DOCX
-                ? WordDocumentRedactor.detect(redacted, check, options, columnRules)
-                : XlsxRedactor.detect(redacted, check, options, columnRules);
+                ? WordDocumentRedactor.detect(redacted, check, callOptions(policy), columnRules)
+                : XlsxRedactor.detect(redacted, check, callOptions(policy), columnRules);
 
         final Map<Integer, List<ReplacedRange>> replacedByParagraph = replacedRanges(redaction.spans());
         final List<String> replacedElsewhere = new ArrayList<>();
@@ -343,8 +348,8 @@ public class OoxmlFilterService extends BinaryFilterService {
         final ColumnRules columnRules = columnRules(policy, contextService, vectorService, context, incrementalRedactions, tokens);
 
         return type == OoxmlDocumentType.DOCX
-                ? WordDocumentRedactor.applySpans(input, officeSpans, options, textFilter, columnRules)
-                : XlsxRedactor.applySpans(input, officeSpans, options, textFilter, columnRules);
+                ? WordDocumentRedactor.applySpans(input, officeSpans, callOptions(policy), textFilter, columnRules)
+                : XlsxRedactor.applySpans(input, officeSpans, callOptions(policy), textFilter, columnRules);
 
     }
 
@@ -364,6 +369,11 @@ public class OoxmlFilterService extends BinaryFilterService {
                 throw new IllegalStateException("Unable to filter document text.", e);
             }
         };
+    }
+
+    // The constructor's per-call options with the policy's Word and Excel settings.
+    private OoxmlRedactionOptions callOptions(final Policy policy) {
+        return options.copy().setWord(policy.getConfig().getWord()).setExcel(policy.getConfig().getExcel());
     }
 
     /*

@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.policy.config.Excel;
+import ai.philterd.phileas.policy.config.Word;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -59,7 +61,7 @@ public class XlsxPivotCacheRedactionTest {
     @Test
     public void disabledLeavesPivotCacheIntact() throws Exception {
         final byte[] output = XlsxRedactor.redact(makeWorkbook(), FILTER,
-                OoxmlRedactionOptions.defaults().setRedactPivotCaches(false)).document();
+                OoxmlRedactionOptions.defaults().setExcel(new Excel().setPivotCaches(Word.RedactOrKeep.KEEP))).document();
 
         final String pivot = SpreadsheetDocs.allPivotXml(output);
         Assertions.assertTrue(pivot.contains(EMAIL));
@@ -69,7 +71,7 @@ public class XlsxPivotCacheRedactionTest {
     @Test
     public void detectFindsPivotCachePiiRegardlessOfOption() throws Exception {
         final List<OfficeRedactionSpan> residuals = XlsxRedactor.detect(makeWorkbook(), FILTER,
-                OoxmlRedactionOptions.defaults().setRedactPivotCaches(false));
+                OoxmlRedactionOptions.defaults().setExcel(new Excel().setPivotCaches(Word.RedactOrKeep.KEEP)));
 
         Assertions.assertTrue(residuals.stream().anyMatch(s -> s.getText().contains(EMAIL)));
         Assertions.assertTrue(residuals.stream().anyMatch(s -> s.getText().contains(EMAIL2)));

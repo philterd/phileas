@@ -18,9 +18,11 @@ package ai.philterd.phileas.policy;
 import ai.philterd.phileas.policy.config.Analysis;
 import ai.philterd.phileas.policy.config.Csv;
 import ai.philterd.phileas.policy.config.Email;
+import ai.philterd.phileas.policy.config.Excel;
 import ai.philterd.phileas.policy.config.Pdf;
 import ai.philterd.phileas.policy.config.Review;
 import ai.philterd.phileas.policy.config.Splitting;
+import ai.philterd.phileas.policy.config.Word;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -56,6 +58,16 @@ public class Config {
     @Expose
     @JsonAdapter(Csv.Adapter.class)
     private Csv csv = new Csv();
+
+    @SerializedName("word")
+    @Expose
+    @JsonAdapter(Word.Adapter.class)
+    private Word word = new Word();
+
+    @SerializedName("excel")
+    @Expose
+    @JsonAdapter(Excel.Adapter.class)
+    private Excel excel = new Excel();
 
     public Splitting getSplitting() {
         return splitting;
@@ -119,6 +131,30 @@ public class Config {
 
     public void setCsv(Csv csv) {
         this.csv = csv;
+    }
+
+    /**
+     * How a Word document is redacted beyond its body text.
+     * @return The {@link Word} settings, with the defaults when the policy has none.
+     */
+    public Word getWord() {
+        return word == null ? new Word() : word;
+    }
+
+    public void setWord(Word word) {
+        this.word = word;
+    }
+
+    /**
+     * How an Excel workbook is redacted beyond its cell text.
+     * @return The {@link Excel} settings, with the defaults when the policy has none.
+     */
+    public Excel getExcel() {
+        return excel == null ? new Excel() : excel;
+    }
+
+    public void setExcel(Excel excel) {
+        this.excel = excel;
     }
 
 }

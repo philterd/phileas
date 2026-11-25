@@ -32,8 +32,9 @@ public class WordDetectParityTest {
 
     private static final String EMAIL_AND_URL_POLICY = "{\"identifiers\":{\"emailAddress\":{},\"url\":{}}}";
 
+    // Comments and tracked changes are kept, so detection is compared in them too.
     private static OoxmlRedactionOptions defaults() {
-        return OoxmlRedactionOptions.defaults();
+        return OoxmlTestFixtures.keepingCommentsAndRevisions();
     }
 
     private static String describe(final OfficeRedactionSpan s) {

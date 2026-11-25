@@ -39,8 +39,9 @@ public class WordTrackedChangeRedactionTest {
                     + "<w:r><w:t xml:space=\"preserve\">to a@example.com today</w:t></w:r>"
                     + "</w:p>";
 
+    // These tests cover tracked changes kept and redacted; the default accepts them.
     private static OoxmlRedactionOptions defaults() {
-        return OoxmlRedactionOptions.defaults();
+        return OoxmlTestFixtures.keepingCommentsAndRevisions();
     }
 
     @Test
@@ -50,8 +51,9 @@ public class WordTrackedChangeRedactionTest {
 
         final byte[] output = WordDocumentRedactor.redact(input, FILTER, defaults()).document();
 
-        assertTrue(WordDocs.bodyParagraphs(output).stream().noneMatch(p -> p.contains("DELETEDSECRET")));
-        assertFalse(WordDocs.anyPartContains(output, "DELETEDSECRET"));
+        assertTrue(WordDocumentRedactor.readParagraphs(output).stream().noneMatch(p -> p.contains("DELETEDSECRET")));
+        // The deletion is kept as a deletion; its text holds nothing the policy finds.
+        assertTrue(WordDocs.deletedTexts(output).contains("DELETEDSECRET "), WordDocs.deletedTexts(output).toString());
     }
 
     @Test

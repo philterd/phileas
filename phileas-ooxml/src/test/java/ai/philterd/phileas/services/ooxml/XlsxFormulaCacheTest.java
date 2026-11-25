@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.policy.config.Excel;
+import ai.philterd.phileas.policy.config.Word;
 import ai.philterd.phileas.services.ooxml.SpreadsheetDocs.CellSpec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -63,7 +65,7 @@ public class XlsxFormulaCacheTest {
     @Test
     public void disabledFormulaCellsAreLeftUntouched() throws Exception {
         final byte[] output = XlsxRedactor.redact(makeWorkbook(), FILTER,
-                OoxmlRedactionOptions.defaults().setRedactFormulaValues(false)).document();
+                OoxmlRedactionOptions.defaults().setExcel(new Excel().setFormulaCaches(Word.RedactOrKeep.KEEP))).document();
 
         Assertions.assertFalse(SpreadsheetDocs.isFormulaCell(output, "A2"));
         Assertions.assertEquals("george@example.com", SpreadsheetDocs.cachedValue(output, "B2"));

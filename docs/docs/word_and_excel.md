@@ -63,13 +63,52 @@ A span with `paragraphNumber` -1 was found in content that is not a body paragra
 
 `apply(policy, input, spans, outputMimeType)` applies a list of spans, for example ones a reviewer accepted or added, by their paragraph number and offsets. Content that spans cannot be placed in (paragraph number -1) is redacted again with the policy.
 
-## Options
+## Policy settings
 
-Pass `OoxmlRedactionOptions` to the service's constructor to change what is redacted:
+The policy's `config.word` and `config.excel` set how a document is redacted beyond its text. They are read from each call's policy, so one service can redact with policies that differ. Without them, the defaults below apply.
+
+```json
+{
+  "identifiers": { "emailAddress": {} },
+  "config": {
+    "word": { "comments": "redact", "highlight": true },
+    "excel": { "pivotCaches": "keep" }
+  }
+}
+```
+
+### Word
+
+| Setting | Default | Description |
+|---|---|---|
+| `headersFooters` | `redact` | `redact` redacts the text of headers and footers. `keep` leaves them unscanned. |
+| `comments` | `remove` | `remove` deletes every comment with its author, including the threaded-comment copy and the comment ranges and references in the text. `redact` keeps comments and redacts their text. |
+| `trackedChanges` | `accept` | `accept` accepts every insertion and deletion and removes the revision history, so deleted text is gone and inserted text is redacted as body text. A deleted table row is removed. `redact` keeps the revisions and redacts their text, including deleted text. |
+| `hiddenText` | `remove` | `remove` deletes runs marked hidden. `redact` keeps them and redacts them like visible text. |
+| `charts` | `redact` | `redact` redacts chart titles and labels, cached chart values, and each chart's embedded workbook. `keep` leaves charts as they are. |
+| `uninspectableObjects` | `remove` | `remove` deletes embedded objects that cannot be inspected (anything but an embedded Word or Excel document). `keep` leaves them, unredacted, and reports them. |
+| `removeDocumentProperties` | `true` | Clears the title, subject, keywords, categories, the comments field, and custom properties. `false` keeps them. Authorship is cleared either way. |
+| `highlight` | `false` | Highlights each replacement in yellow. |
+
+### Excel
+
+| Setting | Default | Description |
+|---|---|---|
+| `printHeadersFooters` | `redact` | `redact` redacts print headers and footers. `keep` leaves them unscanned. |
+| `charts` | `redact` | As for Word. |
+| `formulaCaches` | `redact` | `redact` scans formula cells' cached results, and when any cell is redacted, clears the cached results and sets the workbook to recalculate when opened. `keep` leaves formula cells as they are, so a cached copy of a redacted value can remain. |
+| `pivotCaches` | `redact` | `redact` redacts pivot caches and sets a redacted cache to refresh when opened. `keep` leaves them as they are. |
+| `uninspectableObjects` | `remove` | As for Word. |
+| `removeDocumentProperties` | `true` | As for Word. |
+
+Cell text and comments are always redacted. A Word or Excel document embedded in another follows the same settings. A setting with an unknown key or value is refused when the policy loads.
+
+## Per-call options
+
+Pass `OoxmlRedactionOptions` to the service's constructor to pick worksheets and columns for its calls:
 
 ```java
 final OoxmlRedactionOptions options = OoxmlRedactionOptions.defaults()
-        .setRedactCharts(false)
         .setFullyRedactedColumns(Set.of(2));
 
 final OoxmlFilterService service = new OoxmlFilterService(configuration,
@@ -78,15 +117,11 @@ final OoxmlFilterService service = new OoxmlFilterService(configuration,
 
 | Option | Default | Description |
 |---|---|---|
-| `highlight` | `false` | Word: each replacement is highlighted in yellow. |
-| `redactHeadersFooters` | `true` | Redact Word headers and footers and Excel print headers and footers. |
-| `redactCharts` | `true` | Redact chart titles and labels, cached chart values, and charts' embedded workbooks. |
-| `removeUninspectableEmbeddedObjects` | `true` | Remove embedded objects that cannot be inspected (anything but an embedded Word or Excel document). When `false` they are kept, unredacted. |
-| `redactFormulaValues` | `true` | Excel: redact formula cells' cached results, and when any cell is redacted, clear the cached results and set the workbook to recalculate when opened. |
-| `redactPivotCaches` | `true` | Excel: redact pivot caches and set a redacted cache to refresh when opened. |
 | `useHeaderContext` | `false` | Excel: detect each data cell with its column's header in front of it (`SSN: 123456789`), so a header can help identify a bare value. Only the cell is redacted. |
 | `fullyRedactedColumns` | none | Excel: 1-based columns whose data cells are all replaced with `{{{REDACTED}}}`, whether or not anything is detected. The header row is kept, or the `headerRows` of the sheet entry that applies. Overrides the policy's [column rules](#column-rules) for those columns. |
 | `worksheet` | all | Excel: redact only the worksheet with this name. Applies with the policy's column rules: the other worksheets are left unchanged. |
+
+When calling `WordDocumentRedactor` or `XlsxRedactor` directly, set the Word and Excel settings on the options with `setWord` and `setExcel`.
 
 ## Column rules
 
@@ -183,12 +218,14 @@ Office documents keep copies of text in places other than the visible body.
 
 * Body paragraphs, including tables
 * Headers and footers
-* Footnotes, endnotes, and comments. A threaded comment's copy of the comment text (`threadedComments.xml`) is removed, with its companion parts, after the comment itself is redacted.
+* Footnotes and endnotes
+* Comments, which are removed by default. With `comments: redact`, a threaded comment's copy of the comment text (`threadedComments.xml`) is removed, with its companion parts, after the comment itself is redacted.
 * Text in shapes, text boxes, and SmartArt
 * Chart titles and labels, cached chart values, and each chart's embedded workbook
 * Hyperlink targets. A target the policy flags is replaced with `https://redacted.invalid/`.
 * Field instructions, such as `HYPERLINK` and `INCLUDETEXT`
-* Tracked deletions, whose text could otherwise be restored with Reject Changes
+* Tracked changes, which are accepted by default. With `trackedChanges: redact`, the text of tracked deletions, which could otherwise be restored with Reject Changes, is redacted.
+* Hidden text, which is removed by default
 * Embedded Word and Excel documents, redacted in place
 
 **Excel:**
@@ -206,8 +243,8 @@ Office documents keep copies of text in places other than the visible body.
 ### Authors and document properties
 
 Who wrote and edited a document is cleared whatever the policy, including a policy with no filters, and in embedded
-Word and Excel documents. A chart's embedded workbook is cleared only when `redactCharts` is on; otherwise it is not
-opened. These fields are not run through detection.
+Word and Excel documents, whatever `removeDocumentProperties` is set to. A chart's embedded workbook is cleared only when
+`charts` is `redact`; otherwise it is not opened. These fields are not run through detection.
 
 | Location | Cleared |
 |---|---|
@@ -221,15 +258,19 @@ opened. These fields are not run through detection.
 | `docProps/core.xml` | `dc:creator` and `cp:lastModifiedBy` are emptied. |
 | `docProps/app.xml` | `Company` and `Manager` are emptied. |
 
-In Excel, authors are cleared on every worksheet, including when `worksheet` selects one. The text of comments is
-redacted with the policy like any other text.
+In Excel, authors are cleared on every worksheet, including when `worksheet` selects one. The text of comments that
+are kept is redacted with the policy like any other text. `removeDocumentProperties` clears the other properties in
+`docProps/core.xml` (`dc:title`, `dc:subject`, `cp:keywords`, `cp:category`, and `dc:description`) and every property in
+`docProps/custom.xml`.
 
 ## Limitations
 
-* A Word paragraph that is redacted loses its inline formatting, and hyperlinks and fields in it become plain text. Line breaks and tabs are kept. Paragraphs with nothing redacted are unchanged.
+* In Word, a replacement is written in place of the redacted text, in the run that held its first character, and takes that run's formatting. The rest of the paragraph, including its formatting, hyperlinks, fields, tracked changes, and comment ranges, is unchanged. A value that spans runs is removed from the runs after the first.
+* `hiddenText: remove` removes runs marked hidden in their own properties. A hidden run that holds a field marker keeps the marker and loses its text, so the field stays well formed. Text hidden by a character or paragraph style is kept and redacted like visible text.
+* `trackedChanges: accept` removes a deleted paragraph mark without joining the paragraph to the next one.
 * A redacted Excel cell is written as text, and a redacted formula cell loses its formula.
 * Column rules replace values in cells, not in the copies that charts and pivot caches keep. See [Column rules](#column-rules).
 * Excel cells are detected by their stored value, not as Excel displays them. Excel stores most dates as serial numbers, so a date displayed as `3/14/1985` is scanned as `31120` and is not found by the date filter. A number shown through a display format, such as `123456789` shown as `123-45-6789`, is scanned as `123456789`.
 * Embedded objects other than Word and Excel documents, such as legacy OLE objects, cannot be inspected.
-* Document properties other than those listed under [Authors and document properties](#authors-and-document-properties), such as the title, subject, keywords, and custom properties, are not redacted.
+* Document properties other than those listed under [Authors and document properties](#authors-and-document-properties) are not redacted.
 * Only Word documents and Excel workbooks in the Transitional Office Open XML format, which Word and Excel save by default, are supported. Documents saved as Strict Open XML, and `.doc`, `.xls`, and OpenDocument files, are rejected.

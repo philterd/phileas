@@ -126,6 +126,46 @@ public class OoxmlValidationCorpusTest {
         return corpus;
     }
 
+    // The Word and Excel settings, each with the value that changes the document most: comments, tracked
+    // changes, and hidden text removed or kept, a highlighted replacement in a formatted run, and properties.
+    static Map<String, Object[]> settingsCorpus() {
+        final Map<String, Object[]> corpus = new LinkedHashMap<>();
+        corpus.put("word-comments-removed.docx", new Object[]{OfficePolicySettingsTest.commented(), "{}"});
+        corpus.put("word-comments-kept.docx", new Object[]{OfficePolicySettingsTest.commented(), "{\"word\":{\"comments\":\"redact\"}}"});
+        corpus.put("word-tracked-accepted.docx", new Object[]{OfficePolicySettingsTest.tracked(), "{}"});
+        corpus.put("word-tracked-kept.docx", new Object[]{OfficePolicySettingsTest.tracked(), "{\"word\":{\"trackedChanges\":\"redact\"}}"});
+        corpus.put("word-hidden-removed.docx", new Object[]{OfficePolicySettingsTest.hidden(), "{}"});
+        corpus.put("word-tracked-structure-accepted.docx", new Object[]{OfficePolicySettingsTest.trackedStructure(), "{}"});
+        corpus.put("word-hidden-field-removed.docx", new Object[]{OfficePolicySettingsTest.hiddenField(), "{}"});
+        corpus.put("word-hidden-kept.docx", new Object[]{OfficePolicySettingsTest.hidden(), "{\"word\":{\"hiddenText\":\"redact\"}}"});
+        corpus.put("word-highlight.docx", new Object[]{WordDocs.createRaw("<w:p><w:r><w:rPr><w:b/><w:u w:val=\"single\"/></w:rPr>"
+                + "<w:t xml:space=\"preserve\">To " + EMAIL + " now</w:t></w:r></w:p>"), "{\"word\":{\"highlight\":true}}"});
+        corpus.put("word-properties.docx", new Object[]{OfficePolicySettingsTest.wordWithProperties(), "{}"});
+        corpus.put("excel-properties.xlsx", new Object[]{OfficePolicySettingsTest.workbookWithProperties(), "{}"});
+        return corpus;
+    }
+
+    @Test
+    public void writesSettingsCorpusForValidation() throws Exception {
+        final Path root = Path.of("target", "ooxml-validation");
+        Files.createDirectories(root.resolve("input"));
+        Files.createDirectories(root.resolve("output"));
+        final OoxmlFilterService service = new OoxmlFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null);
+
+        for (final Map.Entry<String, Object[]> entry : settingsCorpus().entrySet()) {
+            final String name = entry.getKey();
+            final byte[] input = (byte[]) entry.getValue()[0];
+            final Policy policy = new Gson().fromJson("{\"identifiers\":{\"emailAddress\":{},\"ssn\":{}},\"config\":"
+                    + entry.getValue()[1] + "}", Policy.class);
+            final MimeType type = name.endsWith(".docx") ? MimeType.APPLICATION_DOCX : MimeType.APPLICATION_XLSX;
+            final byte[] output = service.filter(policy, "ctx", input, type).getDocument();
+            Files.write(root.resolve("input").resolve(name), input);
+            Files.write(root.resolve("output").resolve(name), output);
+            Assertions.assertFalse(TestPackage.allXml(output).contains(EMAIL), name);
+        }
+    }
+
     @Test
     public void writesColumnRuleCorpusForValidation() throws Exception {
         final Path root = Path.of("target", "ooxml-validation");

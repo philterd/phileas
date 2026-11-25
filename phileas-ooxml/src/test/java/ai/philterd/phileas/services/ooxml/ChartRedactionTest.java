@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.policy.config.Excel;
+import ai.philterd.phileas.policy.config.Word;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -44,7 +46,7 @@ public class ChartRedactionTest {
         final byte[] input = WordDocs.createWithChartData(TITLE, SERIES_NAME, CATEGORY, "Body.");
 
         final byte[] output = WordDocumentRedactor.redact(input, FILTER, OoxmlRedactionOptions.defaults()
-                .setHighlight(false).setRedactHeadersFooters(true).setRedactCharts(true)).document();
+                ).document();
 
         assertFalse(WordDocs.anyPartContains(output, "john@example.com"));
         assertFalse(WordDocs.anyPartContains(output, "123-45-6789"));
@@ -56,7 +58,7 @@ public class ChartRedactionTest {
         final byte[] input = WordDocs.createWithChartData(TITLE, SERIES_NAME, CATEGORY, "Body.");
 
         final byte[] output = WordDocumentRedactor.redact(input, FILTER, OoxmlRedactionOptions.defaults()
-                .setHighlight(false).setRedactHeadersFooters(true).setRedactCharts(false)).document();
+                .setWord(new Word().setCharts(Word.RedactOrKeep.KEEP))).document();
 
         assertTrue(WordDocs.anyPartContains(output, "john@example.com"));
         assertTrue(WordDocs.anyPartContains(output, "123-45-6789"));
@@ -90,7 +92,7 @@ public class ChartRedactionTest {
     public void xlsxChartOffLeavesChartUntouched() throws Exception {
         final byte[] input = WordDocs.createXlsxWithChart(GRID, TITLE, SERIES_NAME, CATEGORY);
 
-        final byte[] output = XlsxRedactor.redact(input, FILTER, OoxmlRedactionOptions.defaults().setRedactCharts(false)).document();
+        final byte[] output = XlsxRedactor.redact(input, FILTER, OoxmlRedactionOptions.defaults().setExcel(new Excel().setCharts(Word.RedactOrKeep.KEEP))).document();
 
         assertTrue(WordDocs.allChartXml(output).contains("john@example.com"));
     }

@@ -40,11 +40,13 @@ import static ai.philterd.phileas.services.ooxml.OfficeSpanMath.Order;
 import static ai.philterd.phileas.services.ooxml.OfficeSpanMath.ReplacementRange;
 import static ai.philterd.phileas.services.ooxml.OoxmlPackage.REL;
 import static ai.philterd.phileas.services.ooxml.OoxmlPackage.allDescendants;
+import static ai.philterd.phileas.services.ooxml.OoxmlPackage.childElements;
 import static ai.philterd.phileas.services.ooxml.OoxmlPackage.children;
 import static ai.philterd.phileas.services.ooxml.OoxmlPackage.descendants;
 import static ai.philterd.phileas.services.ooxml.OoxmlPackage.firstChild;
 import static ai.philterd.phileas.services.ooxml.OoxmlPackage.is;
 import static ai.philterd.phileas.services.ooxml.OoxmlPackage.nearestAncestor;
+import static ai.philterd.phileas.services.ooxml.OoxmlPackage.qualified;
 import static ai.philterd.phileas.services.ooxml.OoxmlPackage.removeChildren;
 import static ai.philterd.phileas.services.ooxml.OoxmlPackage.setText;
 
@@ -129,9 +131,8 @@ public final class WordDocumentRedactor {
     public static List<OfficeRedactionSpan> detect(final byte[] input, final TextFilter filter,
                                                    final OoxmlRedactionOptions options, final ColumnRules rules) throws IOException {
         try (OoxmlPackage pkg = new OoxmlPackage(input)) {
-            final List<OfficeRedactionSpan> captured = run(pkg, filter, rules, false, false,
-                    options.isRedactHeadersFooters(), options.isRedactCharts());
-            EmbeddedObjectRedactor.process(pkg, filter, rules, false, false, captured, new Order(captured.size()));
+            final List<OfficeRedactionSpan> captured = run(pkg, filter, rules, options, false);
+            EmbeddedObjectRedactor.process(pkg, filter, rules, options, false, false, captured, new Order(captured.size()));
             return captured;
         }
     }
@@ -150,9 +151,8 @@ public final class WordDocumentRedactor {
     public static OoxmlRedactionResult redact(final byte[] input, final TextFilter filter,
                                               final OoxmlRedactionOptions options, final ColumnRules rules) throws IOException {
         try (OoxmlPackage pkg = new OoxmlPackage(input)) {
-            final List<OfficeRedactionSpan> captured = run(pkg, filter, rules, true, options.isHighlight(),
-                    options.isRedactHeadersFooters(), options.isRedactCharts());
-            EmbeddedObjectRedactor.process(pkg, filter, rules, options.isRemoveUninspectableEmbeddedObjects(), true,
+            final List<OfficeRedactionSpan> captured = run(pkg, filter, rules, options, true);
+            EmbeddedObjectRedactor.process(pkg, filter, rules, options, options.wordRemovesUninspectableObjects(), true,
                     captured, new Order(captured.size()));
             return new OoxmlRedactionResult(pkg.save(), captured);
         }
@@ -182,6 +182,8 @@ public final class WordDocumentRedactor {
             byParagraph.computeIfAbsent(s.getParagraphIndex(), k -> new ArrayList<>()).add(s);
         }
         try (OoxmlPackage pkg = new OoxmlPackage(input)) {
+            // As on redaction, so the paragraphs are numbered the same.
+            prepare(pkg, options);
             int paragraphIndex = 0;
             for (final Target t : enumerateTargets(pkg)) {
                 final String original = ownText(t.paragraph());
@@ -198,7 +200,7 @@ public final class WordDocumentRedactor {
                     }
                     final List<ReplacementRange> resolved = OfficeSpanMath.resolveNonOverlapping(ranges);
                     if (!resolved.isEmpty()) {
-                        applyRangesToParagraph(t.paragraph(), original, resolved, options.isHighlight());
+                        applyRangesToParagraph(t.paragraph(), original, resolved, options.wordHighlight());
                         pkg.markDirty(t.part());
                     }
                 }
@@ -210,14 +212,17 @@ public final class WordDocumentRedactor {
                 redactHyperlinkTargets(pkg, drawingFilter, true, null, order);
                 redactFieldInstructions(pkg, drawingFilter, true, null, order);
                 scanDeletedText(pkg, drawingFilter, true, null, order);
-                if (options.isRedactCharts()) {
-                    scanCharts(pkg, drawingFilter, rules, true, null, order);
+                if (options.wordRedactsCharts()) {
+                    scanCharts(pkg, drawingFilter, rules, options, true, null, order);
                 }
-                EmbeddedObjectRedactor.process(pkg, drawingFilter, rules, options.isRemoveUninspectableEmbeddedObjects(),
+                EmbeddedObjectRedactor.process(pkg, drawingFilter, rules, options, options.wordRemovesUninspectableObjects(),
                         true, null, order);
             }
             removeThreadedCommentDuplicate(pkg);
             AuthorshipCleaner.clearWord(pkg);
+            if (options.wordRemovesDocumentProperties()) {
+                AuthorshipCleaner.clearContentProperties(pkg);
+            }
             return pkg.save();
         }
     }
@@ -226,14 +231,15 @@ public final class WordDocumentRedactor {
 
     /** Redact (write) or Detect (no write), without the embedded-object pass, which runs at the top level only. */
     static List<OfficeRedactionSpan> run(final OoxmlPackage pkg, final TextFilter filter, final ColumnRules rules,
-                                         final boolean write,
-                                         final boolean highlight, final boolean redactHeadersFooters,
-                                         final boolean redactCharts) {
+                                         final OoxmlRedactionOptions options, final boolean write) {
         final List<OfficeRedactionSpan> captured = new ArrayList<>();
         final Order order = new Order();
         if (pkg.mainPart() == null) {
             return captured;
         }
+        final boolean highlight = options.wordHighlight();
+        final boolean redactHeadersFooters = options.wordRedactsHeadersFooters();
+        prepare(pkg, options);
         int paragraphIndex = 0;
         for (final Target t : enumerateTargets(pkg)) {
             final String original = ownText(t.paragraph());
@@ -256,12 +262,15 @@ public final class WordDocumentRedactor {
         redactHyperlinkTargets(pkg, filter, write, captured, order);
         redactFieldInstructions(pkg, filter, write, captured, order);
         scanDeletedText(pkg, filter, write, captured, order);
-        if (redactCharts) {
-            scanCharts(pkg, filter, rules, write, captured, order);
+        if (options.wordRedactsCharts()) {
+            scanCharts(pkg, filter, rules, options, write, captured, order);
         }
         if (write) {
             removeThreadedCommentDuplicate(pkg);
             AuthorshipCleaner.clearWord(pkg);
+            if (options.wordRemovesDocumentProperties()) {
+                AuthorshipCleaner.clearContentProperties(pkg);
+            }
         }
         return captured;
     }
@@ -271,7 +280,7 @@ public final class WordDocumentRedactor {
      * the filter itself propagates rather than being taken for an unreadable document.
      */
     static byte[] redactEmbeddedBytes(final byte[] bytes, final TextFilter filter, final ColumnRules rules,
-                                      final List<OfficeRedactionSpan> spans) {
+                                      final OoxmlRedactionOptions options, final List<OfficeRedactionSpan> spans) {
         final OoxmlPackage pkg = openEmbedded(bytes);
         if (pkg == null) {
             return null;
@@ -280,7 +289,7 @@ public final class WordDocumentRedactor {
             if (pkg.mainPart() == null || pkg.dom(pkg.mainPart()) == null) {
                 return null;
             }
-            final List<OfficeRedactionSpan> redacted = run(pkg, filter, rules, true, false, true, true);
+            final List<OfficeRedactionSpan> redacted = run(pkg, filter, rules, options.forEmbedded(), true);
             final byte[] output = pkg.save();
             spans.addAll(redacted);
             return output;
@@ -289,13 +298,14 @@ public final class WordDocumentRedactor {
         }
     }
 
-    static List<OfficeRedactionSpan> detectEmbeddedBytes(final byte[] bytes, final TextFilter filter, final ColumnRules rules) {
+    static List<OfficeRedactionSpan> detectEmbeddedBytes(final byte[] bytes, final TextFilter filter, final ColumnRules rules,
+                                                         final OoxmlRedactionOptions options) {
         final OoxmlPackage pkg = openEmbedded(bytes);
         if (pkg == null) {
             return new ArrayList<>();
         }
         try (pkg) {
-            return pkg.mainPart() == null ? new ArrayList<>() : run(pkg, filter, rules, false, false, true, true);
+            return pkg.mainPart() == null ? new ArrayList<>() : run(pkg, filter, rules, options.forEmbedded(), false);
         }
     }
 
@@ -306,6 +316,172 @@ public final class WordDocumentRedactor {
         } catch (final IOException | RuntimeException e) {
             return null;
         }
+    }
+
+    // --- comments, tracked changes, and hidden text -----------------------------------------------
+
+    // Revision records that carry only an author and date, removed when changes are accepted.
+    private static final Set<String> REVISION_MARKS = Set.of("rPrChange", "pPrChange", "tblPrChange", "trPrChange",
+            "tcPrChange", "tblPrExChange", "sectPrChange", "numberingChange", "moveFromRangeStart",
+            "moveFromRangeEnd", "moveToRangeStart", "moveToRangeEnd");
+
+    /*
+     * Removes what the Word settings remove, before any text is read, so redaction, detection, and applying
+     * spans number the same paragraphs: comments, tracked changes (accepted), and hidden text.
+     */
+    static void prepare(final OoxmlPackage pkg, final OoxmlRedactionOptions options) {
+        final boolean accept = options.wordAcceptsTrackedChanges();
+        final boolean comments = options.wordRemovesComments();
+        final boolean hidden = options.wordRemovesHiddenText();
+        if (pkg.mainPart() == null || (!accept && !comments && !hidden)) {
+            return;
+        }
+        for (final PackagePart part : pkg.allParts(pkg.mainPart())) {
+            final Document d = pkg.dom(part);
+            if (d == null || !W.equals(d.getDocumentElement().getNamespaceURI())) {
+                continue;
+            }
+            final Element root = d.getDocumentElement();
+            boolean changed = false;
+            if (accept) {
+                changed |= acceptRevisions(root);
+            }
+            if (comments) {
+                changed |= removeCommentMarks(root);
+            }
+            if (hidden) {
+                changed |= removeHiddenRuns(root);
+            }
+            if (changed) {
+                pkg.markDirty(part);
+            }
+        }
+        if (comments) {
+            removeCommentParts(pkg);
+        }
+    }
+
+    // Accepts every insertion and deletion: deleted content and deleted table rows are removed, inserted
+    // content is kept without its revision wrapper, and the remaining revision records are removed.
+    private static boolean acceptRevisions(final Element root) {
+        boolean changed = false;
+        for (final Element row : descendants(root, W, "tr")) {
+            final Element trPr = firstChild(row, W, "trPr");
+            if (trPr != null && firstChild(trPr, W, "del") != null && row.getParentNode() != null) {
+                final Node table = row.getParentNode();
+                table.removeChild(row);
+                changed = true;
+                // A table left without rows is replaced by an empty paragraph, which is valid wherever a table is.
+                if (table instanceof Element t && children(t, W, "tr").isEmpty() && t.getParentNode() != null) {
+                    t.getParentNode().replaceChild(t.getOwnerDocument().createElementNS(W, qualified(t, "p")), t);
+                }
+            }
+        }
+        for (final String name : List.of("del", "moveFrom", "delText", "delInstrText")) {
+            for (final Element e : descendants(root, W, name)) {
+                if (e.getParentNode() != null) {
+                    e.getParentNode().removeChild(e);
+                    changed = true;
+                }
+            }
+        }
+        for (final String name : List.of("ins", "moveTo")) {
+            for (final Element e : descendants(root, W, name)) {
+                unwrap(e);
+                changed = true;
+            }
+        }
+        for (final Element e : allDescendants(root)) {
+            if (W.equals(e.getNamespaceURI()) && REVISION_MARKS.contains(e.getLocalName()) && e.getParentNode() != null) {
+                e.getParentNode().removeChild(e);
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
+    // Comment ranges and references. A run left holding only its properties is removed with its reference.
+    private static boolean removeCommentMarks(final Element root) {
+        boolean changed = false;
+        for (final String name : List.of("commentRangeStart", "commentRangeEnd")) {
+            for (final Element e : descendants(root, W, name)) {
+                e.getParentNode().removeChild(e);
+                changed = true;
+            }
+        }
+        for (final Element reference : descendants(root, W, "commentReference")) {
+            final Node run = reference.getParentNode();
+            run.removeChild(reference);
+            changed = true;
+            if (run instanceof Element r && is(r, W, "r") && r.getParentNode() != null) {
+                boolean onlyProperties = true;
+                for (final Element child : childElements(r)) {
+                    onlyProperties &= is(child, W, "rPr");
+                }
+                if (onlyProperties) {
+                    r.getParentNode().removeChild(r);
+                }
+            }
+        }
+        return changed;
+    }
+
+    // The comments part and its companions: the extended, ids, and extensible parts and the threaded comments.
+    private static void removeCommentParts(final OoxmlPackage pkg) {
+        final PackagePart main = pkg.mainPart();
+        final List<PackageRelationship> remove = new ArrayList<>();
+        for (final PackageRelationship rel : pkg.relationships(main)) {
+            final String type = rel.getRelationshipType();
+            final PackagePart part = pkg.related(main, rel);
+            final boolean threaded = part != null
+                    && part.getContentType().toLowerCase(Locale.ROOT).contains("threadedcomment");
+            if (threaded || type.endsWith("/comments") || type.endsWith("/commentsExtended")
+                    || type.endsWith("/commentsIds") || type.endsWith("/commentsExtensible")) {
+                remove.add(rel);
+            }
+        }
+        for (final PackageRelationship rel : remove) {
+            pkg.deletePart(main, rel);
+        }
+    }
+
+    // Runs whose own properties mark them hidden (w:vanish not turned off). A hidden run holding a field marker
+    // keeps the marker and loses its text, so a field whose markers are not all hidden stays well formed.
+    private static boolean removeHiddenRuns(final Element root) {
+        boolean changed = false;
+        for (final Element run : descendants(root, W, "r")) {
+            final Element rPr = firstChild(run, W, "rPr");
+            final Element vanish = rPr == null ? null : firstChild(rPr, W, "vanish");
+            if (vanish == null || isOff(vanish) || run.getParentNode() == null) {
+                continue;
+            }
+            if (firstChild(run, W, "fldChar") != null) {
+                for (final Element t : children(run, W, "t")) {
+                    run.removeChild(t);
+                }
+            } else {
+                run.getParentNode().removeChild(run);
+            }
+            changed = true;
+        }
+        return changed;
+    }
+
+    private static boolean isOff(final Element toggle) {
+        final String value = toggle.getAttributeNS(W, "val");
+        return "0".equals(value) || "false".equals(value) || "off".equals(value);
+    }
+
+    // Replaces an element with its children.
+    private static void unwrap(final Element element) {
+        final Node parent = element.getParentNode();
+        if (parent == null) {
+            return;
+        }
+        while (element.getFirstChild() != null) {
+            parent.insertBefore(element.getFirstChild(), element);
+        }
+        parent.removeChild(element);
     }
 
     // --- enumeration ---------------------------------------------------------------------
@@ -460,179 +636,192 @@ public final class WordDocumentRedactor {
         return nearestAncestor(e, W, "p") == owner;
     }
 
-    // The paragraph's run-level character elements by their offset in ownText. A soft hyphen has no
-    // character, so it is keyed by the offset that follows it.
-    private record RunCharacters(Map<Integer, Element> characters, Map<Integer, List<Element>> zeroWidth) {
-    }
+    // --- in-place redaction ------------------------------------------------------------------------
 
-    private static RunCharacters ownRunCharacters(final Element paragraph) {
-        final Map<Integer, Element> characters = new TreeMap<>();
-        final Map<Integer, List<Element>> zeroWidth = new HashMap<>();
-        int offset = 0;
-        for (final Content c : ownContent(paragraph)) {
-            if (!is(c.element(), W, "t")) {
-                if (c.text().isEmpty()) {
-                    zeroWidth.computeIfAbsent(offset, k -> new ArrayList<>()).add(c.element());
-                } else {
-                    characters.put(offset, c.element());
-                }
-            }
-            offset += c.text().length();
-        }
-        return new RunCharacters(characters, zeroWidth);
-    }
+    // rPr children that follow w:highlight in the schema's order, so a highlight is inserted before them.
+    private static final List<String> AFTER_HIGHLIGHT = List.of("u", "effect", "bdr", "shd", "fitText", "vertAlign",
+            "rtl", "cs", "em", "lang", "eastAsianLayout", "specVanish", "oMath", "rPrChange");
 
-    // Runs holding the paragraph's own text or run-level characters, excluding drawing runs and runs in a
-    // nested text box.
-    private static List<Element> ownTextRuns(final Element paragraph) {
-        final List<Element> out = new ArrayList<>();
-        for (final Element r : descendants(paragraph, W, "r")) {
-            if (!belongsDirectlyTo(paragraph, r) || hasDrawing(r)) {
-                continue;
-            }
-            boolean own = !children(r, W, "t").isEmpty();
-            for (Node n = r.getFirstChild(); !own && n != null; n = n.getNextSibling()) {
-                own = n instanceof Element e && runCharacter(e) != null && isOwnRunCharacter(paragraph, e);
-            }
-            if (own) {
-                out.add(r);
-            }
-        }
-        return out;
-    }
-
-    // A paragraph with a drawing, picture, or text box is redacted run by run rather than rebuilt, so the
-    // drawing survives.
-    private static boolean containsDrawing(final Element paragraph) {
-        return hasDrawing(paragraph) || !descendants(paragraph, W, "p").isEmpty();
-    }
-
-    // --- rebuild ------------------------------------------------------------------------------
-
+    /*
+     * Replaces each range of the paragraph's own text in place, in the runs that hold it, so everything else in
+     * the paragraph stays as it was: run formatting, hidden marks, tracked insertions and deletions, comment
+     * anchors, hyperlinks, fields, and drawings. A replacement takes the place of the range's first character;
+     * a break or tab inside the range is kept after it, and other characters in the range are removed.
+     */
     private static void applyRangesToParagraph(final Element paragraph, final String ownText,
                                                final List<ReplacementRange> ranges, final boolean highlight) {
-        if (ranges.isEmpty()) {
-            return;
-        }
-        if (containsDrawing(paragraph)) {
-            rebuildComplexParagraph(paragraph, ownText, ranges, highlight);
-        } else {
-            rebuildParagraph(paragraph, ownText, ranges, highlight);
-        }
-    }
-
-    private static void rebuildParagraph(final Element paragraph, final String original,
-                                         final List<ReplacementRange> ranges, final boolean highlight) {
-        final RunCharacters marks = ownRunCharacters(paragraph);
-        final Element properties = firstChild(paragraph, W, "pPr");
-        removeChildren(paragraph);
-        if (properties != null) {
-            paragraph.appendChild(properties);
-        }
-        for (final Element run : buildRuns(paragraph.getOwnerDocument(), original, ranges, highlight, marks)) {
-            paragraph.appendChild(run);
-        }
-    }
-
-    private static void rebuildComplexParagraph(final Element paragraph, final String ownText,
-                                                final List<ReplacementRange> ranges, final boolean highlight) {
-        final List<Element> ownRuns = ownTextRuns(paragraph);
-        if (ownRuns.isEmpty()) {
-            return;
-        }
-        final RunCharacters marks = ownRunCharacters(paragraph);
-        final Element anchor = ownRuns.get(0);
-        final Node parent = anchor.getParentNode();
-        for (final Element run : buildRuns(paragraph.getOwnerDocument(), ownText, ranges, highlight, marks)) {
-            parent.insertBefore(run, anchor);
-        }
-        for (final Element run : ownRuns) {
-            run.getParentNode().removeChild(run);
-        }
-    }
-
-    // Plain runs for kept text and one run per replacement. A break or tab inside a replaced span follows
-    // the replacement; a hyphen, symbol, or soft hyphen inside it goes with the value.
-    private static List<Element> buildRuns(final Document doc, final String text, final List<ReplacementRange> ranges,
-                                           final boolean highlight, final RunCharacters marks) {
-        final List<Element> runs = new ArrayList<>();
-        int last = 0;
         final List<ReplacementRange> sorted = new ArrayList<>(ranges);
         sorted.sort(Comparator.comparingInt(ReplacementRange::start));
+        final List<ReplacementRange> applied = new ArrayList<>();
+        int last = 0;
         for (final ReplacementRange range : sorted) {
-            if (range.start() < last || range.end() > text.length()) {
+            if (range.start() < last || range.end() > ownText.length() || range.end() <= range.start()) {
                 continue;
             }
-            if (range.start() > last) {
-                runs.add(makeRun(doc, text, last, range.start(), marks));
-            }
-            final Element replacement = newRun(doc, highlight);
-            replacement.appendChild(preservedText(doc, range.replacement() == null ? "" : range.replacement()));
-            for (final Map.Entry<Integer, Element> c : marks.characters().entrySet()) {
-                if (c.getKey() >= range.start() && c.getKey() < range.end() && isLayout(c.getValue())) {
-                    replacement.appendChild(c.getValue().cloneNode(true));
-                }
-            }
-            runs.add(replacement);
+            applied.add(range);
             last = range.end();
         }
-        if (last < text.length()) {
-            runs.add(makeRun(doc, text, last, text.length(), marks));
+        // From the last range back, so the offsets of earlier ranges are not moved.
+        for (int i = applied.size() - 1; i >= 0; i--) {
+            replaceInPlace(paragraph, applied.get(i), highlight);
         }
-        return runs;
     }
 
-    // A run for text[start, end), with run-level characters emitted as their elements and soft hyphens
-    // after the character they followed.
-    private static Element makeRun(final Document doc, final String text, final int start, final int end,
-                                   final RunCharacters marks) {
-        final Element run = newRun(doc, false);
-        int segment = start;
-        if (start == 0) {
-            segment = emitZeroWidth(doc, run, text, segment, 0, marks);
-        }
-        for (int i = start; i < end; i++) {
-            final Element element = marks.characters().get(i);
-            if (element != null) {
-                if (i > segment) {
-                    run.appendChild(preservedText(doc, text.substring(segment, i)));
-                }
-                run.appendChild(element.cloneNode(true));
-                segment = i + 1;
+    private static void replaceInPlace(final Element paragraph, final ReplacementRange range, final boolean highlight) {
+
+        splitTextAt(paragraph, range.start());
+        splitTextAt(paragraph, range.end());
+
+        final List<Element> inRange = new ArrayList<>();
+        int offset = 0;
+        for (final Content c : ownContent(paragraph)) {
+            final int length = c.text().length();
+            final boolean inside = length == 0
+                    ? offset > range.start() && offset < range.end()
+                    : offset >= range.start() && offset + length <= range.end();
+            if (inside) {
+                inRange.add(c.element());
             }
-            segment = emitZeroWidth(doc, run, text, segment, i + 1, marks);
+            offset += length;
         }
-        if (end > segment) {
-            run.appendChild(preservedText(doc, text.substring(segment, end)));
+        if (inRange.isEmpty()) {
+            return;
         }
-        return run;
-    }
 
-    private static int emitZeroWidth(final Document doc, final Element run, final String text, final int segment,
-                                     final int offset, final RunCharacters marks) {
-        final List<Element> elements = marks.zeroWidth().get(offset);
-        if (elements == null) {
-            return segment;
+        final String replacement = range.replacement() == null ? "" : range.replacement();
+        final Element first = inRange.get(0);
+        final Element text;
+        if (is(first, W, "t")) {
+            text = first;
+            setPreservedText(text, replacement);
+        } else {
+            text = preservedText(first.getOwnerDocument(), replacement);
+            first.getParentNode().insertBefore(text, first);
         }
-        if (offset > segment) {
-            run.appendChild(preservedText(doc, text.substring(segment, offset)));
-        }
-        for (final Element element : elements) {
-            run.appendChild(element.cloneNode(true));
-        }
-        return Math.max(segment, offset);
-    }
 
-    private static Element newRun(final Document doc, final boolean highlight) {
-        final Element run = doc.createElementNS(W, "w:r");
+        final List<Element> runs = new ArrayList<>();
+        for (final Element e : inRange) {
+            final Node run = e.getParentNode();
+            if (run instanceof Element r && !runs.contains(r)) {
+                runs.add(r);
+            }
+            if (e != text && !isLayout(e)) {
+                run.removeChild(e);
+            }
+        }
+
         if (highlight) {
-            final Element rPr = doc.createElementNS(W, "w:rPr");
-            final Element mark = doc.createElementNS(W, "w:highlight");
-            mark.setAttributeNS(W, "w:val", "yellow");
-            rPr.appendChild(mark);
-            run.appendChild(rPr);
+            highlightAlone(text);
         }
-        return run;
+
+        for (final Element run : runs) {
+            if (run != text.getParentNode() && run.getParentNode() != null && onlyProperties(run)) {
+                run.getParentNode().removeChild(run);
+            }
+        }
+
+    }
+
+    // Splits the w:t that has the offset inside it into two, so the offset falls between elements.
+    private static void splitTextAt(final Element paragraph, final int at) {
+        int offset = 0;
+        for (final Content c : ownContent(paragraph)) {
+            final int length = c.text().length();
+            if (at > offset && at < offset + length && is(c.element(), W, "t")) {
+                final Element t = c.element();
+                final String value = c.text();
+                final Element second = preservedText(t.getOwnerDocument(), value.substring(at - offset));
+                setPreservedText(t, value.substring(0, at - offset));
+                t.getParentNode().insertBefore(second, t.getNextSibling());
+                return;
+            }
+            offset += length;
+        }
+    }
+
+    // Puts the text element in a run of its own, a copy of its run, and highlights that run.
+    private static void highlightAlone(final Element text) {
+        final Element run = (Element) text.getParentNode();
+        splitRunBefore(run, text);
+        final Element next = nextElement(text);
+        if (next != null) {
+            splitRunBefore((Element) text.getParentNode(), next);
+        }
+        final Element own = (Element) text.getParentNode();
+        Element rPr = firstChild(own, W, "rPr");
+        if (rPr == null) {
+            rPr = own.getOwnerDocument().createElementNS(W, qualified(own, "rPr"));
+            own.insertBefore(rPr, own.getFirstChild());
+        }
+        Element mark = firstChild(rPr, W, "highlight");
+        if (mark == null) {
+            mark = rPr.getOwnerDocument().createElementNS(W, qualified(rPr, "highlight"));
+            Node before = null;
+            for (final Element child : childElements(rPr)) {
+                if (W.equals(child.getNamespaceURI()) && AFTER_HIGHLIGHT.contains(child.getLocalName())) {
+                    before = child;
+                    break;
+                }
+            }
+            rPr.insertBefore(mark, before);
+        }
+        mark.setAttributeNS(W, qualified(rPr, "val"), "yellow");
+    }
+
+    // The run holding child and everything after it: run itself when child is its first content, otherwise a
+    // copy of run, with run's properties, inserted after it. A copy's formatting-change record is left out, since
+    // its id must be unique.
+    private static Element splitRunBefore(final Element run, final Element child) {
+        boolean first = true;
+        for (Node n = run.getFirstChild(); n != null && n != child; n = n.getNextSibling()) {
+            if (n instanceof Element e && !is(e, W, "rPr")) {
+                first = false;
+                break;
+            }
+        }
+        if (first) {
+            return run;
+        }
+        final Element copy = (Element) run.cloneNode(false);
+        final Element rPr = firstChild(run, W, "rPr");
+        if (rPr != null) {
+            final Element properties = (Element) rPr.cloneNode(true);
+            for (final Element change : children(properties, W, "rPrChange")) {
+                properties.removeChild(change);
+            }
+            copy.appendChild(properties);
+        }
+        Node n = child;
+        while (n != null) {
+            final Node next = n.getNextSibling();
+            copy.appendChild(n);
+            n = next;
+        }
+        run.getParentNode().insertBefore(copy, run.getNextSibling());
+        return copy;
+    }
+
+    private static Element nextElement(final Node node) {
+        for (Node n = node.getNextSibling(); n != null; n = n.getNextSibling()) {
+            if (n instanceof Element e) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    private static boolean onlyProperties(final Element run) {
+        for (final Element child : childElements(run)) {
+            if (!is(child, W, "rPr")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static void setPreservedText(final Element t, final String text) {
+        t.setAttributeNS(XML_NS, "xml:space", "preserve");
+        t.setTextContent(text);
     }
 
     private static Element preservedText(final Document doc, final String text) {
@@ -675,7 +864,8 @@ public final class WordDocumentRedactor {
     }
 
     // Chart text and cached values, then each chart's embedded source workbook.
-    private static void scanCharts(final OoxmlPackage pkg, final TextFilter filter, final ColumnRules rules, final boolean write,
+    private static void scanCharts(final OoxmlPackage pkg, final TextFilter filter, final ColumnRules rules,
+                                   final OoxmlRedactionOptions options, final boolean write,
                                    final List<OfficeRedactionSpan> captured, final Order order) {
         for (final PackagePart part : pkg.allParts(pkg.mainPart())) {
             if (!CHART_CONTENT_TYPE.equals(part.getContentType())) {
@@ -685,7 +875,7 @@ public final class WordDocumentRedactor {
             if (d != null && ChartRedactor.redactChartPart(d.getDocumentElement(), filter, write, captured, order) && write) {
                 pkg.markDirty(part);
             }
-            XlsxRedactor.redactChartEmbeddedWorkbooks(pkg, part, filter, rules, write, captured, order);
+            XlsxRedactor.redactChartEmbeddedWorkbooks(pkg, part, filter, rules, options, write, captured, order);
         }
     }
 

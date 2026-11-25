@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.policy.config.Excel;
+import ai.philterd.phileas.policy.config.Word;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +56,7 @@ public class OoxmlCoverageTest {
     public void wordCommentTextIsRedacted() throws Exception {
         final byte[] input = WordDocs.createWithComment("Reviewer note for " + EMAIL, "Body.");
 
-        final byte[] output = redactDocx(input).document();
+        final byte[] output = WordDocumentRedactor.redact(input, TestFilters.email(), OoxmlTestFixtures.keepingCommentsAndRevisions()).document();
 
         Assertions.assertEquals(List.of("Reviewer note for " + REDACTED), WordDocs.commentTexts(output));
         Assertions.assertFalse(WordDocs.anyPartContains(output, EMAIL));
@@ -65,7 +67,7 @@ public class OoxmlCoverageTest {
         final byte[] input = WordDocs.createWithThreadedThread(new String[]{"First " + EMAIL, "Reply " + OTHER_EMAIL}, "Body.");
         Assertions.assertTrue(WordDocs.anyPartContains(input, EMAIL));
 
-        final byte[] output = redactDocx(input).document();
+        final byte[] output = WordDocumentRedactor.redact(input, TestFilters.email(), OoxmlTestFixtures.keepingCommentsAndRevisions()).document();
 
         Assertions.assertFalse(WordDocs.anyPartContains(output, EMAIL));
         Assertions.assertFalse(WordDocs.anyPartContains(output, OTHER_EMAIL));
@@ -106,7 +108,7 @@ public class OoxmlCoverageTest {
         final byte[] input = WordDocs.createWithHeaderFooter("Header " + EMAIL, "Footer", "Body " + OTHER_EMAIL);
 
         final byte[] output = WordDocumentRedactor.redact(input, TestFilters.email(),
-                OoxmlRedactionOptions.defaults().setRedactHeadersFooters(false)).document();
+                OoxmlRedactionOptions.defaults().setWord(new Word().setHeadersFooters(Word.RedactOrKeep.KEEP))).document();
 
         Assertions.assertTrue(WordDocs.anyPartContains(output, EMAIL));
         Assertions.assertFalse(WordDocs.anyPartContains(output, OTHER_EMAIL));
@@ -132,7 +134,7 @@ public class OoxmlCoverageTest {
         final byte[] input = SpreadsheetDocs.createXlsxWithHeaderFooter(rows, "&LHeader " + EMAIL, "&CFooter");
 
         final byte[] output = XlsxRedactor.redact(input, TestFilters.email(),
-                OoxmlRedactionOptions.defaults().setRedactHeadersFooters(false)).document();
+                OoxmlRedactionOptions.defaults().setExcel(new Excel().setPrintHeadersFooters(Word.RedactOrKeep.KEEP))).document();
 
         Assertions.assertTrue(SpreadsheetDocs.headerFooterText(output).contains(EMAIL));
     }

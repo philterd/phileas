@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.policy.config.Word;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -81,7 +82,7 @@ public class EmbeddedObjectRedactionTest {
         final byte[] input = WordFixturesForEmbeddedTests.createWithEmbeddedOleObject(garbage, "Object below.");
 
         final byte[] output = WordDocumentRedactor.redact(input, FILTER,
-                OoxmlRedactionOptions.defaults().setRemoveUninspectableEmbeddedObjects(false)).document();
+                OoxmlRedactionOptions.defaults().setWord(new Word().setUninspectableObjects(Word.RemoveOrKeep.KEEP))).document();
 
         Assertions.assertTrue(WordFixturesForEmbeddedTests.hasAnyEmbeddedObject(output), "the object is kept when the option is off");
         Assertions.assertTrue(EmbeddedObjectRedactor.docxHasUninspectable(output), "verification should flag the kept object");

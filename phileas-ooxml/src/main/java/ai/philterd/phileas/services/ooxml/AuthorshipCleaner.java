@@ -42,6 +42,8 @@ final class AuthorshipCleaner {
     private static final String EXTENDED = "http://schemas.openxmlformats.org/officeDocument/2006/extended-properties";
     private static final String REL_CORE = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties";
     private static final String REL_EXTENDED = OoxmlPackage.REL + "extended-properties";
+    private static final String CUSTOM = "http://schemas.openxmlformats.org/officeDocument/2006/custom-properties";
+    private static final String REL_CUSTOM = OoxmlPackage.REL + "custom-properties";
     private static final String XML_NS = "http://www.w3.org/XML/1998/namespace";
 
     private AuthorshipCleaner() {
@@ -251,6 +253,27 @@ final class AuthorshipCleaner {
     private static void clearDocumentProperties(final OoxmlPackage pkg) {
         clearText(pkg, pkg.packagePartByRelationshipType(REL_CORE), List.of(DC, "creator", CORE, "lastModifiedBy"));
         clearText(pkg, pkg.packagePartByRelationshipType(REL_EXTENDED), List.of(EXTENDED, "Company", EXTENDED, "Manager"));
+    }
+
+    /**
+     * Clears the document properties beyond authorship, for {@code removeDocumentProperties}: title, subject,
+     * keywords, category, and description (the comments field) in docProps/core.xml, and every custom property
+     * in docProps/custom.xml.
+     */
+    static void clearContentProperties(final OoxmlPackage pkg) {
+        clearText(pkg, pkg.packagePartByRelationshipType(REL_CORE), List.of(DC, "title", DC, "subject",
+                CORE, "keywords", CORE, "category", DC, "description"));
+        final PackagePart custom = pkg.packagePartByRelationshipType(REL_CUSTOM);
+        final Document d = custom == null ? null : pkg.dom(custom);
+        if (d != null) {
+            final List<Element> properties = elements(d, CUSTOM, "property");
+            for (final Element property : properties) {
+                property.getParentNode().removeChild(property);
+            }
+            if (!properties.isEmpty()) {
+                pkg.markDirty(custom);
+            }
+        }
     }
 
     // Empties each named element's text, keeping the element, as Word and Excel write an unset property.

@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.policy.config.Excel;
+import ai.philterd.phileas.policy.config.Word;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
@@ -38,6 +40,14 @@ public class AuthorshipClearingTest {
     private static final String TEMPLATE = "file:///C:\\Users\\" + PROFILE + "\\AppData\\Roaming\\Microsoft\\Templates\\Normal.dotm";
 
     private static final TextFilter NO_FILTERS = TestFilters.forPolicy("{}");
+
+    // Keeps comments, tracked changes, and the other document properties, so what authorship clearing changes in
+    // them can be checked. Authorship is cleared with any settings; see authorshipIsClearedWithEverySetting.
+    private static OoxmlRedactionOptions keep() {
+        return OoxmlTestFixtures.keepingCommentsAndRevisions()
+                .setWord(OoxmlTestFixtures.keepingCommentsAndRevisions().getWord().setRemoveDocumentProperties(false))
+                .setExcel(new Excel().setRemoveDocumentProperties(false));
+    }
 
     private static final String REL_CORE = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties";
     private static final String REL_APP = TestPackage.REL + "extended-properties";
@@ -171,28 +181,54 @@ public class AuthorshipClearingTest {
 
     @Test
     public void wordAuthorsPeopleAndPropertiesAreClearedWithAPolicyWithNoFilters() throws Exception {
-        assertWordCleared(WordDocumentRedactor.redact(word(), NO_FILTERS, OoxmlRedactionOptions.defaults()).document());
+        assertWordCleared(WordDocumentRedactor.redact(word(), NO_FILTERS, keep()).document());
     }
 
     @Test
     public void wordApplySpansClearsAuthorship() throws Exception {
-        assertWordCleared(WordDocumentRedactor.applySpans(word(), List.of(), OoxmlRedactionOptions.defaults(), null));
+        assertWordCleared(WordDocumentRedactor.applySpans(word(), List.of(), keep(), null));
     }
 
     @Test
     public void excelCommentAuthorsPersonsAndPropertiesAreClearedWithAPolicyWithNoFilters() throws Exception {
-        final byte[] output = XlsxRedactor.redact(workbook("Sheet1"), NO_FILTERS, OoxmlRedactionOptions.defaults()).document();
+        final byte[] output = XlsxRedactor.redact(workbook("Sheet1"), NO_FILTERS, keep()).document();
         assertExcelCleared(output);
     }
 
     @Test
     public void excelApplySpansClearsAuthorship() throws Exception {
-        assertExcelCleared(XlsxRedactor.applySpans(workbook("Sheet1"), List.of(), OoxmlRedactionOptions.defaults(), null));
+        assertExcelCleared(XlsxRedactor.applySpans(workbook("Sheet1"), List.of(), keep(), null));
+    }
+
+    @Test
+    public void authorshipIsClearedWithEverySetting() throws Exception {
+        for (final Word.RemoveOrRedact comments : Word.RemoveOrRedact.values()) {
+            for (final Word.AcceptOrRedact tracked : Word.AcceptOrRedact.values()) {
+                for (final Word.RemoveOrRedact hidden : Word.RemoveOrRedact.values()) {
+                    for (final boolean properties : new boolean[]{true, false}) {
+                        final OoxmlRedactionOptions options = OoxmlRedactionOptions.defaults().setWord(new Word()
+                                .setComments(comments).setTrackedChanges(tracked).setHiddenText(hidden)
+                                .setRemoveDocumentProperties(properties));
+                        final String combination = comments + " " + tracked + " " + hidden + " " + properties;
+                        final byte[] redacted = WordDocumentRedactor.redact(word(), NO_FILTERS, options).document();
+                        assertNoAuthorship(redacted);
+                        Assertions.assertFalse(TestPackage.entries(redacted).containsKey("word/people.xml"), combination);
+                        assertNoAuthorship(WordDocumentRedactor.applySpans(word(), List.of(), options, null));
+                    }
+                }
+            }
+        }
+        for (final boolean properties : new boolean[]{true, false}) {
+            final OoxmlRedactionOptions options = OoxmlRedactionOptions.defaults()
+                    .setExcel(new Excel().setRemoveDocumentProperties(properties));
+            assertNoAuthorship(XlsxRedactor.redact(workbook("Sheet1"), NO_FILTERS, options).document());
+            assertNoAuthorship(XlsxRedactor.applySpans(workbook("Sheet1"), List.of(), options, null));
+        }
     }
 
     @Test
     public void excelAuthorsAreClearedOnSheetsTheWorksheetOptionLeavesOut() throws Exception {
-        final OoxmlRedactionOptions options = OoxmlRedactionOptions.defaults().setWorksheet("Other");
+        final OoxmlRedactionOptions options = keep().setWorksheet("Other");
         assertExcelCleared(XlsxRedactor.redact(workbook("Sheet1"), NO_FILTERS, options).document());
     }
 
@@ -275,12 +311,12 @@ public class AuthorshipClearingTest {
     @Test
     public void embeddedDocumentsAreCleared() throws Exception {
         final byte[] docx = WordDocumentRedactor.redact(OoxmlTestFixtures.docxWithEmbeddedXlsx("Body.", workbook("Sheet1")),
-                NO_FILTERS, OoxmlRedactionOptions.defaults()).document();
+                NO_FILTERS, keep()).document();
         assertExcelCleared(TestPackage.entries(docx).get("word/embeddings/Microsoft_Excel_Worksheet.xlsx"));
 
         final byte[] xlsx = XlsxRedactor.redact(SpreadsheetDocs.createXlsxWithEmbeddedPackage(
                         List.<String[]>of(new String[]{"Name"}), word(), TestPackage.CT_DOCX),
-                NO_FILTERS, OoxmlRedactionOptions.defaults()).document();
+                NO_FILTERS, keep()).document();
         assertWordCleared(TestPackage.entries(xlsx).get("xl/embeddings/package1.docx"));
     }
 

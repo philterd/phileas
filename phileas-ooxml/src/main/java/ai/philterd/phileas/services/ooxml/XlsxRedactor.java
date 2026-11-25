@@ -91,8 +91,8 @@ public final class XlsxRedactor {
             final List<String> warnings = new ArrayList<>();
             final List<OfficeRedactionSpan> captured = redactOpen(pkg, filter, options, rules, warnings);
             final Order order = new Order(captured.size());
-            scanChartEmbeddings(pkg, options.getWorksheet(), filter, rules, true, captured, order);
-            EmbeddedObjectRedactor.process(pkg, filter, rules, options.isRemoveUninspectableEmbeddedObjects(), true, captured, order);
+            scanChartEmbeddings(pkg, options.getWorksheet(), filter, rules, options, true, captured, order);
+            EmbeddedObjectRedactor.process(pkg, filter, rules, options, options.excelRemovesUninspectableObjects(), true, captured, order);
             return new OoxmlRedactionResult(pkg.save(), captured, warnings);
         }
     }
@@ -111,11 +111,10 @@ public final class XlsxRedactor {
     public static List<OfficeRedactionSpan> detect(final byte[] input, final TextFilter filter,
                                                    final OoxmlRedactionOptions options, final ColumnRules rules) throws IOException {
         try (OoxmlPackage pkg = new OoxmlPackage(input)) {
-            final List<OfficeRedactionSpan> captured = detectOpen(pkg, filter, options.getWorksheet(),
-                    options.isRedactHeadersFooters(), options.isRedactCharts(), rules);
+            final List<OfficeRedactionSpan> captured = detectOpen(pkg, filter, options, rules);
             final Order order = new Order(captured.size());
-            scanChartEmbeddings(pkg, options.getWorksheet(), filter, rules, false, captured, order);
-            EmbeddedObjectRedactor.process(pkg, filter, rules, false, false, captured, order);
+            scanChartEmbeddings(pkg, options.getWorksheet(), filter, rules, options, false, captured, order);
+            EmbeddedObjectRedactor.process(pkg, filter, rules, options, false, false, captured, order);
             return captured;
         }
     }
@@ -149,13 +148,16 @@ public final class XlsxRedactor {
                 return pkg.save();
             }
             AuthorshipCleaner.clearSpreadsheet(pkg);
+            if (options.excelRemovesDocumentProperties()) {
+                AuthorshipCleaner.clearContentProperties(pkg);
+            }
             final List<String> sharedStrings = sharedStrings(pkg);
             int cellIndex = 0;
             boolean anyCellRedacted = false;
             for (final CellRef c : enumerateCells(pkg, worksheet)) {
                 final int currentIndex = cellIndex++;
                 final List<OfficeRedactionSpan> cellSpans = byCell.get(currentIndex);
-                if ((hasFormula(c.cell()) && !options.isRedactFormulaValues()) || cellSpans == null) {
+                if ((hasFormula(c.cell()) && !options.excelRedactsFormulaCaches()) || cellSpans == null) {
                     continue;
                 }
                 final String original = getCellText(c.cell(), sharedStrings);
@@ -178,24 +180,24 @@ public final class XlsxRedactor {
                     anyCellRedacted = true;
                 }
             }
-            if (options.isRedactFormulaValues() && anyCellRedacted) {
+            if (options.excelRedactsFormulaCaches() && anyCellRedacted) {
                 clearFormulaCachesAndForceRecalc(pkg, worksheet);
             }
             if (policyFilter != null) {
                 final Order order = new Order();
-                if (options.isRedactHeadersFooters()) {
+                if (options.excelRedactsPrintHeadersFooters()) {
                     scanHeadersFooters(pkg, worksheet, policyFilter, true, null, order);
                 }
                 scanComments(pkg, worksheet, policyFilter, true, null, order);
                 scanShapes(pkg, worksheet, policyFilter, true, null, order);
-                if (options.isRedactCharts()) {
+                if (options.excelRedactsCharts()) {
                     scanCharts(pkg, worksheet, policyFilter, true, null, order);
                 }
-                if (options.isRedactPivotCaches()) {
+                if (options.excelRedactsPivotCaches()) {
                     scanPivotCaches(pkg, policyFilter, true, null, order);
                 }
-                scanChartEmbeddings(pkg, worksheet, policyFilter, rules, true, null, order);
-                EmbeddedObjectRedactor.process(pkg, policyFilter, rules, options.isRemoveUninspectableEmbeddedObjects(),
+                scanChartEmbeddings(pkg, worksheet, policyFilter, rules, options, true, null, order);
+                EmbeddedObjectRedactor.process(pkg, policyFilter, rules, options, options.excelRemovesUninspectableObjects(),
                         true, null, order);
             }
             pruneUnusedSharedStrings(pkg);
@@ -271,6 +273,9 @@ public final class XlsxRedactor {
         }
         // Before comment text is redacted, so a note's author name is matched as Excel wrote it.
         AuthorshipCleaner.clearSpreadsheet(pkg);
+        if (options.excelRemovesDocumentProperties()) {
+            AuthorshipCleaner.clearContentProperties(pkg);
+        }
         final String worksheet = options.getWorksheet();
         final Set<Integer> fullColumns = options.getFullyRedactedColumns();
         final List<String> sharedStrings = sharedStrings(pkg);
@@ -293,7 +298,7 @@ public final class XlsxRedactor {
             final boolean header = plan.isHeader(c);
             // A formula cell's cached value can copy a now-redacted value. With the option off, formula
             // cells are left alone; with it on, the cached value is scanned like any other cell.
-            if (hasFormula(cell) && !options.isRedactFormulaValues()) {
+            if (hasFormula(cell) && !options.excelRedactsFormulaCaches()) {
                 continue;
             }
             final String original = getCellText(cell, sharedStrings);
@@ -354,18 +359,18 @@ public final class XlsxRedactor {
             }
         }
 
-        if (options.isRedactHeadersFooters()) {
+        if (options.excelRedactsPrintHeadersFooters()) {
             scanHeadersFooters(pkg, worksheet, filter, true, captured, order);
         }
         scanComments(pkg, worksheet, filter, true, captured, order);
         scanShapes(pkg, worksheet, filter, true, captured, order);
-        if (options.isRedactCharts()) {
+        if (options.excelRedactsCharts()) {
             scanCharts(pkg, worksheet, filter, true, captured, order);
         }
-        if (options.isRedactPivotCaches()) {
+        if (options.excelRedactsPivotCaches()) {
             scanPivotCaches(pkg, filter, true, captured, order);
         }
-        if (options.isRedactFormulaValues() && anyCellRedacted) {
+        if (options.excelRedactsFormulaCaches() && anyCellRedacted) {
             clearFormulaCachesAndForceRecalc(pkg, worksheet);
         }
         pruneUnusedSharedStrings(pkg);
@@ -373,8 +378,8 @@ public final class XlsxRedactor {
     }
 
     private static List<OfficeRedactionSpan> detectOpen(final OoxmlPackage pkg, final TextFilter filter,
-                                                        final String worksheet, final boolean redactHeadersFooters,
-                                                        final boolean redactCharts, final ColumnRules rules) {
+                                                        final OoxmlRedactionOptions options, final ColumnRules rules) {
+        final String worksheet = options.getWorksheet();
         final List<OfficeRedactionSpan> captured = new ArrayList<>();
         final Order order = new Order();
         final PackagePart workbook = pkg.mainPart();
@@ -409,12 +414,12 @@ public final class XlsxRedactor {
             }
             OfficeSpanMath.capture(result, original, currentIndex, null, captured, order);
         }
-        if (redactHeadersFooters) {
+        if (options.excelRedactsPrintHeadersFooters()) {
             scanHeadersFooters(pkg, worksheet, filter, false, captured, order);
         }
         scanComments(pkg, worksheet, filter, false, captured, order);
         scanShapes(pkg, worksheet, filter, false, captured, order);
-        if (redactCharts) {
+        if (options.excelRedactsCharts()) {
             scanCharts(pkg, worksheet, filter, false, captured, order);
         }
         // The pivot cache is scanned regardless of the option, so verification flags a residual copy.
@@ -993,12 +998,13 @@ public final class XlsxRedactor {
     // --- chart embedded workbooks ----------------------------------------------------------------
 
     private static void scanChartEmbeddings(final OoxmlPackage pkg, final String worksheet, final TextFilter filter,
-                                            final ColumnRules rules, final boolean write, final List<OfficeRedactionSpan> captured, final Order order) {
+                                            final ColumnRules rules, final OoxmlRedactionOptions options,
+                                            final boolean write, final List<OfficeRedactionSpan> captured, final Order order) {
         if (pkg.mainPart() == null) {
             return;
         }
         for (final PackagePart chart : chartParts(pkg, worksheet)) {
-            redactChartEmbeddedWorkbooks(pkg, chart, filter, rules, write, captured, order);
+            redactChartEmbeddedWorkbooks(pkg, chart, filter, rules, options, write, captured, order);
         }
     }
 
@@ -1008,7 +1014,8 @@ public final class XlsxRedactor {
      * be parsed is removed along with the chart's reference to it.
      */
     static void redactChartEmbeddedWorkbooks(final OoxmlPackage pkg, final PackagePart chart, final TextFilter filter,
-                                             final ColumnRules rules, final boolean write, final List<OfficeRedactionSpan> captured, final Order order) {
+                                             final ColumnRules rules, final OoxmlRedactionOptions options,
+                                             final boolean write, final List<OfficeRedactionSpan> captured, final Order order) {
         for (final PackageRelationship rel : pkg.relationshipsByType(chart, REL + "package")) {
             final PackagePart embedded = pkg.related(chart, rel);
             if (embedded == null) {
@@ -1019,13 +1026,13 @@ public final class XlsxRedactor {
                 continue;
             }
             if (!write) {
-                for (final OfficeRedactionSpan span : detectEmbeddedBytes(bytes, filter, rules)) {
+                for (final OfficeRedactionSpan span : detectEmbeddedBytes(bytes, filter, rules, options)) {
                     addEmbedded(captured, order, span);
                 }
                 continue;
             }
             final List<OfficeRedactionSpan> embeddedSpans = new ArrayList<>();
-            final byte[] redacted = redactEmbeddedBytes(bytes, filter, rules, embeddedSpans);
+            final byte[] redacted = redactEmbeddedBytes(bytes, filter, rules, options, embeddedSpans);
             if (redacted != null) {
                 pkg.replacePart(embedded, redacted);
                 for (final OfficeRedactionSpan span : embeddedSpans) {
@@ -1061,7 +1068,7 @@ public final class XlsxRedactor {
      * the filter itself propagates rather than being taken for an unreadable workbook.
      */
     static byte[] redactEmbeddedBytes(final byte[] bytes, final TextFilter filter, final ColumnRules rules,
-                                      final List<OfficeRedactionSpan> spans) {
+                                      final OoxmlRedactionOptions options, final List<OfficeRedactionSpan> spans) {
         final OoxmlPackage pkg = WordDocumentRedactor.openEmbedded(bytes);
         if (pkg == null) {
             return null;
@@ -1072,7 +1079,7 @@ public final class XlsxRedactor {
             }
             // The column rules apply as they do to the outer workbook. A header that matches no column here is
             // not reported, since an embedded workbook often holds only some of the columns.
-            final List<OfficeRedactionSpan> redacted = redactOpen(pkg, filter, OoxmlRedactionOptions.defaults(),
+            final List<OfficeRedactionSpan> redacted = redactOpen(pkg, filter, options.forEmbedded(),
                     rules, new ArrayList<>());
             final byte[] output = pkg.save();
             spans.addAll(redacted);
@@ -1082,13 +1089,14 @@ public final class XlsxRedactor {
         }
     }
 
-    static List<OfficeRedactionSpan> detectEmbeddedBytes(final byte[] bytes, final TextFilter filter, final ColumnRules rules) {
+    static List<OfficeRedactionSpan> detectEmbeddedBytes(final byte[] bytes, final TextFilter filter, final ColumnRules rules,
+                                                         final OoxmlRedactionOptions options) {
         final OoxmlPackage pkg = WordDocumentRedactor.openEmbedded(bytes);
         if (pkg == null) {
             return new ArrayList<>();
         }
         try (pkg) {
-            return detectOpen(pkg, filter, null, true, true, rules);
+            return detectOpen(pkg, filter, options.forEmbedded(), rules);
         }
     }
 

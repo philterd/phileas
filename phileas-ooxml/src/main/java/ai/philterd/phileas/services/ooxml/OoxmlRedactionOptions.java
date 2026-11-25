@@ -15,93 +15,62 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.policy.config.Excel;
+import ai.philterd.phileas.policy.config.Word;
+
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Options for Word and Excel redaction. The defaults match phileas-dotnet's.
+ * Options for Word and Excel redaction: the policy's {@code config.word} and {@code config.excel} settings, and
+ * the per-call options that pick a worksheet and columns. {@code OoxmlFilterService} takes the Word and Excel
+ * settings from each call's policy; set them here when calling the redactors directly.
  */
 public final class OoxmlRedactionOptions {
 
-    private boolean highlight = false;
-    private boolean redactHeadersFooters = true;
-    private boolean redactCharts = true;
-    private boolean removeUninspectableEmbeddedObjects = true;
-    private boolean redactFormulaValues = true;
-    private boolean redactPivotCaches = true;
+    private Word word = new Word();
+    private Excel excel = new Excel();
     private boolean useHeaderContext = false;
     private Set<Integer> fullyRedactedColumns = Collections.emptySet();
     private String worksheet = null;
 
-    /** Options with the defaults. */
+    /** Options with the defaults: the policy schema's defaults for Word and Excel, and no per-call options. */
     public static OoxmlRedactionOptions defaults() {
         return new OoxmlRedactionOptions();
     }
 
-    /** Word: wrap each replacement in a yellow highlight. Default {@code false}. */
-    public boolean isHighlight() {
-        return highlight;
-    }
-
-    public OoxmlRedactionOptions setHighlight(final boolean highlight) {
-        this.highlight = highlight;
-        return this;
-    }
-
-    /** Redact Word headers and footers, and Excel print headers and footers. Default {@code true}. */
-    public boolean isRedactHeadersFooters() {
-        return redactHeadersFooters;
-    }
-
-    public OoxmlRedactionOptions setRedactHeadersFooters(final boolean redactHeadersFooters) {
-        this.redactHeadersFooters = redactHeadersFooters;
-        return this;
-    }
-
-    /** Redact chart text and cached chart values. Default {@code true}. */
-    public boolean isRedactCharts() {
-        return redactCharts;
-    }
-
-    public OoxmlRedactionOptions setRedactCharts(final boolean redactCharts) {
-        this.redactCharts = redactCharts;
-        return this;
+    /** A copy of these options. */
+    public OoxmlRedactionOptions copy() {
+        return new OoxmlRedactionOptions().setWord(word).setExcel(excel).setUseHeaderContext(useHeaderContext)
+                .setFullyRedactedColumns(fullyRedactedColumns).setWorksheet(worksheet);
     }
 
     /**
-     * Remove embedded objects that cannot be inspected (anything but an embedded Word or Excel document).
-     * When {@code false} they are kept and reported. Default {@code true}.
+     * The options for a document embedded in the one being redacted: the same Word and Excel settings, without
+     * the per-call options, which pick worksheets and columns of the outer document.
      */
-    public boolean isRemoveUninspectableEmbeddedObjects() {
-        return removeUninspectableEmbeddedObjects;
+    OoxmlRedactionOptions forEmbedded() {
+        return new OoxmlRedactionOptions().setWord(word).setExcel(excel);
     }
 
-    public OoxmlRedactionOptions setRemoveUninspectableEmbeddedObjects(final boolean remove) {
-        this.removeUninspectableEmbeddedObjects = remove;
+    /** The Word settings, as in the policy's {@code config.word}. */
+    public Word getWord() {
+        return word.copy();
+    }
+
+    public OoxmlRedactionOptions setWord(final Word word) {
+        this.word = word == null ? new Word() : word.copy();
         return this;
     }
 
-    /**
-     * Excel: redact the cached results of formula cells, and when any cell is redacted, clear formula
-     * caches and set the workbook to recalculate on open. Default {@code true}.
-     */
-    public boolean isRedactFormulaValues() {
-        return redactFormulaValues;
+    /** The Excel settings, as in the policy's {@code config.excel}. */
+    public Excel getExcel() {
+        return excel.copy();
     }
 
-    public OoxmlRedactionOptions setRedactFormulaValues(final boolean redactFormulaValues) {
-        this.redactFormulaValues = redactFormulaValues;
-        return this;
-    }
-
-    /** Excel: redact pivot caches and set a redacted cache to refresh on open. Default {@code true}. */
-    public boolean isRedactPivotCaches() {
-        return redactPivotCaches;
-    }
-
-    public OoxmlRedactionOptions setRedactPivotCaches(final boolean redactPivotCaches) {
-        this.redactPivotCaches = redactPivotCaches;
+    public OoxmlRedactionOptions setExcel(final Excel excel) {
+        this.excel = excel == null ? new Excel() : excel.copy();
         return this;
     }
 
@@ -120,7 +89,7 @@ public final class OoxmlRedactionOptions {
 
     /**
      * Excel: 1-based columns whose data cells are all replaced, whether or not anything is detected. The
-     * header row is kept. Default none.
+     * header rows are kept. Default none.
      */
     public Set<Integer> getFullyRedactedColumns() {
         return fullyRedactedColumns;
@@ -139,6 +108,64 @@ public final class OoxmlRedactionOptions {
     public OoxmlRedactionOptions setWorksheet(final String worksheet) {
         this.worksheet = worksheet;
         return this;
+    }
+
+    // --- the settings as the redactors read them ------------------------------------------------
+
+    boolean wordHighlight() {
+        return word.isHighlight();
+    }
+
+    boolean wordRedactsHeadersFooters() {
+        return word.getHeadersFooters() == Word.RedactOrKeep.REDACT;
+    }
+
+    boolean wordRedactsCharts() {
+        return word.getCharts() == Word.RedactOrKeep.REDACT;
+    }
+
+    boolean wordRemovesUninspectableObjects() {
+        return word.getUninspectableObjects() == Word.RemoveOrKeep.REMOVE;
+    }
+
+    boolean wordRemovesComments() {
+        return word.getComments() == Word.RemoveOrRedact.REMOVE;
+    }
+
+    boolean wordAcceptsTrackedChanges() {
+        return word.getTrackedChanges() == Word.AcceptOrRedact.ACCEPT;
+    }
+
+    boolean wordRemovesHiddenText() {
+        return word.getHiddenText() == Word.RemoveOrRedact.REMOVE;
+    }
+
+    boolean wordRemovesDocumentProperties() {
+        return word.isRemoveDocumentProperties();
+    }
+
+    boolean excelRedactsPrintHeadersFooters() {
+        return excel.getPrintHeadersFooters() == Word.RedactOrKeep.REDACT;
+    }
+
+    boolean excelRedactsCharts() {
+        return excel.getCharts() == Word.RedactOrKeep.REDACT;
+    }
+
+    boolean excelRedactsFormulaCaches() {
+        return excel.getFormulaCaches() == Word.RedactOrKeep.REDACT;
+    }
+
+    boolean excelRedactsPivotCaches() {
+        return excel.getPivotCaches() == Word.RedactOrKeep.REDACT;
+    }
+
+    boolean excelRemovesUninspectableObjects() {
+        return excel.getUninspectableObjects() == Word.RemoveOrKeep.REMOVE;
+    }
+
+    boolean excelRemovesDocumentProperties() {
+        return excel.isRemoveDocumentProperties();
     }
 
 }

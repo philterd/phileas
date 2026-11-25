@@ -177,7 +177,7 @@ public class DrawingTextBreakRedactionTest {
     public void docxChartTitle() throws Exception {
         final byte[] input = WordDocs.createWithChart(drawingParagraphXml("Signed,", "\n", "George Washington"), "Body.");
 
-        final byte[] output = WordDocumentRedactor.redact(input, names(), OoxmlRedactionOptions.defaults().setRedactCharts(true)).document();
+        final byte[] output = WordDocumentRedactor.redact(input, names(), OoxmlRedactionOptions.defaults()).document();
 
         assertTrue(WordDocs.drawingParagraphs(output).contains("Signed,|\n|{{{REDACTED-first-name}}} {{{REDACTED-first-name}}}"));
     }
@@ -203,7 +203,7 @@ public class DrawingTextBreakRedactionTest {
         final byte[] input = WordDocs.createXlsxWithChartXml(GRID, SpreadsheetDocs.chartSpaceXmlWithTitleParagraph(
                 drawingParagraphXml("Patient George", "\n", "Washington"), "Series", "Category"));
 
-        final byte[] output = XlsxRedactor.redact(input, names(), OoxmlRedactionOptions.defaults().setRedactCharts(true)).document();
+        final byte[] output = XlsxRedactor.redact(input, names(), OoxmlRedactionOptions.defaults()).document();
 
         assertTrue(WordDocs.drawingParagraphs(output).contains("Patient {{{REDACTED-first-name}}}|\n|{{{REDACTED-first-name}}}"));
     }

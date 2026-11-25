@@ -321,6 +321,12 @@ reviewer, is up to the application.
 The policy's `config.email` decides how an email message is redacted beyond its text: which headers are removed
 outright, and what happens to attachments and inline images. See [Email Redaction](../email.md).
 
+### Word and Excel
+
+The policy's `config.word` and `config.excel` decide how Word and Excel documents are redacted beyond their text:
+whether comments are removed, tracked changes accepted, hidden text removed, and headers, charts, formula and pivot
+caches, embedded objects, and document properties redacted. See [Policy settings](../word_and_excel.md#policy-settings).
+
 ### Column Rules
 
 The policy's top-level `tabular` section sets rules per column for Excel workbooks: replace every value in a column,

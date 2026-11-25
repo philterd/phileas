@@ -70,10 +70,10 @@ public final class EmbeddedObjectRedactor {
 
     // An embedded workbook follows the policy's column rules, as the document it is embedded in does.
     static void process(final OoxmlPackage pkg, final TextFilter filter, final ColumnRules rules,
-                        final boolean removeUninspectable, final boolean write,
+                        final OoxmlRedactionOptions options, final boolean removeUninspectable, final boolean write,
                         final List<OfficeRedactionSpan> captured, final Order order) {
         for (final Found found : find(pkg)) {
-            handle(pkg, found, filter, rules, removeUninspectable, write, captured, order);
+            handle(pkg, found, filter, rules, options, removeUninspectable, write, captured, order);
         }
     }
 
@@ -119,24 +119,25 @@ public final class EmbeddedObjectRedactor {
     }
 
     private static void handle(final OoxmlPackage pkg, final Found found, final TextFilter filter,
-                               final ColumnRules rules, final boolean removeUninspectable, final boolean write,
+                               final ColumnRules rules, final OoxmlRedactionOptions options,
+                               final boolean removeUninspectable, final boolean write,
                                final List<OfficeRedactionSpan> captured, final Order order) {
         final byte[] bytes = pkg.partBytes(found.part());
         if (bytes == null || bytes.length == 0) {
             return;
         }
         if (!write) {
-            final List<OfficeRedactionSpan> spans = isXlsx(found) ? XlsxRedactor.detectEmbeddedBytes(bytes, filter, rules)
-                    : isDocx(found) ? WordDocumentRedactor.detectEmbeddedBytes(bytes, filter, rules) : List.of();
+            final List<OfficeRedactionSpan> spans = isXlsx(found) ? XlsxRedactor.detectEmbeddedBytes(bytes, filter, rules, options)
+                    : isDocx(found) ? WordDocumentRedactor.detectEmbeddedBytes(bytes, filter, rules, options) : List.of();
             spans.forEach(s -> XlsxRedactor.addEmbedded(captured, order, s));
             return;
         }
         final List<OfficeRedactionSpan> embeddedSpans = new ArrayList<>();
         byte[] redacted = null;
         if (isXlsx(found)) {
-            redacted = XlsxRedactor.redactEmbeddedBytes(bytes, filter, rules, embeddedSpans);
+            redacted = XlsxRedactor.redactEmbeddedBytes(bytes, filter, rules, options, embeddedSpans);
         } else if (isDocx(found)) {
-            redacted = WordDocumentRedactor.redactEmbeddedBytes(bytes, filter, rules, embeddedSpans);
+            redacted = WordDocumentRedactor.redactEmbeddedBytes(bytes, filter, rules, options, embeddedSpans);
         }
         if (redacted != null) {
             pkg.replacePart(found.part(), redacted);

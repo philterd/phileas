@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.policy.config.Word;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -121,7 +122,7 @@ public class WordDocumentRedactorTest {
     public void redactWithHighlightHighlightsTheReplacement() throws Exception {
         final byte[] input = WordDocs.create("email zzz@example.com end");
 
-        final byte[] output = WordDocumentRedactor.redact(input, FILTER, defaults().setHighlight(true)).document();
+        final byte[] output = WordDocumentRedactor.redact(input, FILTER, defaults().setWord(new Word().setHighlight(true))).document();
 
         assertTrue(WordDocs.bodyParagraphs(output).contains("email {{{REDACTED-email-address}}} end"));
         final String xml = WordDocs.documentXml(output);
@@ -135,7 +136,7 @@ public class WordDocumentRedactorTest {
     public void redactRedactsDeletedTrackedTextKeepsTheDeletion() throws Exception {
         final byte[] input = WordDocs.createWithTrackedDeletion("removed contact aaa@example.com", "Visible body text.");
 
-        final byte[] output = WordDocumentRedactor.redact(input, FILTER, defaults()).document();
+        final byte[] output = WordDocumentRedactor.redact(input, FILTER, OoxmlTestFixtures.keepingCommentsAndRevisions()).document();
 
         final List<String> deleted = WordDocs.deletedTexts(output);
         assertFalse(deleted.isEmpty());
@@ -149,7 +150,7 @@ public class WordDocumentRedactorTest {
     public void redactReportsDeletedTextRedactionAsSpan() throws Exception {
         final byte[] input = WordDocs.createWithTrackedDeletion("old email aaa@example.com", "Body.");
 
-        final List<OfficeRedactionSpan> spans = WordDocumentRedactor.redact(input, FILTER, defaults()).spans();
+        final List<OfficeRedactionSpan> spans = WordDocumentRedactor.redact(input, FILTER, OoxmlTestFixtures.keepingCommentsAndRevisions()).spans();
 
         assertTrue(spans.stream().anyMatch(s -> s.getText().contains("aaa@example.com")));
     }
@@ -158,7 +159,7 @@ public class WordDocumentRedactorTest {
     public void detectFindsPiiInDeletedText() throws Exception {
         final byte[] input = WordDocs.createWithTrackedDeletion("hidden aaa@example.com", "Body.");
 
-        final List<OfficeRedactionSpan> residuals = WordDocumentRedactor.detect(input, FILTER, defaults());
+        final List<OfficeRedactionSpan> residuals = WordDocumentRedactor.detect(input, FILTER, OoxmlTestFixtures.keepingCommentsAndRevisions());
 
         assertTrue(residuals.stream().anyMatch(s -> s.getText().contains("aaa@example.com")));
     }

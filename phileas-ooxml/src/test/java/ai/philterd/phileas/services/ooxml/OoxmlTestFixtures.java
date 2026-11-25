@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.policy.config.Word;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -33,6 +34,15 @@ public final class OoxmlTestFixtures {
     private static final String DOCUMENT = "/word/document.xml";
 
     /** A .docx with one body paragraph per string. */
+    /**
+     * Options that keep comments and tracked changes and redact their text, for tests of that handling. The
+     * defaults remove comments and accept tracked changes.
+     */
+    static OoxmlRedactionOptions keepingCommentsAndRevisions() {
+        return OoxmlRedactionOptions.defaults().setWord(new Word()
+                .setComments(Word.RemoveOrRedact.REDACT).setTrackedChanges(Word.AcceptOrRedact.REDACT));
+    }
+
     public static byte[] docx(final String... paragraphs) {
         return docxPackage(paragraphs).toBytes();
     }

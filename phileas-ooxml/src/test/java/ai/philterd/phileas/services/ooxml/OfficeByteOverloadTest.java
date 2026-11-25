@@ -89,7 +89,7 @@ public class OfficeByteOverloadTest {
         final byte[] input = WordFixturesForEmbeddedTests.create("call dave@example.com");
 
         final List<OfficeRedactionSpan> spans = WordDocumentRedactor.detect(input, filter(), defaults());
-        final byte[] document = WordDocumentRedactor.applySpans(input, spans, defaults().setHighlight(false), null);
+        final byte[] document = WordDocumentRedactor.applySpans(input, spans, defaults(), null);
 
         Assertions.assertFalse(WordFixturesForEmbeddedTests.allBodyText(document).contains("dave@example.com"));
     }
