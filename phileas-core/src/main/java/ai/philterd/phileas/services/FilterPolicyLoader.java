@@ -16,6 +16,7 @@
 package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
+import ai.philterd.phileas.filters.ColumnFilter;
 import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
@@ -213,6 +214,10 @@ public class FilterPolicyLoader {
 
         if (policy.getConfig() != null && policy.getConfig().getReview() != null) {
             policy.getConfig().getReview().validate();
+        }
+
+        if (policy.getTabular() != null) {
+            policy.getTabular().validate(policy.getIdentifiers());
         }
 
         // Refuse a file the policy may not read here, before any filter is built, including the top-level
@@ -863,6 +868,31 @@ public class FilterPolicyLoader {
      * @param replacementGenerators The policy's replacement generators.
      * @return The {@link FilterConfiguration}.
      */
+    /**
+     * Builds the filter that replaces whole table cells with a {@code tabular} column rule's strategies. The
+     * strategies are wired as a detecting filter's are: the policy's encryption keys, anonymization, mappings,
+     * and generators.
+     * @param policy The {@link Policy} the strategies are from.
+     * @param strategies The column rule's strategies.
+     * @return The {@link ColumnFilter}.
+     */
+    public ColumnFilter getColumnFilter(final Policy policy, final List<? extends AbstractFilterStrategy> strategies) {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withRandom(random)
+                .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                .withPolicyFiles(policyFiles)
+                .withStrategies(strategies)
+                .withCrypto(policy.getCrypto())
+                .withFPE(policy.getFpe())
+                .withGenerators(buildReplacementGenerators(policy))
+                .withWindowSize(phileasConfiguration.spanWindowSize())
+                .build();
+
+        return new ColumnFilter(filterConfiguration);
+
+    }
+
     private FilterConfiguration configuration(final Policy policy, final AbstractFilter filter,
                                               final List<? extends AbstractFilterStrategy> strategies,
                                               final Map<String, ReplacementGenerator> replacementGenerators) {

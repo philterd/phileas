@@ -118,10 +118,20 @@ public final class WordDocumentRedactor {
     /** Detects what {@link #redact} would redact, without producing a document. */
     public static List<OfficeRedactionSpan> detect(final byte[] input, final TextFilter filter,
                                                    final OoxmlRedactionOptions options) throws IOException {
+        return detect(input, filter, options, null);
+    }
+
+    /**
+     * As {@link #detect(byte[], TextFilter, OoxmlRedactionOptions)}, with the policy's column rules for the
+     * workbooks embedded in the document's charts and as objects.
+     * @param rules The column rules, or {@code null} for none.
+     */
+    public static List<OfficeRedactionSpan> detect(final byte[] input, final TextFilter filter,
+                                                   final OoxmlRedactionOptions options, final ColumnRules rules) throws IOException {
         try (OoxmlPackage pkg = new OoxmlPackage(input)) {
-            final List<OfficeRedactionSpan> captured = run(pkg, filter, false, false,
+            final List<OfficeRedactionSpan> captured = run(pkg, filter, rules, false, false,
                     options.isRedactHeadersFooters(), options.isRedactCharts());
-            EmbeddedObjectRedactor.process(pkg, filter, false, false, captured, new Order(captured.size()));
+            EmbeddedObjectRedactor.process(pkg, filter, rules, false, false, captured, new Order(captured.size()));
             return captured;
         }
     }
@@ -129,10 +139,20 @@ public final class WordDocumentRedactor {
     /** Redacts the document and returns the redacted bytes and the redactions made. */
     public static OoxmlRedactionResult redact(final byte[] input, final TextFilter filter,
                                               final OoxmlRedactionOptions options) throws IOException {
+        return redact(input, filter, options, null);
+    }
+
+    /**
+     * As {@link #redact(byte[], TextFilter, OoxmlRedactionOptions)}, with the policy's column rules for the
+     * workbooks embedded in the document's charts and as objects.
+     * @param rules The column rules, or {@code null} for none.
+     */
+    public static OoxmlRedactionResult redact(final byte[] input, final TextFilter filter,
+                                              final OoxmlRedactionOptions options, final ColumnRules rules) throws IOException {
         try (OoxmlPackage pkg = new OoxmlPackage(input)) {
-            final List<OfficeRedactionSpan> captured = run(pkg, filter, true, options.isHighlight(),
+            final List<OfficeRedactionSpan> captured = run(pkg, filter, rules, true, options.isHighlight(),
                     options.isRedactHeadersFooters(), options.isRedactCharts());
-            EmbeddedObjectRedactor.process(pkg, filter, options.isRemoveUninspectableEmbeddedObjects(), true,
+            EmbeddedObjectRedactor.process(pkg, filter, rules, options.isRemoveUninspectableEmbeddedObjects(), true,
                     captured, new Order(captured.size()));
             return new OoxmlRedactionResult(pkg.save(), captured);
         }
@@ -146,6 +166,17 @@ public final class WordDocumentRedactor {
      */
     public static byte[] applySpans(final byte[] input, final List<OfficeRedactionSpan> spans,
                                     final OoxmlRedactionOptions options, final TextFilter drawingFilter) throws IOException {
+        return applySpans(input, spans, options, drawingFilter, null);
+    }
+
+    /**
+     * As {@link #applySpans(byte[], List, OoxmlRedactionOptions, TextFilter)}, with the policy's column rules for
+     * the embedded workbooks re-redacted with {@code drawingFilter}.
+     * @param rules The column rules, or {@code null} for none.
+     */
+    public static byte[] applySpans(final byte[] input, final List<OfficeRedactionSpan> spans,
+                                    final OoxmlRedactionOptions options, final TextFilter drawingFilter,
+                                    final ColumnRules rules) throws IOException {
         final Map<Integer, List<OfficeRedactionSpan>> byParagraph = new HashMap<>();
         for (final OfficeRedactionSpan s : spans) {
             byParagraph.computeIfAbsent(s.getParagraphIndex(), k -> new ArrayList<>()).add(s);
@@ -180,9 +211,9 @@ public final class WordDocumentRedactor {
                 redactFieldInstructions(pkg, drawingFilter, true, null, order);
                 scanDeletedText(pkg, drawingFilter, true, null, order);
                 if (options.isRedactCharts()) {
-                    scanCharts(pkg, drawingFilter, true, null, order);
+                    scanCharts(pkg, drawingFilter, rules, true, null, order);
                 }
-                EmbeddedObjectRedactor.process(pkg, drawingFilter, options.isRemoveUninspectableEmbeddedObjects(),
+                EmbeddedObjectRedactor.process(pkg, drawingFilter, rules, options.isRemoveUninspectableEmbeddedObjects(),
                         true, null, order);
             }
             removeThreadedCommentDuplicate(pkg);
@@ -194,7 +225,8 @@ public final class WordDocumentRedactor {
     // --- core --------------------------------------------------------------------------
 
     /** Redact (write) or Detect (no write), without the embedded-object pass, which runs at the top level only. */
-    static List<OfficeRedactionSpan> run(final OoxmlPackage pkg, final TextFilter filter, final boolean write,
+    static List<OfficeRedactionSpan> run(final OoxmlPackage pkg, final TextFilter filter, final ColumnRules rules,
+                                         final boolean write,
                                          final boolean highlight, final boolean redactHeadersFooters,
                                          final boolean redactCharts) {
         final List<OfficeRedactionSpan> captured = new ArrayList<>();
@@ -225,7 +257,7 @@ public final class WordDocumentRedactor {
         redactFieldInstructions(pkg, filter, write, captured, order);
         scanDeletedText(pkg, filter, write, captured, order);
         if (redactCharts) {
-            scanCharts(pkg, filter, write, captured, order);
+            scanCharts(pkg, filter, rules, write, captured, order);
         }
         if (write) {
             removeThreadedCommentDuplicate(pkg);
@@ -238,7 +270,8 @@ public final class WordDocumentRedactor {
      * Redacts an embedded .docx with the standard passes; null when it cannot be opened as one. A failure of
      * the filter itself propagates rather than being taken for an unreadable document.
      */
-    static byte[] redactEmbeddedBytes(final byte[] bytes, final TextFilter filter, final List<OfficeRedactionSpan> spans) {
+    static byte[] redactEmbeddedBytes(final byte[] bytes, final TextFilter filter, final ColumnRules rules,
+                                      final List<OfficeRedactionSpan> spans) {
         final OoxmlPackage pkg = openEmbedded(bytes);
         if (pkg == null) {
             return null;
@@ -247,7 +280,7 @@ public final class WordDocumentRedactor {
             if (pkg.mainPart() == null || pkg.dom(pkg.mainPart()) == null) {
                 return null;
             }
-            final List<OfficeRedactionSpan> redacted = run(pkg, filter, true, false, true, true);
+            final List<OfficeRedactionSpan> redacted = run(pkg, filter, rules, true, false, true, true);
             final byte[] output = pkg.save();
             spans.addAll(redacted);
             return output;
@@ -256,13 +289,13 @@ public final class WordDocumentRedactor {
         }
     }
 
-    static List<OfficeRedactionSpan> detectEmbeddedBytes(final byte[] bytes, final TextFilter filter) {
+    static List<OfficeRedactionSpan> detectEmbeddedBytes(final byte[] bytes, final TextFilter filter, final ColumnRules rules) {
         final OoxmlPackage pkg = openEmbedded(bytes);
         if (pkg == null) {
             return new ArrayList<>();
         }
         try (pkg) {
-            return pkg.mainPart() == null ? new ArrayList<>() : run(pkg, filter, false, false, true, true);
+            return pkg.mainPart() == null ? new ArrayList<>() : run(pkg, filter, rules, false, false, true, true);
         }
     }
 
@@ -642,7 +675,7 @@ public final class WordDocumentRedactor {
     }
 
     // Chart text and cached values, then each chart's embedded source workbook.
-    private static void scanCharts(final OoxmlPackage pkg, final TextFilter filter, final boolean write,
+    private static void scanCharts(final OoxmlPackage pkg, final TextFilter filter, final ColumnRules rules, final boolean write,
                                    final List<OfficeRedactionSpan> captured, final Order order) {
         for (final PackagePart part : pkg.allParts(pkg.mainPart())) {
             if (!CHART_CONTENT_TYPE.equals(part.getContentType())) {
@@ -652,7 +685,7 @@ public final class WordDocumentRedactor {
             if (d != null && ChartRedactor.redactChartPart(d.getDocumentElement(), filter, write, captured, order) && write) {
                 pkg.markDirty(part);
             }
-            XlsxRedactor.redactChartEmbeddedWorkbooks(pkg, part, filter, write, captured, order);
+            XlsxRedactor.redactChartEmbeddedWorkbooks(pkg, part, filter, rules, write, captured, order);
         }
     }
 

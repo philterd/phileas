@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -99,6 +100,11 @@ public class Policy {
     @SerializedName("graphical")
     @Expose
     private Graphical graphical = new Graphical();
+
+    @SerializedName("tabular")
+    @Expose
+    @JsonAdapter(Tabular.Adapter.class)
+    private Tabular tabular;
 
     @SerializedName("generators")
     @Expose
@@ -271,6 +277,18 @@ public class Policy {
 
     public void setFpe(FPE fpe) {
         this.fpe = fpe;
+    }
+
+    /**
+     * The column rules for CSV and Excel documents.
+     * @return The {@link Tabular} section, or <code>null</code> when the policy has none.
+     */
+    public Tabular getTabular() {
+        return tabular;
+    }
+
+    public void setTabular(Tabular tabular) {
+        this.tabular = tabular;
     }
 
     public Map<String, Generator> getGenerators() {

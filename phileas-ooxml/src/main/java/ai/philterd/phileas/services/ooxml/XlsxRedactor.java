@@ -17,6 +17,8 @@ package ai.philterd.phileas.services.ooxml;
 
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
+import ai.philterd.phileas.policy.Tabular;
+import ai.philterd.phileas.services.strategies.ColumnFilterStrategy;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.w3c.dom.Document;
@@ -74,24 +76,46 @@ public final class XlsxRedactor {
     /** Redacts the workbook and returns the redacted bytes and the redactions made. */
     public static OoxmlRedactionResult redact(final byte[] input, final TextFilter filter,
                                               final OoxmlRedactionOptions options) throws IOException {
+        return redact(input, filter, options, null);
+    }
+
+    /**
+     * Redacts the workbook with a policy's column rules: each worksheet's cells follow the sheet entry that
+     * applies to it, and worksheets without one are redacted with {@code filter}. The options' worksheet and
+     * fully redacted columns override the rules.
+     * @param rules The column rules, or {@code null} for none.
+     */
+    public static OoxmlRedactionResult redact(final byte[] input, final TextFilter filter,
+                                              final OoxmlRedactionOptions options, final ColumnRules rules) throws IOException {
         try (OoxmlPackage pkg = new OoxmlPackage(input)) {
-            final List<OfficeRedactionSpan> captured = redactOpen(pkg, filter, options);
+            final List<String> warnings = new ArrayList<>();
+            final List<OfficeRedactionSpan> captured = redactOpen(pkg, filter, options, rules, warnings);
             final Order order = new Order(captured.size());
-            scanChartEmbeddings(pkg, options.getWorksheet(), filter, true, captured, order);
-            EmbeddedObjectRedactor.process(pkg, filter, options.isRemoveUninspectableEmbeddedObjects(), true, captured, order);
-            return new OoxmlRedactionResult(pkg.save(), captured);
+            scanChartEmbeddings(pkg, options.getWorksheet(), filter, rules, true, captured, order);
+            EmbeddedObjectRedactor.process(pkg, filter, rules, options.isRemoveUninspectableEmbeddedObjects(), true, captured, order);
+            return new OoxmlRedactionResult(pkg.save(), captured, warnings);
         }
     }
 
     /** Detects what {@link #redact} would redact in the workbook's content, without producing a document. */
     public static List<OfficeRedactionSpan> detect(final byte[] input, final TextFilter filter,
                                                    final OoxmlRedactionOptions options) throws IOException {
+        return detect(input, filter, options, null);
+    }
+
+    /**
+     * As {@link #detect(byte[], TextFilter, OoxmlRedactionOptions)}, visiting the cells the column rules let
+     * redaction visit: header rows and ignored columns of a worksheet with a sheet entry are not scanned.
+     * @param rules The column rules, or {@code null} for none.
+     */
+    public static List<OfficeRedactionSpan> detect(final byte[] input, final TextFilter filter,
+                                                   final OoxmlRedactionOptions options, final ColumnRules rules) throws IOException {
         try (OoxmlPackage pkg = new OoxmlPackage(input)) {
             final List<OfficeRedactionSpan> captured = detectOpen(pkg, filter, options.getWorksheet(),
-                    options.isRedactHeadersFooters(), options.isRedactCharts());
+                    options.isRedactHeadersFooters(), options.isRedactCharts(), rules);
             final Order order = new Order(captured.size());
-            scanChartEmbeddings(pkg, options.getWorksheet(), filter, false, captured, order);
-            EmbeddedObjectRedactor.process(pkg, filter, false, false, captured, order);
+            scanChartEmbeddings(pkg, options.getWorksheet(), filter, rules, false, captured, order);
+            EmbeddedObjectRedactor.process(pkg, filter, rules, false, false, captured, order);
             return captured;
         }
     }
@@ -103,6 +127,17 @@ public final class XlsxRedactor {
      */
     public static byte[] applySpans(final byte[] input, final List<OfficeRedactionSpan> spans,
                                     final OoxmlRedactionOptions options, final TextFilter policyFilter) throws IOException {
+        return applySpans(input, spans, options, policyFilter, null);
+    }
+
+    /**
+     * As {@link #applySpans(byte[], List, OoxmlRedactionOptions, TextFilter)}, with the policy's column rules for
+     * the workbooks embedded in charts and as objects, which are re-redacted with {@code policyFilter}.
+     * @param rules The column rules, or {@code null} for none.
+     */
+    public static byte[] applySpans(final byte[] input, final List<OfficeRedactionSpan> spans,
+                                    final OoxmlRedactionOptions options, final TextFilter policyFilter,
+                                    final ColumnRules rules) throws IOException {
         final Map<Integer, List<OfficeRedactionSpan>> byCell = new HashMap<>();
         for (final OfficeRedactionSpan s : spans) {
             byCell.computeIfAbsent(s.getParagraphIndex(), k -> new ArrayList<>()).add(s);
@@ -159,8 +194,8 @@ public final class XlsxRedactor {
                 if (options.isRedactPivotCaches()) {
                     scanPivotCaches(pkg, policyFilter, true, null, order);
                 }
-                scanChartEmbeddings(pkg, worksheet, policyFilter, true, null, order);
-                EmbeddedObjectRedactor.process(pkg, policyFilter, options.isRemoveUninspectableEmbeddedObjects(),
+                scanChartEmbeddings(pkg, worksheet, policyFilter, rules, true, null, order);
+                EmbeddedObjectRedactor.process(pkg, policyFilter, rules, options.isRemoveUninspectableEmbeddedObjects(),
                         true, null, order);
             }
             pruneUnusedSharedStrings(pkg);
@@ -226,7 +261,8 @@ public final class XlsxRedactor {
     // --- core --------------------------------------------------------------------------
 
     static List<OfficeRedactionSpan> redactOpen(final OoxmlPackage pkg, final TextFilter filter,
-                                                final OoxmlRedactionOptions options) {
+                                                final OoxmlRedactionOptions options, final ColumnRules rules,
+                                                final List<String> warnings) {
         final List<OfficeRedactionSpan> captured = new ArrayList<>();
         final Order order = new Order();
         final PackagePart workbook = pkg.mainPart();
@@ -238,13 +274,23 @@ public final class XlsxRedactor {
         final String worksheet = options.getWorksheet();
         final Set<Integer> fullColumns = options.getFullyRedactedColumns();
         final List<String> sharedStrings = sharedStrings(pkg);
+        final Map<PackagePart, SheetPlan> plans = new HashMap<>();
+        final List<String> headerStrings = rules == null ? List.of() : displayedSharedStrings(pkg);
         final Map<Integer, String> columnHeaders = new HashMap<>();
+        PackagePart currentPart = null;
         int cellIndex = 0;
         boolean anyCellRedacted = false;
 
         for (final CellRef c : enumerateCells(pkg, worksheet)) {
             final int currentIndex = cellIndex++;
             final Element cell = c.cell();
+            if (c.part() != currentPart) {
+                currentPart = c.part();
+                columnHeaders.clear();
+            }
+            final SheetPlan plan = plans.computeIfAbsent(c.part(),
+                    part -> SheetPlan.of(pkg, part, c.sheet(), rules, headerStrings, warnings));
+            final boolean header = plan.isHeader(c);
             // A formula cell's cached value can copy a now-redacted value. With the option off, formula
             // cells are left alone; with it on, the cached value is scanned like any other cell.
             if (hasFormula(cell) && !options.isRedactFormulaValues()) {
@@ -254,11 +300,11 @@ public final class XlsxRedactor {
             if (original.isEmpty()) {
                 continue;
             }
-            if (options.isUseHeaderContext() && c.headerRow()) {
+            if (options.isUseHeaderContext() && plan.isLastHeaderRow(c)) {
                 columnHeaders.put(c.column(), original);
             }
             if (fullColumns.contains(c.column())) {
-                if (c.headerRow()) {
+                if (header) {
                     continue; // the column's header label is kept
                 }
                 setCellText(cell, COLUMN_REPLACEMENT);
@@ -268,11 +314,33 @@ public final class XlsxRedactor {
                         COLUMN_REPLACEMENT, COLUMN_CLASSIFICATION));
                 continue;
             }
+            TextFilter cellFilter = filter;
+            if (plan.hasRules()) {
+                if (header) {
+                    continue; // header rows are never redacted under column rules
+                }
+                final Handling handling = plan.handling(c.column());
+                if (handling.kind() == Handling.Kind.IGNORE) {
+                    continue;
+                }
+                if (handling.kind() == Handling.Kind.REDACT) {
+                    final String replacement = rules.replace(handling.strategies(), original);
+                    setCellText(cell, replacement);
+                    pkg.markDirty(c.part());
+                    anyCellRedacted = true;
+                    captured.add(new OfficeRedactionSpan(order.next(), currentIndex, 0, original.length(), original,
+                            replacement, COLUMN_CLASSIFICATION));
+                    continue;
+                }
+                if (handling.kind() == Handling.Kind.FILTER) {
+                    cellFilter = plan.filter(handling.filters());
+                }
+            }
             if (!isScannableCell(cell)) {
                 continue; // boolean and error cells carry no free text
             }
-            final String header = options.isUseHeaderContext() && !c.headerRow() ? columnHeaders.get(c.column()) : null;
-            final DetectedCell detected = detectCell(original, header, filter);
+            final String contextHeader = options.isUseHeaderContext() && !header ? columnHeaders.get(c.column()) : null;
+            final DetectedCell detected = detectCell(original, contextHeader, cellFilter);
             if (detected.filteredText().equals(original)) {
                 continue;
             }
@@ -306,7 +374,7 @@ public final class XlsxRedactor {
 
     private static List<OfficeRedactionSpan> detectOpen(final OoxmlPackage pkg, final TextFilter filter,
                                                         final String worksheet, final boolean redactHeadersFooters,
-                                                        final boolean redactCharts) {
+                                                        final boolean redactCharts, final ColumnRules rules) {
         final List<OfficeRedactionSpan> captured = new ArrayList<>();
         final Order order = new Order();
         final PackagePart workbook = pkg.mainPart();
@@ -316,9 +384,17 @@ public final class XlsxRedactor {
         // As on redaction, so a note's author name is not reported. The package is not saved.
         AuthorshipCleaner.clearSpreadsheet(pkg);
         final List<String> sharedStrings = sharedStrings(pkg);
+        final Map<PackagePart, SheetPlan> plans = new HashMap<>();
+        final List<String> headerStrings = rules == null ? List.of() : displayedSharedStrings(pkg);
         int cellIndex = 0;
         for (final CellRef c : enumerateCells(pkg, worksheet)) {
             final int currentIndex = cellIndex++;
+            final SheetPlan plan = plans.computeIfAbsent(c.part(),
+                    part -> SheetPlan.of(pkg, part, c.sheet(), rules, headerStrings, new ArrayList<>()));
+            // Header rows and ignored columns are left as they are by redaction, so they are not reported.
+            if (plan.hasRules() && (plan.isHeader(c) || plan.handling(c.column()).kind() == Handling.Kind.IGNORE)) {
+                continue;
+            }
             // Formula caches are scanned regardless of the redaction option, so verification catches them.
             if (!isScannableCell(c.cell())) {
                 continue;
@@ -386,12 +462,24 @@ public final class XlsxRedactor {
 
     // --- cells ---------------------------------------------------------------------------
 
-    record CellRef(Element cell, boolean headerRow, int column, PackagePart part) {
+    // row is the 0-based position of the cell's row element in the sheet.
+    record CellRef(Element cell, int row, int column, PackagePart part, String sheet) {
+    }
+
+    private record Worksheet(String name, PackagePart part) {
     }
 
     // The worksheet parts processed: one named sheet, or all of them.
     static List<PackagePart> worksheetParts(final OoxmlPackage pkg, final String worksheet) {
         final List<PackagePart> out = new ArrayList<>();
+        for (final Worksheet sheet : worksheets(pkg, worksheet)) {
+            out.add(sheet.part());
+        }
+        return out;
+    }
+
+    private static List<Worksheet> worksheets(final OoxmlPackage pkg, final String worksheet) {
+        final List<Worksheet> out = new ArrayList<>();
         final PackagePart workbook = pkg.mainPart();
         final Document doc = pkg.dom(workbook);
         if (doc == null) {
@@ -403,7 +491,7 @@ public final class XlsxRedactor {
             }
             final PackagePart part = pkg.relatedById(workbook, sheet.getAttributeNS(R, "id"));
             if (part != null && part.getContentType().contains("worksheet") && pkg.dom(part) != null) {
-                out.add(part);
+                out.add(new Worksheet(sheet.getAttribute("name"), part));
             }
         }
         return out;
@@ -428,23 +516,203 @@ public final class XlsxRedactor {
     // cell's column + 1.
     static List<CellRef> enumerateCells(final OoxmlPackage pkg, final String worksheet) {
         final List<CellRef> out = new ArrayList<>();
-        for (final PackagePart part : worksheetParts(pkg, worksheet)) {
-            final Element sheetData = firstChild(pkg.dom(part).getDocumentElement(), S, "sheetData");
+        for (final Worksheet sheet : worksheets(pkg, worksheet)) {
+            final Element sheetData = firstChild(pkg.dom(sheet.part()).getDocumentElement(), S, "sheetData");
             if (sheetData == null) {
                 continue;
             }
-            boolean headerRow = true;
+            int rowPosition = 0;
             for (final Element row : children(sheetData, S, "row")) {
                 int column = 0;
                 for (final Element cell : children(row, S, "c")) {
                     final int referenced = SpreadsheetColumn.letterToIndex(cell.getAttribute("r"));
                     column = referenced > 0 ? referenced : column + 1;
-                    out.add(new CellRef(cell, headerRow, column, part));
+                    out.add(new CellRef(cell, rowPosition, column, sheet.part(), sheet.name()));
                 }
-                headerRow = false;
+                rowPosition++;
             }
         }
         return out;
+    }
+
+    // --- column rules ------------------------------------------------------------------------
+
+    // What happens to a column's data cells under a sheet entry.
+    private record Handling(Kind kind, List<ColumnFilterStrategy> strategies, List<String> filters) {
+
+        enum Kind { IDENTIFIERS, IGNORE, REDACT, FILTER }
+
+        static final Handling IDENTIFIERS = new Handling(Kind.IDENTIFIERS, null, null);
+        static final Handling IGNORE = new Handling(Kind.IGNORE, null, null);
+
+    }
+
+    /*
+     * How one worksheet's cells are handled: by its sheet entry's column rules when one applies, or else as
+     * without rules, where the first row is the header row and every cell is scanned.
+     */
+    private static final class SheetPlan {
+
+        private final ColumnRules rules;
+        private final Tabular.ResolvedColumns resolved;
+        private final int headerRows;
+        private final Map<List<String>, TextFilter> filters = new HashMap<>();
+
+        private SheetPlan(final ColumnRules rules, final Tabular.ResolvedColumns resolved) {
+            this.rules = rules;
+            this.resolved = resolved;
+            this.headerRows = resolved == null ? 1 : resolved.sheet().getHeaderRows();
+        }
+
+        static SheetPlan of(final OoxmlPackage pkg, final PackagePart part, final String name, final ColumnRules rules,
+                            final List<String> headerStrings, final List<String> warnings) {
+            final Tabular.Sheet entry = rules == null || rules.tabular() == null ? null : rules.tabular().sheetFor(name);
+            if (entry == null) {
+                return new SheetPlan(rules, null);
+            }
+            final Map<Integer, String> headers = entry.getHeaderRows() == 0
+                    ? Map.of() : headerTexts(pkg, part, entry.getHeaderRows(), headerStrings);
+            final Tabular.ResolvedColumns resolved = entry.resolve(headers);
+            warnings.addAll(resolved.warnings());
+            return new SheetPlan(rules, resolved);
+        }
+
+        boolean hasRules() {
+            return resolved != null;
+        }
+
+        boolean isHeader(final CellRef c) {
+            return c.row() < headerRows;
+        }
+
+        boolean isLastHeaderRow(final CellRef c) {
+            return headerRows > 0 && c.row() == headerRows - 1;
+        }
+
+        Handling handling(final int column) {
+            final Tabular.Column rule = resolved.ruleFor(column);
+            if (rule != null) {
+                return switch (rule.getAction()) {
+                    case IGNORE -> Handling.IGNORE;
+                    case REDACT -> new Handling(Handling.Kind.REDACT, rule.getStrategies(), null);
+                    case FILTER -> new Handling(Handling.Kind.FILTER, null, rule.getFilters());
+                };
+            }
+            final Tabular.Sheet sheet = resolved.sheet();
+            return switch (sheet.getUnlistedColumns()) {
+                case IDENTIFIERS -> Handling.IDENTIFIERS;
+                case IGNORE -> Handling.IGNORE;
+                case REDACT -> new Handling(Handling.Kind.REDACT, sheet.getEffectiveUnlistedStrategies(), null);
+            };
+        }
+
+        TextFilter filter(final List<String> keys) {
+            return filters.computeIfAbsent(keys, rules::filter);
+        }
+
+    }
+
+    /*
+     * The displayed text of each column in the last of a sheet's leading header rows, trimmed: a formula by its
+     * cached result, rich text as plain text, and a merged cell by its top-left cell's text.
+     */
+    static Map<Integer, String> headerTexts(final OoxmlPackage pkg, final PackagePart part, final int headerRows,
+                                            final List<String> displayedSharedStrings) {
+        final Map<Integer, String> headers = new HashMap<>();
+        final Element root = pkg.dom(part).getDocumentElement();
+        final Element sheetData = firstChild(root, S, "sheetData");
+        if (sheetData == null) {
+            return headers;
+        }
+        final List<Element> rows = children(sheetData, S, "row");
+        final int count = Math.min(headerRows, rows.size());
+        if (count == 0) {
+            return headers;
+        }
+        // Every header row's text by row and column, for the top-left cells of merged ranges.
+        final Map<String, String> texts = new HashMap<>();
+        int rowNumber = 0;
+        for (int i = 0; i < count; i++) {
+            final Element row = rows.get(i);
+            rowNumber = rowNumber(row.getAttribute("r"), rowNumber + 1);
+            int column = 0;
+            for (final Element cell : children(row, S, "c")) {
+                final int referenced = SpreadsheetColumn.letterToIndex(cell.getAttribute("r"));
+                column = referenced > 0 ? referenced : column + 1;
+                final String text = displayedText(cell, displayedSharedStrings);
+                texts.put(rowNumber + ":" + column, text);
+                if (i == count - 1) {
+                    headers.put(column, text.strip());
+                }
+            }
+        }
+        final int lastRow = rowNumber;
+        final Element mergeCells = firstChild(root, S, "mergeCells");
+        if (mergeCells != null) {
+            for (final Element merge : children(mergeCells, S, "mergeCell")) {
+                final String[] ends = merge.getAttribute("ref").split(":");
+                if (ends.length != 2) {
+                    continue;
+                }
+                final int firstColumn = SpreadsheetColumn.letterToIndex(ends[0]);
+                final int lastColumn = SpreadsheetColumn.letterToIndex(ends[1]);
+                final int firstRow = rowNumber(ends[0].replaceAll("^[A-Za-z]+", ""), 0);
+                final int endRow = rowNumber(ends[1].replaceAll("^[A-Za-z]+", ""), 0);
+                if (firstColumn <= 0 || lastColumn < firstColumn || firstRow <= 0 || endRow < firstRow
+                        || lastRow < firstRow || lastRow > endRow) {
+                    continue;
+                }
+                final String text = texts.getOrDefault(firstRow + ":" + firstColumn, "").strip();
+                for (int column = firstColumn; column <= lastColumn; column++) {
+                    headers.put(column, text);
+                }
+            }
+        }
+        return headers;
+    }
+
+    // A cell's text as Excel shows it, for matching headers: a boolean as TRUE or FALSE, and a shared string
+    // without its phonetic guide. Numbers and dates are their stored values; number formats are not applied.
+    private static String displayedText(final Element cell, final List<String> displayedSharedStrings) {
+        if ("b".equals(cell.getAttribute("t"))) {
+            final Element v = firstChild(cell, S, "v");
+            return v == null ? "" : "1".equals(v.getTextContent().trim()) ? "TRUE" : "FALSE";
+        }
+        return getCellText(cell, displayedSharedStrings);
+    }
+
+    // The shared strings without phonetic guides (rPh), which Excel does not show in the cell.
+    private static List<String> displayedSharedStrings(final OoxmlPackage pkg) {
+        final List<String> out = new ArrayList<>();
+        final List<PackagePart> parts = pkg.relatedByType(pkg.mainPart(), REL + "sharedStrings");
+        if (!parts.isEmpty()) {
+            final Document d = pkg.dom(parts.get(0));
+            if (d != null) {
+                for (final Element si : children(d.getDocumentElement(), S, "si")) {
+                    final StringBuilder text = new StringBuilder();
+                    for (final Element child : childElements(si)) {
+                        if (S.equals(child.getNamespaceURI()) && "t".equals(child.getLocalName())) {
+                            text.append(child.getTextContent());
+                        } else if (S.equals(child.getNamespaceURI()) && "r".equals(child.getLocalName())) {
+                            for (final Element t : children(child, S, "t")) {
+                                text.append(t.getTextContent());
+                            }
+                        }
+                    }
+                    out.add(text.toString());
+                }
+            }
+        }
+        return out;
+    }
+
+    private static int rowNumber(final String value, final int fallback) {
+        try {
+            final int number = Integer.parseInt(value.trim());
+            return number > 0 ? number : fallback;
+        } catch (final NumberFormatException e) {
+            return fallback;
+        }
     }
 
     private static List<String> sharedStrings(final OoxmlPackage pkg) {
@@ -725,12 +993,12 @@ public final class XlsxRedactor {
     // --- chart embedded workbooks ----------------------------------------------------------------
 
     private static void scanChartEmbeddings(final OoxmlPackage pkg, final String worksheet, final TextFilter filter,
-                                            final boolean write, final List<OfficeRedactionSpan> captured, final Order order) {
+                                            final ColumnRules rules, final boolean write, final List<OfficeRedactionSpan> captured, final Order order) {
         if (pkg.mainPart() == null) {
             return;
         }
         for (final PackagePart chart : chartParts(pkg, worksheet)) {
-            redactChartEmbeddedWorkbooks(pkg, chart, filter, write, captured, order);
+            redactChartEmbeddedWorkbooks(pkg, chart, filter, rules, write, captured, order);
         }
     }
 
@@ -740,7 +1008,7 @@ public final class XlsxRedactor {
      * be parsed is removed along with the chart's reference to it.
      */
     static void redactChartEmbeddedWorkbooks(final OoxmlPackage pkg, final PackagePart chart, final TextFilter filter,
-                                             final boolean write, final List<OfficeRedactionSpan> captured, final Order order) {
+                                             final ColumnRules rules, final boolean write, final List<OfficeRedactionSpan> captured, final Order order) {
         for (final PackageRelationship rel : pkg.relationshipsByType(chart, REL + "package")) {
             final PackagePart embedded = pkg.related(chart, rel);
             if (embedded == null) {
@@ -751,13 +1019,13 @@ public final class XlsxRedactor {
                 continue;
             }
             if (!write) {
-                for (final OfficeRedactionSpan span : detectEmbeddedBytes(bytes, filter)) {
+                for (final OfficeRedactionSpan span : detectEmbeddedBytes(bytes, filter, rules)) {
                     addEmbedded(captured, order, span);
                 }
                 continue;
             }
             final List<OfficeRedactionSpan> embeddedSpans = new ArrayList<>();
-            final byte[] redacted = redactEmbeddedBytes(bytes, filter, embeddedSpans);
+            final byte[] redacted = redactEmbeddedBytes(bytes, filter, rules, embeddedSpans);
             if (redacted != null) {
                 pkg.replacePart(embedded, redacted);
                 for (final OfficeRedactionSpan span : embeddedSpans) {
@@ -792,7 +1060,8 @@ public final class XlsxRedactor {
      * Redacts an embedded .xlsx with the standard passes; null when it cannot be opened as one. A failure of
      * the filter itself propagates rather than being taken for an unreadable workbook.
      */
-    static byte[] redactEmbeddedBytes(final byte[] bytes, final TextFilter filter, final List<OfficeRedactionSpan> spans) {
+    static byte[] redactEmbeddedBytes(final byte[] bytes, final TextFilter filter, final ColumnRules rules,
+                                      final List<OfficeRedactionSpan> spans) {
         final OoxmlPackage pkg = WordDocumentRedactor.openEmbedded(bytes);
         if (pkg == null) {
             return null;
@@ -801,7 +1070,10 @@ public final class XlsxRedactor {
             if (pkg.mainPart() == null || pkg.dom(pkg.mainPart()) == null) {
                 return null;
             }
-            final List<OfficeRedactionSpan> redacted = redactOpen(pkg, filter, OoxmlRedactionOptions.defaults());
+            // The column rules apply as they do to the outer workbook. A header that matches no column here is
+            // not reported, since an embedded workbook often holds only some of the columns.
+            final List<OfficeRedactionSpan> redacted = redactOpen(pkg, filter, OoxmlRedactionOptions.defaults(),
+                    rules, new ArrayList<>());
             final byte[] output = pkg.save();
             spans.addAll(redacted);
             return output;
@@ -810,13 +1082,13 @@ public final class XlsxRedactor {
         }
     }
 
-    static List<OfficeRedactionSpan> detectEmbeddedBytes(final byte[] bytes, final TextFilter filter) {
+    static List<OfficeRedactionSpan> detectEmbeddedBytes(final byte[] bytes, final TextFilter filter, final ColumnRules rules) {
         final OoxmlPackage pkg = WordDocumentRedactor.openEmbedded(bytes);
         if (pkg == null) {
             return new ArrayList<>();
         }
         try (pkg) {
-            return detectOpen(pkg, filter, null, true, true);
+            return detectOpen(pkg, filter, null, true, true, rules);
         }
     }
 

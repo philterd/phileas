@@ -16,6 +16,14 @@
 package ai.philterd.phileas.services.ooxml;
 import java.util.List;
 
-/** A redacted document and the redactions made in it. */
-public record OoxmlRedactionResult(byte[] document, List<OfficeRedactionSpan> spans) {
+/**
+ * A redacted document, the redactions made in it, and warnings about the policy, such as a column rule whose
+ * header matches no column.
+ */
+public record OoxmlRedactionResult(byte[] document, List<OfficeRedactionSpan> spans, List<String> warnings) {
+
+    public OoxmlRedactionResult(final byte[] document, final List<OfficeRedactionSpan> spans) {
+        this(document, spans, List.of());
+    }
+
 }

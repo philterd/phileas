@@ -16,6 +16,7 @@
 package ai.philterd.phileas.policy;
 
 import ai.philterd.phileas.policy.config.Analysis;
+import ai.philterd.phileas.policy.config.Csv;
 import ai.philterd.phileas.policy.config.Email;
 import ai.philterd.phileas.policy.config.Pdf;
 import ai.philterd.phileas.policy.config.Review;
@@ -50,6 +51,11 @@ public class Config {
     @Expose
     @JsonAdapter(Email.Adapter.class)
     private Email email = new Email();
+
+    @SerializedName("csv")
+    @Expose
+    @JsonAdapter(Csv.Adapter.class)
+    private Csv csv = new Csv();
 
     public Splitting getSplitting() {
         return splitting;
@@ -101,6 +107,18 @@ public class Config {
 
     public void setEmail(Email email) {
         this.email = email;
+    }
+
+    /**
+     * How a CSV document is read.
+     * @return The {@link Csv} settings, with the defaults when the policy has none.
+     */
+    public Csv getCsv() {
+        return csv == null ? new Csv() : csv;
+    }
+
+    public void setCsv(Csv csv) {
+        this.csv = csv;
     }
 
 }

@@ -152,6 +152,34 @@ public class SchemaConformanceTest {
     }
 
     @Test
+    public void everyTopLevelSectionDeclaredBySchemaIsModeledByPhileas() {
+
+        final JsonObject schema = schema();
+
+        for (final String property : schema.getAsJsonObject("properties").keySet()) {
+            assertModeled("policy", property, Policy.class);
+        }
+
+    }
+
+    @Test
+    public void everyTabularPropertyDeclaredBySchemaIsModeledByPhileas() {
+
+        final JsonObject schema = schema();
+
+        for (final String property : propertiesOf(schema, "tabular")) {
+            assertModeled("tabular", property, Tabular.class);
+        }
+        for (final String property : propertiesOf(schema, "tabularSheet")) {
+            assertModeled("tabularSheet", property, Tabular.Sheet.class);
+        }
+        for (final String property : propertiesOf(schema, "tabularColumn")) {
+            assertModeled("tabularColumn", property, Tabular.Column.class);
+        }
+
+    }
+
+    @Test
     public void everyConfigPropertyDeclaredBySchemaIsModeledByPhileas() {
 
         final JsonObject schema = schema();

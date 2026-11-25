@@ -15,6 +15,13 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.PhileasConfiguration;
+import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.context.DefaultContextService;
+import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
+import ai.philterd.phileas.services.filters.filtering.OoxmlFilterService;
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +30,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Redacts a corpus of documents covering each structure the redactors handle and writes each input and
@@ -86,6 +94,58 @@ public class OoxmlValidationCorpusTest {
         corpus.put("embedded-document.xlsx", SpreadsheetDocs.createXlsxWithEmbeddedPackage(rows,
                 OoxmlTestFixtures.docx("Embedded " + EMAIL), TestPackage.CT_DOCX));
         return corpus;
+    }
+
+    // Column rules: a whole-column redaction, a filtered column, an ignored column, unlisted columns replaced,
+    // a formula cell in a redacted column, and a merged header.
+    private static final String TABULAR_POLICY = "{\"identifiers\":{\"emailAddress\":{},\"ssn\":{}},"
+            + "\"tabular\":{\"sheets\":[{\"worksheet\":\"Sheet1\",\"columns\":["
+            + "{\"header\":\"SSN\",\"action\":\"redact\",\"strategies\":[{\"strategy\":\"MASK\"}]},"
+            + "{\"header\":\"Email\",\"action\":\"filter\",\"filters\":[\"emailAddress\"]},"
+            + "{\"header\":\"Name\",\"action\":\"ignore\"}]},"
+            + "{\"unlistedColumns\":\"redact\",\"columns\":[{\"header\":\"Keep\",\"action\":\"ignore\"}]}]}}";
+
+    static Map<String, byte[]> tabularCorpus() {
+        final Map<String, byte[]> corpus = new LinkedHashMap<>();
+        corpus.put("tabular-cells.xlsx", SpreadsheetDocs.createXlsxWithSecondSheet(List.of(
+                        new String[]{"Name", "SSN", "Email"},
+                        new String[]{"Jane", SSN, "Write " + EMAIL},
+                        new String[]{"Shared", "123-45", EMAIL}), "Sheet1",
+                List.of(new String[]{"Keep", "Other"}, new String[]{"Visible", SSN}), "Other"));
+        corpus.put("tabular-formula.xlsx", SpreadsheetDocs.createTyped(List.of(
+                new SpreadsheetDocs.CellSpec[]{SpreadsheetDocs.CellSpec.of("SSN"), SpreadsheetDocs.CellSpec.of("Copy")},
+                new SpreadsheetDocs.CellSpec[]{SpreadsheetDocs.CellSpec.formula(SSN, "B2"), SpreadsheetDocs.CellSpec.of(SSN)})));
+        final SpreadsheetDocs.Workbook merged = new SpreadsheetDocs.Workbook(List.of(
+                new String[]{"SSN", null, "Email"},
+                new String[]{SSN, SSN, EMAIL}), "Sheet1");
+        merged.afterSheetData.append("<mergeCells count=\"1\"><mergeCell ref=\"A1:B1\"/></mergeCells>");
+        corpus.put("tabular-merged-header.xlsx", merged.toBytes());
+        corpus.put("tabular-chart-embedded.xlsx", SpreadsheetDocs.createXlsxWithChartEmbeddedWorkbook(
+                List.of(new String[]{"Name", "SSN"}, new String[]{"Jane", SSN}),
+                SpreadsheetDocs.createXlsx(List.of(new String[]{"SSN", "Email"}, new String[]{"123-45", EMAIL}))));
+        return corpus;
+    }
+
+    @Test
+    public void writesColumnRuleCorpusForValidation() throws Exception {
+        final Path root = Path.of("target", "ooxml-validation");
+        Files.createDirectories(root.resolve("input"));
+        Files.createDirectories(root.resolve("output"));
+        final Policy policy = new Gson().fromJson(TABULAR_POLICY, Policy.class);
+        final OoxmlFilterService service = new OoxmlFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null);
+
+        for (final Map.Entry<String, byte[]> entry : tabularCorpus().entrySet()) {
+            final String name = entry.getKey();
+            final byte[] input = entry.getValue();
+            final byte[] output = service.filter(policy, "ctx", input, MimeType.APPLICATION_XLSX).getDocument();
+            Files.write(root.resolve("input").resolve(name), input);
+            Files.write(root.resolve("output").resolve(name), output);
+
+            final String xml = TestPackage.allXml(output);
+            Assertions.assertFalse(xml.contains(EMAIL), name);
+            Assertions.assertFalse(xml.contains(SSN), name);
+        }
     }
 
     @Test

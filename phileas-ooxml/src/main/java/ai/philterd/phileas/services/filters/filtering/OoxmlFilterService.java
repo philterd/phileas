@@ -16,6 +16,7 @@
 package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
+import ai.philterd.phileas.filters.ColumnFilter;
 import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.Explanation;
@@ -26,6 +27,7 @@ import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.Tabular;
 import ai.philterd.phileas.model.filtering.ReplacedRange;
 import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.LeftoverChecker;
@@ -38,6 +40,8 @@ import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
 import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
+import ai.philterd.phileas.services.strategies.ColumnFilterStrategy;
+import ai.philterd.phileas.services.ooxml.ColumnRules;
 import ai.philterd.phileas.services.ooxml.OfficeRedactionSpan;
 import ai.philterd.phileas.services.ooxml.OoxmlDocumentType;
 import ai.philterd.phileas.services.ooxml.OoxmlRedactionOptions;
@@ -47,6 +51,7 @@ import ai.philterd.phileas.services.ooxml.WordDocumentRedactor;
 import ai.philterd.phileas.services.ooxml.XlsxRedactor;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
+import com.google.gson.Gson;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,6 +62,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Redacts Word (.docx) and Excel (.xlsx) documents with a policy. The output is a document of the same
@@ -71,6 +77,11 @@ public class OoxmlFilterService extends BinaryFilterService {
     private final DocumentProcessor unstructuredDocumentProcessor;
     private final TokenCounter tokenCounter;
     private final OoxmlRedactionOptions options;
+
+    // Column filters by policy and strategies, built once like the policy's detecting filters, so the policy's
+    // strategy objects are wired once rather than on every request.
+    private final Map<String, ColumnFilter> columnFilterCache = new ConcurrentHashMap<>();
+    private static final Gson GSON = new Gson();
 
     // Bound at construction for the no-service overloads; null for a warm, per-call instance.
     private final ContextService defaultContextService;
@@ -161,10 +172,15 @@ public class OoxmlFilterService extends BinaryFilterService {
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
         final long[] tokens = {0};
         final TextFilter textFilter = textFilter(policy, contextService, vectorService, context, incrementalRedactions, tokens);
+        final ColumnRules columnRules = columnRules(policy, contextService, vectorService, context, incrementalRedactions, tokens);
 
         final OoxmlRedactionResult result = type == OoxmlDocumentType.DOCX
-                ? WordDocumentRedactor.redact(input, textFilter, options)
-                : XlsxRedactor.redact(input, textFilter, options);
+                ? WordDocumentRedactor.redact(input, textFilter, options, columnRules)
+                : XlsxRedactor.redact(input, textFilter, options, columnRules);
+
+        for (final String warning : result.warnings()) {
+            LOGGER.warn(warning);
+        }
 
         final List<Span> spans = new ArrayList<>();
         for (final OfficeRedactionSpan officeSpan : result.spans()) {
@@ -178,7 +194,7 @@ public class OoxmlFilterService extends BinaryFilterService {
         final Explanation explanation = new Explanation(spans, spans);
 
         final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, filterOptions)
-                ? leftoverCheck(policy, type, result, filterOptions) : null;
+                ? leftoverCheck(policy, type, result, filterOptions, columnRules) : null;
 
         return new BinaryDocumentFilterResult(result.document(), context, explanation, tokens[0], incrementalRedactions,
                 reviewSampled, leftoverCheck);
@@ -193,7 +209,8 @@ public class OoxmlFilterService extends BinaryFilterService {
      * when it is a replacement the redaction put in such text, or part of one.
      */
     private LeftoverCheckResult leftoverCheck(final Policy policy, final OoxmlDocumentType type,
-                                              final OoxmlRedactionResult redaction, final FilterOptions filterOptions) throws Exception {
+                                              final OoxmlRedactionResult redaction, final FilterOptions filterOptions,
+                                              final ColumnRules columnRules) throws Exception {
 
         final LeftoverCheck.Using using = leftoverCheckUsing(policy);
 
@@ -214,8 +231,8 @@ public class OoxmlFilterService extends BinaryFilterService {
 
         final byte[] redacted = redaction.document();
         final List<OfficeRedactionSpan> detected = type == OoxmlDocumentType.DOCX
-                ? WordDocumentRedactor.detect(redacted, check, options)
-                : XlsxRedactor.detect(redacted, check, options);
+                ? WordDocumentRedactor.detect(redacted, check, options, columnRules)
+                : XlsxRedactor.detect(redacted, check, options, columnRules);
 
         final Map<Integer, List<ReplacedRange>> replacedByParagraph = replacedRanges(redaction.spans());
         final List<String> replacedElsewhere = new ArrayList<>();
@@ -320,11 +337,14 @@ public class OoxmlFilterService extends BinaryFilterService {
             officeSpans.add(OfficeRedactionSpan.fromSpan(span));
         }
 
-        final TextFilter textFilter = textFilter(policy, contextService, vectorService, context, new ArrayList<>(), new long[1]);
+        final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
+        final long[] tokens = new long[1];
+        final TextFilter textFilter = textFilter(policy, contextService, vectorService, context, incrementalRedactions, tokens);
+        final ColumnRules columnRules = columnRules(policy, contextService, vectorService, context, incrementalRedactions, tokens);
 
         return type == OoxmlDocumentType.DOCX
-                ? WordDocumentRedactor.applySpans(input, officeSpans, options, textFilter)
-                : XlsxRedactor.applySpans(input, officeSpans, options, textFilter);
+                ? WordDocumentRedactor.applySpans(input, officeSpans, options, textFilter, columnRules)
+                : XlsxRedactor.applySpans(input, officeSpans, options, textFilter, columnRules);
 
     }
 
@@ -344,6 +364,54 @@ public class OoxmlFilterService extends BinaryFilterService {
                 throw new IllegalStateException("Unable to filter document text.", e);
             }
         };
+    }
+
+    /*
+     * The policy's column rules, or null when it has none. A filter rule's cells are scanned with a copy of the
+     * policy that keeps only the rule's identifiers, and a redact rule's cells are replaced by a column filter.
+     */
+    private ColumnRules columnRules(final Policy policy, final ContextService contextService, final VectorService vectorService,
+                                    final String context, final List<IncrementalRedaction> incrementalRedactions,
+                                    final long[] tokens) {
+
+        final Tabular tabular = policy.getTabular();
+        if (tabular == null) {
+            return null;
+        }
+
+        return new ColumnRules() {
+
+            @Override
+            public Tabular tabular() {
+                return tabular;
+            }
+
+            @Override
+            public TextFilter filter(final List<String> identifierKeys) {
+                try {
+                    return textFilter(Tabular.restrictIdentifiers(policy, identifierKeys), contextService, vectorService,
+                            context, incrementalRedactions, tokens);
+                } catch (final RuntimeException e) {
+                    throw e;
+                } catch (final Exception e) {
+                    throw new IllegalStateException("Unable to build the filters of a tabular column rule.", e);
+                }
+            }
+
+            @Override
+            public String replace(final List<ColumnFilterStrategy> strategies, final String value) {
+                final ColumnFilter columnFilter = columnFilterCache.computeIfAbsent(
+                        policy.getCacheKey() + "\n" + GSON.toJson(strategies),
+                        key -> filterPolicyLoader.getColumnFilter(policy, strategies));
+                try {
+                    return columnFilter.replace(contextService, policy, context, value).getReplacement();
+                } catch (final Exception e) {
+                    throw new IllegalStateException("Unable to replace a cell with a tabular column rule's strategies.", e);
+                }
+            }
+
+        };
+
     }
 
     // The input's format, which must also be the requested output format.

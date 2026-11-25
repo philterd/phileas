@@ -79,6 +79,8 @@ final class SpreadsheetDocs {
         String sheetDataXml;
         /** Whether the workbook has a shared-string table. */
         boolean sharedStrings = true;
+        /** When set, the shared-string table is this XML instead of being built from {@link #rows}. */
+        String sharedStringsXml;
         /** Further sheets as {name, sheetData XML}. */
         final List<String[]> extraSheets = new ArrayList<>();
         String sheetRelId;
@@ -162,7 +164,7 @@ final class SpreadsheetDocs {
             pkg.part(sheetPart, CT_WORKSHEET,
                     "<worksheet xmlns=\"" + S + "\" xmlns:r=\"" + TestPackage.R + "\">" + sheetData + afterSheetData + "</worksheet>");
             if (sharedStrings) {
-                pkg.part("/xl/sharedStrings.xml", CT_SHARED_STRINGS, sst.toString());
+                pkg.part("/xl/sharedStrings.xml", CT_SHARED_STRINGS, sharedStringsXml != null ? sharedStringsXml : sst.toString());
             }
             return pkg.toBytes();
         }
@@ -336,6 +338,18 @@ final class SpreadsheetDocs {
 
     /** A single-sheet workbook with an embedded chart whose chart part is {@code chartSpaceXml}. */
     static byte[] createXlsxWithChartXml(final List<String[]> rows, final String chartSpaceXml) {
+        return chartWorkbook(rows, chartSpaceXml).toBytes();
+    }
+
+    /** A workbook with a chart whose source data is the embedded workbook {@code embedded}. */
+    static byte[] createXlsxWithChartEmbeddedWorkbook(final List<String[]> rows, final byte[] embedded) {
+        final Workbook wb = chartWorkbook(rows, chartSpaceXml("Chart", "Series", "Category"));
+        wb.pkg.rel("/xl/charts/chart1.xml", "rIdEmb", REL + "package", "/xl/embeddings/Microsoft_Excel_Worksheet1.xlsx");
+        wb.pkg.part("/xl/embeddings/Microsoft_Excel_Worksheet1.xlsx", TestPackage.CT_XLSX, embedded);
+        return wb.toBytes();
+    }
+
+    private static Workbook chartWorkbook(final List<String[]> rows, final String chartSpaceXml) {
         final Workbook wb = new Workbook(rows, "Sheet1");
         final String drawing = "/xl/drawings/drawing1.xml";
         final String drawingId = wb.pkg.rel(wb.sheetPart, REL + "drawing", drawing);
@@ -352,7 +366,7 @@ final class SpreadsheetDocs {
                         + "<a:graphic><a:graphicData uri=\"http://schemas.openxmlformats.org/drawingml/2006/chart\"><c:chart r:id=\"" + chartId + "\"/></a:graphicData></a:graphic>"
                         + "</xdr:graphicFrame><xdr:clientData/></xdr:twoCellAnchor></xdr:wsDr>");
         wb.afterSheetData.append("<drawing r:id=\"").append(drawingId).append("\"/>");
-        return wb.toBytes();
+        return wb;
     }
 
     // --- shapes ---------------------------------------------------------------------------------

@@ -21,6 +21,7 @@ A policy:
 * Can have encryption keys to support [encryption](filter_strategies.md#fpe) of sensitive information.
 * Can have an optional [`metadata`](#policy-metadata) object describing the policy itself.
 * Can give each filter an optional [`id`](#filter-identifiers) naming it in logs.
+* Can have [column rules](#column-rules) (`tabular`) for spreadsheets.
 
 ### An Example Policy
 
@@ -319,6 +320,15 @@ reviewer, is up to the application.
 
 The policy's `config.email` decides how an email message is redacted beyond its text: which headers are removed
 outright, and what happens to attachments and inline images. See [Email Redaction](../email.md).
+
+### Column Rules
+
+The policy's top-level `tabular` section sets rules per column for Excel workbooks: replace every value in a column,
+leave it unchanged, or scan it with only some filters. See [Column rules](../word_and_excel.md#column-rules).
+
+`config.csv` sets how a CSV document is read: `delimiter` (default `,`), `quote` (default `"`), and `encoding` (default
+`UTF-8`). Each of `delimiter` and `quote` is one character other than a line break, and they must differ. Phileas reads
+and validates these settings, but does not yet redact CSV documents.
 
 ### Applying a Policy to Text
 
