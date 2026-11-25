@@ -28,7 +28,8 @@ in the text:
 
 Each age after the first in a run or range is identified only up to 125, and an age after a keyword does not end
 right before a hyphen or a slash followed by a digit, so a date such as `age 25-03-2024`, `aged 12-25-2020`, or
-`Age: 12/25/2020` is not identified, in whole or in part, as an age.
+`Age: 12/25/2020` is not identified, in whole or in part, as an age. The limit does not apply to an age that a month, week, or
+day unit follows, so `aged 6 to 130 months` is identified whole.
 
 An age written with a unit (`years`, `yrs`, `yr`, `yo`, or `y/o`) is identified only up to 125, well above
 the longest recorded lifespan, so a year or the age of an object, such as `the 2019 years old` or

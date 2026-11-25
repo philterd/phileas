@@ -73,10 +73,16 @@ public class AgeFilter extends RegexFilter {
     // An age up to MAX_AGE.
     private static final String BOUNDED_AGE = "(?:1[01]\\d|12[0-5]|0?\\d?\\d)(?:\\.\\d+)?";
 
+    // The units an age in months, weeks, or days is written with, as AgeInYears reads them.
+    private static final String SMALL_UNIT = "(?:months?|mos?|mths?|weeks?|wks?|days?)";
+
     // An age after the first in a run or range. It is read only up to MAX_AGE, so a date such as
-    // "aged 12-25-2020" is not read as a run of ages. It is not followed by a slash and a digit, or by a hyphen and
-    // a digit unless another age follows the hyphen, as in "ages 3-5-7", so it is matched whole or not at all.
-    private static final String NEXT_AGE = BOUNDED_AGE + "\\b(?!/\\d)(?!-(?!" + BOUNDED_AGE + "\\b)\\d)";
+    // "aged 12-25-2020" is not read as a run of ages, unless a month, week, or day unit follows it, as in
+    // "aged 6 to 130 months", where a larger number is still a real age. It is not followed by a slash and a digit,
+    // or by a hyphen and a digit unless another age follows the hyphen, as in "ages 3-5-7", so it is matched whole
+    // or not at all.
+    private static final String NEXT_AGE = "(?:" + BOUNDED_AGE + "\\b(?!/\\d)(?!-(?!" + BOUNDED_AGE + "\\b)\\d)"
+            + "|\\d+(?:\\.\\d+)?(?=\\s*" + SMALL_UNIT + "\\b))";
 
     // Joins two ages with a hyphen or a word: "39-41", "39 to 41", "39 and 41", "39 or 41".
     private static final String WORD_JOIN = "(?:\\s*-\\s*|,?\\s+(?:and|or|to)\\s+)";

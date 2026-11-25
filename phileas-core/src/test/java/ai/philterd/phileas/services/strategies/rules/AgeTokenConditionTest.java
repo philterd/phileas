@@ -131,7 +131,9 @@ public class AgeTokenConditionTest {
             "Eligible age 18-95.                    | Eligible 90 or older.",
             "between the ages of 95 and 41          | between the 90 or older",
             "The sisters, aged 39 and 41, left.     | The sisters, aged 39 and 41, left.",
-            "aged 30 to 40 months                   | aged 30 to 40 months"
+            "aged 30 to 40 months                   | aged 30 to 40 months",
+            "Infants aged 6 to 130 months were seen. | Infants aged 6 to 130 months were seen.",
+            "Patients aged 6 to 1100 months.        | Patients 90 or older months."
     })
     public void aRunWithAnAgeOver89IsReplaced(final String text, final String expected) throws Exception {
         Assertions.assertEquals(expected, filter(SAFE_HARBOR_POLICY, text), text);

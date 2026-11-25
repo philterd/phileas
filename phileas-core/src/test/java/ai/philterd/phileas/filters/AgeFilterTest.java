@@ -901,6 +901,21 @@ public class AgeFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(List.of(expected), spanTexts(text), text);
     }
 
+    // A later age in a run is capped at the oldest age in years, except before a month, week, or day unit, where a
+    // larger number is still a real age.
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "Infants aged 6 to 130 months were seen.    | aged 6 to 130",
+            "Children aged 24 to 180 months enrolled.   | aged 24 to 180",
+            "ages 3, 130 months                         | ages 3, 130",
+            "at age 6-130 weeks                         | age 6-130",
+            "aged 30 to 400 days                        | aged 30 to 400",
+            "aged 6 to 130 patients                     | aged 6"
+    })
+    public void aLaterAgeBeforeAMonthWeekOrDayUnitIsNotCapped(final String text, final String expected) throws Exception {
+        Assertions.assertEquals(List.of(expected), spanTexts(text), text);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {
             "age 25-03-2024",
