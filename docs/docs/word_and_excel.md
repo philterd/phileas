@@ -125,7 +125,7 @@ When calling `WordDocumentRedactor` or `XlsxRedactor` directly, set the Word and
 
 ## Column rules
 
-A policy's top-level `tabular` section sets rules per column. A rule can replace every value in a column, leave a column unchanged, or scan a column with only some of the policy's filters. A rule on a known column, such as `SSN`, replaces malformed and partial values that detection could miss, and its cells are not run through detection.
+A policy's top-level `tabular` section sets rules per column, for Excel workbooks and for [CSV documents](csv.md#column-rules). A rule can replace every value in a column, leave a column unchanged, or scan a column with only some of the policy's filters. A rule on a known column, such as `SSN`, replaces malformed and partial values that detection could miss, and its cells are not run through detection.
 
 ```json
 {

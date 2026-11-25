@@ -31,6 +31,11 @@ public enum MimeType {
     TEXT_HTML("text/html"),
 
     /**
+     * text/csv
+     */
+    TEXT_CSV("text/csv"),
+
+    /**
      * application/pdf
      */
     APPLICATION_PDF("application/pdf"),

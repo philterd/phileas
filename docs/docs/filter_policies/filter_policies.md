@@ -329,12 +329,13 @@ caches, embedded objects, and document properties redacted. See [Policy settings
 
 ### Column Rules
 
-The policy's top-level `tabular` section sets rules per column for Excel workbooks: replace every value in a column,
-leave it unchanged, or scan it with only some filters. See [Column rules](../word_and_excel.md#column-rules).
+The policy's top-level `tabular` section sets rules per column for Excel workbooks and CSV documents: replace every
+value in a column, leave it unchanged, or scan it with only some filters. See [Column rules](../word_and_excel.md#column-rules)
+and [CSV Redaction](../csv.md#column-rules).
 
 `config.csv` sets how a CSV document is read: `delimiter` (default `,`), `quote` (default `"`), and `encoding` (default
-`UTF-8`). Each of `delimiter` and `quote` is one character other than a line break, and they must differ. Phileas reads
-and validates these settings, but does not yet redact CSV documents.
+`UTF-8`). Each of `delimiter` and `quote` is one character other than a line break, and they must differ. See
+[CSV Redaction](../csv.md#reading-the-document).
 
 ### Applying a Policy to Text
 

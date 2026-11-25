@@ -37,6 +37,10 @@ public final class LeftoverFinding {
     // For an email, the attachment the finding is in; otherwise null.
     private final String attachment;
 
+    // For a CSV document, the field's row and column, counting from 1; otherwise null, and left out of JSON.
+    private final Integer row;
+    private final Integer column;
+
     // In-process only, and only when asked for.
     private final transient String matchedText;
 
@@ -86,7 +90,24 @@ public final class LeftoverFinding {
         this.lineNumber = lineNumber;
         this.paragraphNumber = paragraphNumber;
         this.attachment = attachment;
+        this.row = null;
+        this.column = null;
         this.matchedText = matchedText;
+    }
+
+    private LeftoverFinding(final LeftoverFinding finding, final String attachment, final Integer row, final Integer column) {
+        this.filterType = finding.filterType;
+        this.classification = finding.classification;
+        this.characterStart = finding.characterStart;
+        this.characterEnd = finding.characterEnd;
+        this.confidence = finding.confidence;
+        this.pageNumber = finding.pageNumber;
+        this.lineNumber = finding.lineNumber;
+        this.paragraphNumber = finding.paragraphNumber;
+        this.attachment = attachment;
+        this.row = row;
+        this.column = column;
+        this.matchedText = finding.matchedText;
     }
 
     public FilterType getFilterType() {
@@ -141,8 +162,33 @@ public final class LeftoverFinding {
      * @return A copy of this finding with the attachment set.
      */
     public LeftoverFinding inAttachment(final String attachment) {
-        return new LeftoverFinding(filterType, classification, characterStart, characterEnd, confidence, pageNumber,
-                lineNumber, paragraphNumber, attachment, matchedText);
+        return new LeftoverFinding(this, attachment, row, column);
+    }
+
+    /**
+     * This finding, placed in a field of a CSV document. Its offsets are then into the field's value.
+     * @param row The field's row, counting from 1.
+     * @param column The field's column, counting from 1.
+     * @return A copy of this finding with the row and column set.
+     */
+    public LeftoverFinding inField(final int row, final int column) {
+        return new LeftoverFinding(this, attachment, row, column);
+    }
+
+    /**
+     * For a CSV document, the row of the field the finding is in, counting from 1.
+     * @return The row, or {@code null} when the finding is not in a CSV document.
+     */
+    public Integer getRow() {
+        return row;
+    }
+
+    /**
+     * For a CSV document, the column of the field the finding is in, counting from 1.
+     * @return The column, or {@code null} when the finding is not in a CSV document.
+     */
+    public Integer getColumn() {
+        return column;
     }
 
     /**

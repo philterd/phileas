@@ -108,6 +108,9 @@ public final class Span {
     private int lineNumber = 0;
     private int pageNumber = 0;
     private int paragraphNumber = 0;
+    // For a CSV document, the field's row and column, counting from 1; otherwise null, and left out of JSON.
+    private Integer row;
+    private Integer column;
     private float lowerLeftX;
     private float lowerLeftY;
     private float upperRightX;
@@ -735,6 +738,8 @@ public final class Span {
                 append(lineNumber).
                 append(pageNumber).
                 append(paragraphNumber).
+                append(row).
+                append(column).
                 append(pageAssignment).
                 toHashCode();
 
@@ -766,6 +771,8 @@ public final class Span {
                 .append(lineNumber, span.lineNumber)
                 .append(pageNumber, span.pageNumber)
                 .append(paragraphNumber, span.paragraphNumber)
+                .append(row, span.row)
+                .append(column, span.column)
                 .append(lowerLeftX, span.lowerLeftX)
                 .append(lowerLeftY, span.lowerLeftY)
                 .append(upperRightX, span.upperRightX)
@@ -1078,6 +1085,30 @@ public final class Span {
 
     public void setParagraphNumber(int paragraphNumber) {
         this.paragraphNumber = paragraphNumber;
+    }
+
+    /**
+     * For a CSV document, the row of the field the span is in, counting from 1.
+     * @return The row, or <code>null</code> when the span is not in a CSV document.
+     */
+    public Integer getRow() {
+        return row;
+    }
+
+    public void setRow(Integer row) {
+        this.row = row;
+    }
+
+    /**
+     * For a CSV document, the column of the field the span is in, counting from 1.
+     * @return The column, or <code>null</code> when the span is not in a CSV document.
+     */
+    public Integer getColumn() {
+        return column;
+    }
+
+    public void setColumn(Integer column) {
+        this.column = column;
     }
 
 }
