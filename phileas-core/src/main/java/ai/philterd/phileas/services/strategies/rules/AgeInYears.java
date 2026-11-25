@@ -34,11 +34,15 @@ import java.util.regex.Pattern;
  * the number, so the word after it in the window gives the unit: months, weeks, or days are converted to years,
  * with a month as a twelfth of a year and a week as seven of a year's 365 days. Any other word, or none, leaves
  * the number in years.</p>
+ *
+ * <p>A span can hold a run or range of ages, such as {@code aged 39 and 41} or {@code ages 18-65}.
+ * {@link #every(String, String[])} reads each of them, every number written with digits in the span, and the
+ * unit after the span applies to each.</p>
  */
 public final class AgeInYears {
 
     private static final Pattern DIGITS = Pattern.compile("[0-9]+(?:\\.[0-9]+)?|\\.[0-9]+");
-    private static final Pattern KEYWORD = Pattern.compile("age(?:d|\\s+of)?\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern KEYWORD = Pattern.compile("age[ds]?(?:\\s+of)?\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern NON_LETTERS = Pattern.compile("[^a-z]+");
 
     // The same normalization Filter.getWindow applies to the window's tokens.
@@ -73,29 +77,59 @@ public final class AgeInYears {
      */
     public static OptionalDouble of(final String token, final String[] window) {
 
+        final List<Double> ages = every(token, window);
+
+        return ages.isEmpty() ? OptionalDouble.empty() : OptionalDouble.of(ages.get(0));
+
+    }
+
+    /**
+     * Every age in years that an age span expresses, in the order they are written, such as 39 and 41 in
+     * {@code aged 39 and 41}.
+     * @param token The span's text.
+     * @param window The window of words from the span on, as the age filter gives its strategies. The
+     *               first occurrence of the span's words is taken as the span.
+     * @return The ages in years, or an empty list when the span has no number that can be read.
+     */
+    public static List<Double> every(final String token, final String[] window) {
+
         if (token == null) {
-            return OptionalDouble.empty();
+            return List.of();
         }
 
-        final OptionalDouble number = number(token);
+        final List<Double> numbers = numbers(token);
 
-        if (number.isEmpty() || !KEYWORD.matcher(token.trim()).lookingAt()) {
-            return number;
+        if (numbers.isEmpty() || !KEYWORD.matcher(token.trim()).lookingAt()) {
+            return numbers;
         }
 
         final Double yearsPerUnit = YEARS_PER_UNIT.get(wordAfter(token, window));
 
-        return yearsPerUnit == null ? number : OptionalDouble.of(number.getAsDouble() * yearsPerUnit);
+        return yearsPerUnit == null ? numbers : numbers.stream().map(number -> number * yearsPerUnit).toList();
 
     }
 
-    private static OptionalDouble number(final String token) {
+    private static List<Double> numbers(final String token) {
+
+        final List<Double> numbers = new ArrayList<>();
 
         final Matcher digits = DIGITS.matcher(token);
 
-        if (digits.find()) {
-            return OptionalDouble.of(Double.parseDouble(digits.group()));
+        while (digits.find()) {
+            numbers.add(Double.parseDouble(digits.group()));
         }
+
+        if (!numbers.isEmpty()) {
+            return numbers;
+        }
+
+        final OptionalDouble spelled = spelledNumber(token);
+
+        return spelled.isPresent() ? List.of(spelled.getAsDouble()) : List.of();
+
+    }
+
+    private static OptionalDouble spelledNumber(final String token) {
 
         // A spelled-out number, as the age filter matches it: up to ninety-nine, optionally after
         // "(one|a) hundred (and)". Words before the number, such as "aged", are skipped, and the first

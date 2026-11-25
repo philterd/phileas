@@ -63,6 +63,38 @@ public class AgeFilter extends RegexFilter {
     // Whitespace sits inside the group to avoid ambiguous backtracking.
     private static final String AGE_SEPARATOR = "\\s*(?:[:=-]\\s*)?";
 
+    // A number after an age keyword.
+    private static final String NUMBER = "[\\d.]+";
+
+    // Ends a keyword age. It does not end right before a hyphen or a slash and a digit, so a date such as
+    // "age 25-03-2024" or "Age: 12/25/2020" is not cut into a partial age.
+    private static final String KEYWORD_END = "\\b(?![-/]\\d)";
+
+    // An age up to MAX_AGE.
+    private static final String BOUNDED_AGE = "(?:1[01]\\d|12[0-5]|0?\\d?\\d)(?:\\.\\d+)?";
+
+    // An age after the first in a run or range. It is read only up to MAX_AGE, so a date such as
+    // "aged 12-25-2020" is not read as a run of ages. It is not followed by a slash and a digit, or by a hyphen and
+    // a digit unless another age follows the hyphen, as in "ages 3-5-7", so it is matched whole or not at all.
+    private static final String NEXT_AGE = BOUNDED_AGE + "\\b(?!/\\d)(?!-(?!" + BOUNDED_AGE + "\\b)\\d)";
+
+    // Joins two ages with a hyphen or a word: "39-41", "39 to 41", "39 and 41", "39 or 41".
+    private static final String WORD_JOIN = "(?:\\s*-\\s*|,?\\s+(?:and|or|to)\\s+)";
+
+    // After the singular "age" or "age of": one age, or a range joined by a hyphen or "to", as in "age 18-65".
+    // A comma or "and" does not continue it, so "age 45, 3 visits" is one age.
+    private static final String AGE_OR_RANGE = NUMBER + "(?:(?:\\s*-\\s*|\\s+to\\s+)" + NEXT_AGE + ")?";
+
+    // After "aged", "between", or "from": ages joined by a hyphen or a word, where a comma joins only inside a list
+    // that a word or a hyphen closes, so "aged 3, 5 and 7" is read whole and "aged 39, 2 children" is one age.
+    // The repetitions are possessive: each joined age is matched whole, so nothing is given back, and a long run
+    // does not overflow the stack.
+    private static final String AGE_RUN =
+            NUMBER + "(?:(?:\\s*,\\s*" + NEXT_AGE + ")*+" + WORD_JOIN + NEXT_AGE + ")*+";
+
+    // After the plural "ages" or "ages of": ages joined by commas, words, or hyphens, as in "Ages: 39, 41".
+    private static final String AGE_SERIES = NUMBER + "(?:(?:\\s*,\\s*|" + WORD_JOIN + ")" + NEXT_AGE + ")*+";
+
     private final Set<FilterPattern> unitPatterns;
 
     public AgeFilter(FilterConfiguration filterConfiguration) {
@@ -71,8 +103,22 @@ public class AgeFilter extends RegexFilter {
         final Pattern agePattern1 = Pattern.compile("\\b[0-9.]+[\\s]*" + UNIT + "(\\.?)(?:[\\s-]*old)?\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern age1 = new FilterPattern.FilterPatternBuilder(agePattern1, 0.90).build();
 
-        final Pattern agePattern2 = Pattern.compile(AGE_KEYWORD + AGE_SEPARATOR + "[0-9.]+\\b", Pattern.CASE_INSENSITIVE);
+        // "age 47", "Age: 47", "age of 39", "age 18-65", "age 39 to 41".
+        final Pattern agePattern2 = Pattern.compile("\\bage(?:\\s+of)?" + AGE_SEPARATOR + AGE_OR_RANGE + KEYWORD_END, Pattern.CASE_INSENSITIVE);
         final FilterPattern age2 = new FilterPattern.FilterPatternBuilder(agePattern2, 0.90).build();
+
+        // "aged 65", "aged 39 to 41", "aged 3, 5 and 7".
+        final Pattern agePattern7 = Pattern.compile("\\baged" + AGE_SEPARATOR + AGE_RUN + KEYWORD_END, Pattern.CASE_INSENSITIVE);
+        final FilterPattern age7 = new FilterPattern.FilterPatternBuilder(agePattern7, 0.90).build();
+
+        // "ages 39-41", "Ages: 39, 41", "the ages of 39, 41, and 44".
+        final Pattern agePattern8 = Pattern.compile("\\bages(?:\\s+of)?" + AGE_SEPARATOR + AGE_SERIES + KEYWORD_END, Pattern.CASE_INSENSITIVE);
+        final FilterPattern age8 = new FilterPattern.FilterPatternBuilder(agePattern8, 0.90).build();
+
+        // "age between 18 and 65", "Age: between 18 and 65", "ages of between 18 and 65", "aged from 39 to 41".
+        // The keyword is separated from "between" or "from" by whitespace or a separator, so "agebetween" is not read.
+        final Pattern agePattern9 = Pattern.compile("\\bage[ds]?(?:\\s+of)?(?:\\s*[:=-]\\s*|\\s+)(?:between|from)\\s+" + AGE_RUN + KEYWORD_END, Pattern.CASE_INSENSITIVE);
+        final FilterPattern age9 = new FilterPattern.FilterPatternBuilder(agePattern9, 0.90).build();
 
         final Pattern agePattern3 = Pattern.compile("\\b[0-9.]+[-]*" + UNIT + "(\\.?)(?:-*old)?\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern age3 = new FilterPattern.FilterPatternBuilder(agePattern3, 0.90).build();
@@ -93,7 +139,7 @@ public class AgeFilter extends RegexFilter {
         this.contextualTerms.add("age");
         this.contextualTerms.add("years");
 
-        this.analyzer = new Analyzer(contextualTerms, age1, age2, age3, age4, age5, age6);
+        this.analyzer = new Analyzer(contextualTerms, age1, age2, age3, age4, age5, age6, age7, age8, age9);
 
         // The patterns whose number is followed by a unit. An age after the "age" keyword is not bounded here,
         // since a unit after it, as in "aged 1100 months", can make a large number a real age.

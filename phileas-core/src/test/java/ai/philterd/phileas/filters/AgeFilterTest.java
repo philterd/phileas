@@ -27,6 +27,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.time.Duration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -845,6 +846,102 @@ public class AgeFilterTest extends AbstractFilterTest {
     })
     public void anAgeIsDetectedAndEndsAtItsUnit(final String text, final String expected) throws Exception {
         Assertions.assertEquals(List.of(expected), spanTexts(text), text);
+    }
+
+    // https://github.com/philterd/phileas/issues/530: the runs and ranges of ages that phileas-dotnet reads whole.
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "They were between the ages of 39 and 41.   | ages of 39 and 41",
+            "the ages of 39, 41, and 44                 | ages of 39, 41, and 44",
+            "Patients ages 39 to 41 enrolled.           | ages 39 to 41",
+            "ages 39-41                                 | ages 39-41",
+            "Ages: 39, 41                               | Ages: 39, 41",
+            "They were aged between 39 and 41           | aged between 39 and 41",
+            "The sisters, aged 39 and 41, left.         | aged 39 and 41",
+            "The brothers were aged 39 to 41            | aged 39 to 41",
+            "The brothers were aged from 39 to 41       | aged from 39 to 41",
+            "They were ages between 39 and 41           | ages between 39 and 41",
+            "Eligible at age between 18 and 65.         | age between 18 and 65",
+            "The sisters, aged 39-41, left.             | aged 39-41",
+            "ages 39 - 41                               | ages 39 - 41",
+            "ages 39, 41 and 44                         | ages 39, 41 and 44",
+            "ages 39 and 41 and 44                      | ages 39 and 41 and 44",
+            "ages 39 and 41, and 44                     | ages 39 and 41, and 44",
+            "ages 5 or 6                                | ages 5 or 6",
+            "The siblings, aged 3, 5 and 7, left.       | aged 3, 5 and 7",
+            "aged 39 or 41                              | aged 39 or 41",
+            "aged 39 and 41 and 44                      | aged 39 and 41 and 44",
+            "aged 39-41 and 44                          | aged 39-41 and 44",
+            "Age: between 18 and 65                     | Age: between 18 and 65",
+            "Ages - from 18 to 65                       | Ages - from 18 to 65",
+            "the ages of between 18 and 65              | ages of between 18 and 65",
+            "Eligible age 18-65.                        | age 18-65",
+            "at age 39 to 41                            | age 39 to 41",
+            "Ages: 39, 2                                | Ages: 39, 2",
+            "ages 3-5-7                                 | ages 3-5-7"
+    })
+    public void everyAgeInARunOrRangeIsDetected(final String text, final String expected) throws Exception {
+        Assertions.assertEquals(List.of(expected), spanTexts(text), text);
+    }
+
+    // After "age" or "aged", a comma does not continue the ages, and a malformed separator ends them after any keyword.
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "Patient age 45, 3 visits                   | age 45",
+            "Age: 5, 10, 15 mg                          | Age: 5",
+            "age of 39, 2 children                      | age of 39",
+            "age 39 and 2 children                      | age 39",
+            "aged 65 and over                           | aged 65",
+            "aged 39, 2 children                        | aged 39",
+            "ages 20,,,21                               | ages 20",
+            "aged 5 and 3/4/20                          | aged 5",
+            "ages 39, 41-2020                           | ages 39"
+    })
+    public void aNumberThatDoesNotContinueTheAgesIsNotDetected(final String text, final String expected) throws Exception {
+        Assertions.assertEquals(List.of(expected), spanTexts(text), text);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "age 25-03-2024",
+            "ages 12-25-2020",
+            "Age: 12/25/2020",
+            "aged 12-25-2020",
+            "age between 12-25-2020"
+    })
+    public void aDateAfterAnAgeKeywordIsNotCutIntoAPartialAge(final String text) throws Exception {
+        Assertions.assertEquals(List.of(), spanTexts(text), text);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "average of 39",
+            "coverage of 39",
+            "images of 39",
+            "wages of 39",
+            "agebetween 39",
+            "agesd 39",
+            "ages 20andand21"
+    })
+    public void aWordThatOnlyContainsAnAgeKeywordIsNotAKeyword(final String text) throws Exception {
+        Assertions.assertEquals(List.of(), spanTexts(text), text);
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "ages 1  | ', '",
+            "ages 1  | ' , and'",
+            "ages 1  | ', 1'",
+            "aged 1  | ', 1'",
+            "aged 1  | ' and 1, 1'",
+            "Age: between 1 | ', 1'"
+    })
+    public void aKeywordFollowedByALongRepeatedRunIsFilteredQuickly(final String keyword, final String repeated) throws Exception {
+
+        final String text = keyword + repeated.repeat(5_000) + " x";
+
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(10), () -> spanTexts(text));
+
     }
 
 }

@@ -54,7 +54,7 @@ class OverlappingSpansEndToEndTest {
             "Call 555-0187 CAD stable. | Call {{{REDACTED-phone-number}}} {{{REDACTED-currency}}} stable.",
             "On March 5 dollars were paid. | On {{{REDACTED-date}}} {{{REDACTED-currency}}} were paid.",
             "SSN 123-45-67.89 CHF stable. | SSN {{{REDACTED-phone-number}}}{{{REDACTED-currency}}} stable.",
-            "Age of 1/2/20 noted. | {{{REDACTED-age}}}{{{REDACTED-date}}} noted."
+            "Age of 1/2/20 noted. | Age of {{{REDACTED-date}}} noted."
     })
     void textCoveredByAPartlyOverlappingSpanIsNotLeftInTheOutput(final String input, final String expected) throws Exception {
         Assertions.assertEquals(expected, filter(POLICY, input));
