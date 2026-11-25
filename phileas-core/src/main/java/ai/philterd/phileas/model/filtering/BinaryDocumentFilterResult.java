@@ -31,7 +31,13 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
 
     public BinaryDocumentFilterResult(byte[] document, String context, Explanation explanation, long tokens,
                                       List<IncrementalRedaction> incrementalRedactions, boolean reviewSampled) {
-        super(context, explanation, tokens, incrementalRedactions, reviewSampled);
+        this(document, context, explanation, tokens, incrementalRedactions, reviewSampled, null);
+    }
+
+    public BinaryDocumentFilterResult(byte[] document, String context, Explanation explanation, long tokens,
+                                      List<IncrementalRedaction> incrementalRedactions, boolean reviewSampled,
+                                      LeftoverCheckResult leftoverCheck) {
+        super(context, explanation, tokens, incrementalRedactions, reviewSampled, leftoverCheck);
 
         this.document = document;
 
@@ -46,6 +52,7 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
                 append(explanation).
                 append(tokens).
                 append(reviewSampled).
+                append(leftoverCheck).
                 toHashCode();
 
     }

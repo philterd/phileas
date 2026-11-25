@@ -17,6 +17,9 @@ package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
+import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
@@ -220,6 +223,63 @@ public class OoxmlFilterServiceTest {
         Assertions.assertTrue(sampledResult.isReviewSampled());
         Assertions.assertEquals(OoxmlTestFixtures.entry(notSampledResult.getDocument(), "word/document.xml"),
                 OoxmlTestFixtures.entry(sampledResult.getDocument(), "word/document.xml"));
+    }
+
+
+    private static final FilterOptions LEFTOVER_CHECK = FilterOptions.defaults().withLeftoverCheck(true).withLeftoverCheckMatchedText(true);
+
+    private static Policy leftoverCheckPolicy(final String identifiers, final String using) {
+        return new Gson().fromJson("{\"identifiers\":" + identifiers + ",\"config\":{\"review\":{\"leftoverCheck\":"
+                + "{\"mode\":\"onRequest\",\"using\":\"" + using + "\"}}}}", Policy.class);
+    }
+
+    @Test
+    public void leftoverCheckFindsWhatIsLeftInAWordDocument() throws Exception {
+        final byte[] input = OoxmlTestFixtures.docx("Keep this.", "Email " + EMAIL + " now.", "SSN 123-45-6789.");
+        final Policy policy = leftoverCheckPolicy("{\"emailAddress\":{\"emailAddressFilterStrategies\":[{\"strategy\":\"RANDOM_REPLACE\"}]}}", "broad");
+
+        final BinaryDocumentFilterResult result = service().filter(policy, new DefaultContextService(), new InMemoryVectorService(),
+                "ctx", input, MimeType.APPLICATION_DOCX, LEFTOVER_CHECK);
+
+        final LeftoverCheckResult check = result.getLeftoverCheck();
+        Assertions.assertTrue(check.isPerformed());
+
+        final LeftoverFinding ssn = check.getFindings().stream()
+                .filter(finding -> finding.getFilterType() == FilterType.SSN).findFirst().orElseThrow();
+        Assertions.assertEquals(2, ssn.getParagraphNumber());
+        Assertions.assertEquals("SSN ".length(), ssn.getCharacterStart());
+        Assertions.assertEquals("123-45-6789", ssn.getMatchedText());
+
+        // The random stand-in for the email address is not reported.
+        Assertions.assertTrue(check.getFindings().stream().noneMatch(finding -> finding.getFilterType() == FilterType.EMAIL_ADDRESS),
+                check.getFindings().toString());
+
+        // The check does not change the document.
+        final BinaryDocumentFilterResult unchecked = service().filter(policy, "ctx", input, MimeType.APPLICATION_DOCX);
+        Assertions.assertFalse(unchecked.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(OoxmlTestFixtures.entry(unchecked.getDocument(), "word/document.xml").contains("123-45-6789"),
+                OoxmlTestFixtures.entry(result.getDocument(), "word/document.xml").contains("123-45-6789"));
+        Assertions.assertEquals(unchecked.getExplanation().appliedSpans().size(), result.getExplanation().appliedSpans().size());
+    }
+
+    @Test
+    public void leftoverCheckFindsWhatIsLeftInAWorkbook() throws Exception {
+        final byte[] input = OoxmlTestFixtures.xlsx(List.of(
+                new String[]{"Name", "Email"},
+                new String[]{"123-45-6789", EMAIL}));
+
+        final BinaryDocumentFilterResult broad = service().filter(leftoverCheckPolicy("{\"emailAddress\":{}}", "broad"),
+                new DefaultContextService(), new InMemoryVectorService(), "ctx", input, null, LEFTOVER_CHECK);
+        final LeftoverFinding ssn = broad.getLeftoverCheck().getFindings().stream()
+                .filter(finding -> finding.getFilterType() == FilterType.SSN).findFirst().orElseThrow();
+        Assertions.assertEquals(2, ssn.getParagraphNumber()); // the third cell
+        Assertions.assertTrue(broad.getLeftoverCheck().getFindings().stream()
+                .noneMatch(finding -> finding.getFilterType() == FilterType.EMAIL_ADDRESS));
+
+        final BinaryDocumentFilterResult samePolicy = service().filter(leftoverCheckPolicy("{\"emailAddress\":{}}", "samePolicy"),
+                new DefaultContextService(), new InMemoryVectorService(), "ctx", input, null, LEFTOVER_CHECK);
+        Assertions.assertTrue(samePolicy.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(0, samePolicy.getLeftoverCheck().getFindingCount(), samePolicy.getLeftoverCheck().getFindings().toString());
     }
 
 }

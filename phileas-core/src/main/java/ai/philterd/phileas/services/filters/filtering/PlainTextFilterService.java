@@ -17,9 +17,12 @@ package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.Filter;
+import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
+import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.LeftoverChecker;
 import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
@@ -35,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -110,8 +114,22 @@ public class PlainTextFilterService extends TextFilterService {
 
     @Override
     public TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception {
+        return filter(policy, context, input, FilterOptions.defaults());
+    }
+
+    /**
+     * Filter text using the context and vector services bound at construction, with options for the call.
+     * @param policy The {@link Policy} to apply.
+     * @param context The redaction context.
+     * @param input The input text.
+     * @param options The {@link FilterOptions} for this call.
+     * @return A {@link TextFilterResult}.
+     * @throws Exception Thrown if the text cannot be filtered.
+     */
+    public TextFilterResult filter(final Policy policy, final String context, final String input,
+                                   final FilterOptions options) throws Exception {
         requireBoundServices();
-        return filter(policy, defaultContextService, defaultVectorService, context, input);
+        return filter(policy, defaultContextService, defaultVectorService, context, input, options);
     }
 
     // Fails fast when a warm instance is used through an overload that needs construction-bound services.
@@ -128,12 +146,12 @@ public class PlainTextFilterService extends TextFilterService {
     @Override
     public TextFilterResult filter(final Policy policy, final ContextService contextService,
                                    final VectorService vectorService, final String context,
-                                   final String input) throws Exception {
+                                   final String input, final FilterOptions options) throws Exception {
 
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
-        return filter(policy, contextService, vectorService, filters, postFilters, context, input);
+        return filter(policy, contextService, vectorService, filters, postFilters, context, input, options);
 
     }
 
@@ -157,7 +175,7 @@ public class PlainTextFilterService extends TextFilterService {
     private TextFilterResult filter(final Policy policy, final ContextService contextService,
                                     final VectorService vectorService, final List<Filter> filters,
                                     final List<PostFilter> postFilters, final String context,
-                                    final String input) throws Exception {
+                                    final String input, final FilterOptions options) throws Exception {
 
         // Drawn once per request, here rather than per chunk, so splitting does not raise the chance of selection.
         final boolean reviewSampled = ReviewSampler.isSelected(policy);
@@ -226,13 +244,36 @@ public class PlainTextFilterService extends TextFilterService {
 
         }
 
-        if (!reviewSampled) {
+        // Run on the whole output, after any pieces are put back together, so a value across a seam is found.
+        final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, options)
+                ? leftoverCheck(policy, textFilterResult, options) : null;
+
+        if (!reviewSampled && leftoverCheck == null) {
             return textFilterResult;
         }
 
-        return new TextFilterResult(textFilterResult.getFilteredText(), textFilterResult.getContext(),
+        final TextFilterResult result = new TextFilterResult(textFilterResult.getFilteredText(), textFilterResult.getContext(),
                 textFilterResult.getPiece(), textFilterResult.getExplanation(),
-                textFilterResult.getIncrementalRedactions(), textFilterResult.getTokens(), true);
+                textFilterResult.getIncrementalRedactions(), textFilterResult.getTokens(), reviewSampled, leftoverCheck);
+        result.setReplacedRanges(textFilterResult.getReplacedRanges());
+        return result;
+
+    }
+
+    // Scans the filtered text, leaving out the replacements the redaction put there.
+    private LeftoverCheckResult leftoverCheck(final Policy policy, final TextFilterResult textFilterResult,
+                                              final FilterOptions options) throws Exception {
+
+        final String output = textFilterResult.getFilteredText();
+        final List<LeftoverFinding> findings = new ArrayList<>();
+
+        for (final Span span : leftoverSpans(policy, leftoverCheckUsing(policy), output)) {
+            if (!LeftoverChecker.isInserted(span, textFilterResult.getReplacedRanges())) {
+                findings.add(LeftoverChecker.finding(span, output, options));
+            }
+        }
+
+        return LeftoverCheckResult.performed(findings);
 
     }
 
@@ -262,8 +303,20 @@ public class PlainTextFilterService extends TextFilterService {
          * @throws Exception Thrown if the text cannot be filtered.
          */
         public TextFilterResult filter(final String context, final String input) throws Exception {
+            return filter(context, input, FilterOptions.defaults());
+        }
+
+        /**
+         * Filters text using this prepared policy and the services bound at construction, with options for the call.
+         * @param context The redaction context.
+         * @param input The input text.
+         * @param options The {@link FilterOptions} for this call.
+         * @return A {@link TextFilterResult}.
+         * @throws Exception Thrown if the text cannot be filtered.
+         */
+        public TextFilterResult filter(final String context, final String input, final FilterOptions options) throws Exception {
             requireBoundServices();
-            return PlainTextFilterService.this.filter(policy, defaultContextService, defaultVectorService, filters, postFilters, context, input);
+            return PlainTextFilterService.this.filter(policy, defaultContextService, defaultVectorService, filters, postFilters, context, input, options);
         }
 
         /**
@@ -278,7 +331,23 @@ public class PlainTextFilterService extends TextFilterService {
          */
         public TextFilterResult filter(final ContextService contextService, final VectorService vectorService,
                                        final String context, final String input) throws Exception {
-            return PlainTextFilterService.this.filter(policy, contextService, vectorService, filters, postFilters, context, input);
+            return filter(contextService, vectorService, context, input, FilterOptions.defaults());
+        }
+
+        /**
+         * Filters text using this prepared policy with a per-call {@link ContextService} and {@link
+         * VectorService}, and options for the call.
+         * @param contextService The {@link ContextService} for this request.
+         * @param vectorService The {@link VectorService} for this request.
+         * @param context The redaction context.
+         * @param input The input text.
+         * @param options The {@link FilterOptions} for this call.
+         * @return A {@link TextFilterResult}.
+         * @throws Exception Thrown if the text cannot be filtered.
+         */
+        public TextFilterResult filter(final ContextService contextService, final VectorService vectorService,
+                                       final String context, final String input, final FilterOptions options) throws Exception {
+            return PlainTextFilterService.this.filter(policy, contextService, vectorService, filters, postFilters, context, input, options);
         }
 
     }

@@ -20,6 +20,7 @@ import ai.philterd.phileas.model.filtering.Explanation;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.IncrementalRedactionHistory;
+import ai.philterd.phileas.model.filtering.ReplacedRange;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
@@ -154,6 +155,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         final StringBuilder sb = new StringBuilder(input.length());
         final String[] hashes = new String[incrementalRedactionsEnabled ? orderedSpans.size() : 0];
+        final List<ReplacedRange> replacedRanges = new ArrayList<>(orderedSpans.size());
         int copiedTo = 0;
 
         for(int i = 0; i < orderedSpans.size(); i++) {
@@ -163,7 +165,10 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
             // Get the replacement. This might be the token itself or an anonymized version.
             final String replacement = span.getReplacement();
 
-            sb.append(input, copiedTo, span.getCharacterStart()).append(replacement);
+            sb.append(input, copiedTo, span.getCharacterStart());
+            final int replacedStart = sb.length();
+            sb.append(replacement);
+            replacedRanges.add(new ReplacedRange(replacedStart, sb.length()));
             copiedTo = span.getCharacterEnd();
 
             if(incrementalRedactionsEnabled) {
@@ -183,7 +188,9 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
             }
         }
 
-        return new TextFilterResult(sb.toString(), context, piece, explanation, incrementalRedactions, tokens);
+        final TextFilterResult result = new TextFilterResult(sb.toString(), context, piece, explanation, incrementalRedactions, tokens);
+        result.setReplacedRanges(replacedRanges);
+        return result;
 
     }
 

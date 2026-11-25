@@ -20,10 +20,15 @@ import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.Explanation;
 import ai.philterd.phileas.model.filtering.IncrementalRedaction;
+import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
+import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.model.filtering.ReplacedRange;
+import ai.philterd.phileas.policy.config.LeftoverCheck;
+import ai.philterd.phileas.services.LeftoverChecker;
 import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
@@ -48,7 +53,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Redacts Word (.docx) and Excel (.xlsx) documents with a policy. The output is a document of the same
@@ -123,10 +131,27 @@ public class OoxmlFilterService extends BinaryFilterService {
         }
     }
 
+    /**
+     * Filters a Word or Excel document using the services bound at construction, with options for the call.
+     * @param policy The {@link Policy} to apply.
+     * @param context The redaction context.
+     * @param input The input document as a byte array.
+     * @param outputMimeType The output {@link MimeType}.
+     * @param options The {@link FilterOptions} for this call.
+     * @return A {@link BinaryDocumentFilterResult}.
+     * @throws Exception Thrown if the document cannot be filtered.
+     */
+    public BinaryDocumentFilterResult filter(final Policy policy, final String context, final byte[] input,
+                                             final MimeType outputMimeType, final FilterOptions options) throws Exception {
+        requireBoundServices();
+        return filter(policy, defaultContextService, defaultVectorService, context, input, outputMimeType, options);
+    }
+
     @Override
     public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
                                              final VectorService vectorService, final String context,
-                                             final byte[] input, final MimeType outputMimeType) throws Exception {
+                                             final byte[] input, final MimeType outputMimeType,
+                                             final FilterOptions filterOptions) throws Exception {
 
         // One draw for the document, not one per paragraph or cell.
         final boolean reviewSampled = ReviewSampler.isSelected(policy);
@@ -151,7 +176,122 @@ public class OoxmlFilterService extends BinaryFilterService {
 
         // As with PDF, the identified and applied spans are reported as the same list.
         final Explanation explanation = new Explanation(spans, spans);
-        return new BinaryDocumentFilterResult(result.document(), context, explanation, tokens[0], incrementalRedactions, reviewSampled);
+
+        final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, filterOptions)
+                ? leftoverCheck(policy, type, result, filterOptions) : null;
+
+        return new BinaryDocumentFilterResult(result.document(), context, explanation, tokens[0], incrementalRedactions,
+                reviewSampled, leftoverCheck);
+
+    }
+
+    /*
+     * Scans the redacted document with the redactor's detect pass, which visits the same text the redaction did.
+     * A finding's position is its paragraph or cell and its offsets there, and a finding inside a replacement the
+     * redaction put in that paragraph or cell is left out. Text that is not a paragraph or cell (drawings,
+     * comments in Excel, hyperlink targets, and so on) has no position to compare, so there a finding is left out
+     * when it is a replacement the redaction put in such text, or part of one.
+     */
+    private LeftoverCheckResult leftoverCheck(final Policy policy, final OoxmlDocumentType type,
+                                              final OoxmlRedactionResult redaction, final FilterOptions filterOptions) throws Exception {
+
+        final LeftoverCheck.Using using = leftoverCheckUsing(policy);
+
+        // Reports each finding as a redaction so the detect pass records where it is. Nothing is written.
+        final TextFilter check = text -> {
+            try {
+                final List<Span> found = leftoverSpans(policy, using, text);
+                final StringBuilder marked = new StringBuilder(text);
+                for (int i = found.size() - 1; i >= 0; i--) {
+                    final Span span = found.get(i);
+                    marked.replace(span.getCharacterStart(), span.getCharacterEnd(), span.getReplacement());
+                }
+                return new TextFilterResult(marked.toString(), "", 0, new Explanation(found, found), List.of(), 0);
+            } catch (final Exception e) {
+                throw new IllegalStateException("Unable to check the redacted document text.", e);
+            }
+        };
+
+        final byte[] redacted = redaction.document();
+        final List<OfficeRedactionSpan> detected = type == OoxmlDocumentType.DOCX
+                ? WordDocumentRedactor.detect(redacted, check, options)
+                : XlsxRedactor.detect(redacted, check, options);
+
+        final Map<Integer, List<ReplacedRange>> replacedByParagraph = replacedRanges(redaction.spans());
+        final List<String> replacedElsewhere = new ArrayList<>();
+        for (final OfficeRedactionSpan span : redaction.spans()) {
+            if (span.getParagraphIndex() < 0 && !span.getReplacement().isEmpty()) {
+                replacedElsewhere.add(span.getReplacement());
+            }
+        }
+
+        final boolean matchedText = filterOptions != null && filterOptions.isLeftoverCheckMatchedText();
+        final List<LeftoverFinding> findings = new ArrayList<>();
+
+        for (final OfficeRedactionSpan officeSpan : detected) {
+
+            final Span span = officeSpan.toSpan();
+
+            // A marker, such as an embedded object, is not a detection.
+            if (span == null || officeSpan.getFilterType().isEmpty()) {
+                continue;
+            }
+
+            final int paragraph = officeSpan.getParagraphIndex();
+
+            final boolean inserted = paragraph >= 0
+                    ? LeftoverChecker.isInserted(span, replacedByParagraph.getOrDefault(paragraph, List.of()))
+                    : replacedElsewhere.stream().anyMatch(replacement -> replacement.contains(officeSpan.getText()));
+
+            if (!inserted) {
+                findings.add(new LeftoverFinding(span.getFilterType(), span.getClassification(),
+                        officeSpan.getCharacterStart(), officeSpan.getCharacterEnd(), span.getConfidence(),
+                        0, 0, paragraph, matchedText ? officeSpan.getText() : null));
+            }
+
+        }
+
+        return LeftoverCheckResult.performed(findings);
+
+    }
+
+    // Where each paragraph's or cell's replacements are in the redacted text, from their places in the original.
+    private static Map<Integer, List<ReplacedRange>> replacedRanges(final List<OfficeRedactionSpan> redactions) {
+
+        final Map<Integer, List<OfficeRedactionSpan>> byParagraph = new HashMap<>();
+        for (final OfficeRedactionSpan span : redactions) {
+            if (span.getParagraphIndex() >= 0 && span.getCharacterEnd() > span.getCharacterStart()) {
+                byParagraph.computeIfAbsent(span.getParagraphIndex(), k -> new ArrayList<>()).add(span);
+            }
+        }
+
+        final Map<Integer, List<ReplacedRange>> ranges = new HashMap<>();
+        for (final Map.Entry<Integer, List<OfficeRedactionSpan>> entry : byParagraph.entrySet()) {
+
+            final List<OfficeRedactionSpan> spans = new ArrayList<>(entry.getValue());
+            // The same order the redaction resolves overlaps in: by start, the longer first.
+            spans.sort(Comparator.comparingInt(OfficeRedactionSpan::getCharacterStart)
+                    .thenComparing(Comparator.comparingInt(OfficeRedactionSpan::getCharacterEnd).reversed()));
+
+            final List<ReplacedRange> paragraphRanges = new ArrayList<>();
+            int shift = 0;
+            int lastEnd = -1;
+            for (final OfficeRedactionSpan span : spans) {
+                // As the redaction applies them, an overlapping span is not applied.
+                if (span.getCharacterStart() < lastEnd) {
+                    continue;
+                }
+                final int start = span.getCharacterStart() + shift;
+                paragraphRanges.add(new ReplacedRange(start, start + span.getReplacement().length()));
+                shift += span.getReplacement().length() - (span.getCharacterEnd() - span.getCharacterStart());
+                lastEnd = span.getCharacterEnd();
+            }
+
+            ranges.put(entry.getKey(), paragraphRanges);
+
+        }
+
+        return ranges;
 
     }
 

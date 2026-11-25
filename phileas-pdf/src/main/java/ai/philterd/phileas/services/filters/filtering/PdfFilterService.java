@@ -20,12 +20,16 @@ import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.Explanation;
 import ai.philterd.phileas.model.filtering.IncrementalRedaction;
+import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
+import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.config.Pdf;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
+import ai.philterd.phileas.policy.config.LeftoverCheck;
+import ai.philterd.phileas.services.LeftoverChecker;
 import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
@@ -157,8 +161,9 @@ public class PdfFilterService extends BinaryFilterService {
     @Override
     public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
                                              final VectorService vectorService, final String context,
-                                             final byte[] input, final MimeType outputMimeType) throws Exception {
-        return filter(policy, contextService, vectorService, context, input, outputMimeType, null);
+                                             final byte[] input, final MimeType outputMimeType,
+                                             final FilterOptions options) throws Exception {
+        return filter(policy, contextService, vectorService, context, input, outputMimeType, null, options);
     }
 
     /**
@@ -174,6 +179,21 @@ public class PdfFilterService extends BinaryFilterService {
     }
 
     /**
+     * Filters a PDF with a policy per page set, using the services bound at construction and options for the call.
+     * @param policy The policy for pages not in {@code pagePolicies}. Its {@code config.pdf} settings render the
+     *               output, and its {@code config.review} settings apply to the document.
+     * @param pagePolicies The policies assigned to page sets, or {@code null} to use {@code policy} for every page.
+     * @param options The {@link FilterOptions} for this call.
+     * @throws IllegalArgumentException before redaction if a page set extends beyond the document's last page.
+     */
+    public BinaryDocumentFilterResult filter(final Policy policy, final String context, final byte[] input,
+                                             final MimeType outputMimeType, final PdfPagePolicies pagePolicies,
+                                             final FilterOptions options) throws Exception {
+        requireBoundServices();
+        return filter(policy, defaultContextService, defaultVectorService, context, input, outputMimeType, pagePolicies, options);
+    }
+
+    /**
      * Filters a PDF with a policy per page set. One context and context service are used for the whole document.
      * @param policy The policy for pages not in {@code pagePolicies}. Its {@code config.pdf} settings render the output.
      * @param pagePolicies The policies assigned to page sets, or {@code null} to use {@code policy} for every page.
@@ -183,6 +203,22 @@ public class PdfFilterService extends BinaryFilterService {
                                              final VectorService vectorService, final String context,
                                              final byte[] input, final MimeType outputMimeType,
                                              final PdfPagePolicies pagePolicies) throws Exception {
+        return filter(policy, contextService, vectorService, context, input, outputMimeType, pagePolicies, FilterOptions.defaults());
+    }
+
+    /**
+     * Filters a PDF with a policy per page set and options for the call. One context and context service are
+     * used for the whole document.
+     * @param policy The policy for pages not in {@code pagePolicies}. Its {@code config.pdf} settings render the
+     *               output, and its {@code config.review} settings apply to the document.
+     * @param pagePolicies The policies assigned to page sets, or {@code null} to use {@code policy} for every page.
+     * @param options The {@link FilterOptions} for this call.
+     * @throws IllegalArgumentException before redaction if a page set extends beyond the document's last page.
+     */
+    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
+                                             final VectorService vectorService, final String context,
+                                             final byte[] input, final MimeType outputMimeType,
+                                             final PdfPagePolicies pagePolicies, final FilterOptions options) throws Exception {
 
         // One draw for the document, with the policy that also sets its rendering, not one per page or page policy.
         final boolean reviewSampled = ReviewSampler.isSelected(policy);
@@ -282,7 +318,63 @@ public class PdfFilterService extends BinaryFilterService {
         // TODO: The identified vs the applied will actually be different
         // but we are setting the same here. Fix this at some point.
         final Explanation explanation = new Explanation(spansList, spansList);
-        return new BinaryDocumentFilterResult(redacted, context, explanation, tokens, incrementalRedactions, reviewSampled);
+
+        final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, options)
+                ? leftoverCheck(policy, pagePolicies, redacted, outputMimeType, options) : null;
+
+        return new BinaryDocumentFilterResult(redacted, context, explanation, tokens, incrementalRedactions,
+                reviewSampled, leftoverCheck);
+
+    }
+
+    /*
+     * Scans the text of the redacted PDF line by line, as the redaction does, each line with the check built from
+     * its page's policy. A page with a redaction is flattened to an image, so only pages kept as they were have
+     * text to read, and none of it was inserted by the redaction. An output with no text at all is reported as
+     * not checked.
+     */
+    private LeftoverCheckResult leftoverCheck(final Policy policy, final PdfPagePolicies pagePolicies,
+                                              final byte[] redacted, final MimeType outputMimeType,
+                                              final FilterOptions options) throws Exception {
+
+        if (outputMimeType != MimeType.APPLICATION_PDF) {
+            return LeftoverCheckResult.notPerformed(LeftoverCheckResult.Reason.UNREADABLE_OUTPUT);
+        }
+
+        final List<PdfLine> lines = new PdfTextExtractor(maxPages, maxPixelsPerPage, maxStreamBytes).getLines(redacted);
+
+        if (lines.stream().allMatch(line -> line.getText().isBlank())) {
+            return LeftoverCheckResult.notPerformed(LeftoverCheckResult.Reason.UNREADABLE_OUTPUT);
+        }
+
+        // The document's policy decides what the check uses on every page.
+        final LeftoverCheck.Using using = leftoverCheckUsing(policy);
+
+        final List<LeftoverFinding> findings = new ArrayList<>();
+        int offset = 0;
+        int lineNumber = 1;
+
+        for (final PdfLine line : lines) {
+
+            final PdfPagePolicies.Assignment assignment =
+                    pagePolicies == null ? null : pagePolicies.assignmentFor(line.getPageNumber() + 1);
+            final Policy linePolicy = assignment == null ? policy : assignment.policy();
+
+            for (final Span span : leftoverSpans(linePolicy, using, line.getText())) {
+                final LeftoverFinding finding = LeftoverChecker.finding(span, line.getText(), options,
+                        line.getPageNumber(), lineNumber, 0);
+                findings.add(new LeftoverFinding(finding.getFilterType(), finding.getClassification(),
+                        finding.getCharacterStart() + offset, finding.getCharacterEnd() + offset,
+                        finding.getConfidence(), finding.getPageNumber(), finding.getLineNumber(), 0,
+                        finding.getMatchedText()));
+            }
+
+            lineNumber++;
+            offset += line.getText().length();
+
+        }
+
+        return LeftoverCheckResult.performed(findings);
 
     }
 

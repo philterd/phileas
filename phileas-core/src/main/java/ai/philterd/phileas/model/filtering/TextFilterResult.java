@@ -36,6 +36,9 @@ public class TextFilterResult extends AbstractFilterResult {
     private final String filteredText;
     private final int piece;
 
+    // Where the redaction put its replacements in filteredText, so the leftover check can leave them out.
+    private transient List<ReplacedRange> replacedRanges = List.of();
+
     public TextFilterResult(String filteredText, String context, int piece,
                             Explanation explanation, List<IncrementalRedaction> incrementalRedactions,
                             long tokens) {
@@ -45,7 +48,13 @@ public class TextFilterResult extends AbstractFilterResult {
     public TextFilterResult(String filteredText, String context, int piece,
                             Explanation explanation, List<IncrementalRedaction> incrementalRedactions,
                             long tokens, boolean reviewSampled) {
-        super(context, explanation, tokens, incrementalRedactions, reviewSampled);
+        this(filteredText, context, piece, explanation, incrementalRedactions, tokens, reviewSampled, null);
+    }
+
+    public TextFilterResult(String filteredText, String context, int piece,
+                            Explanation explanation, List<IncrementalRedaction> incrementalRedactions,
+                            long tokens, boolean reviewSampled, LeftoverCheckResult leftoverCheck) {
+        super(context, explanation, tokens, incrementalRedactions, reviewSampled, leftoverCheck);
 
         this.filteredText = filteredText;
         this.piece = piece;
@@ -78,6 +87,7 @@ public class TextFilterResult extends AbstractFilterResult {
         int documentOffset = 0;
 
         final List<IncrementalRedaction> combinedIncrementalRedactions = new ArrayList<>();
+        final List<ReplacedRange> replacedRanges = new ArrayList<>();
         long tokens = 0;
 
         // Loop over each filter response and build the combined filter response.
@@ -93,6 +103,10 @@ public class TextFilterResult extends AbstractFilterResult {
             appliedSpans.addAll(Span.shiftSpans(documentOffset, textFilterResult.getExplanation().appliedSpans()));
             identifiedSpans.addAll(Span.shiftSpans(documentOffset, textFilterResult.getExplanation().identifiedSpans()));
 
+            for (final ReplacedRange range : textFilterResult.getReplacedRanges()) {
+                replacedRanges.add(range.shift(documentOffset));
+            }
+
             // Adjust the document offset.
             documentOffset += pieceFilteredText.length();
 
@@ -104,9 +118,21 @@ public class TextFilterResult extends AbstractFilterResult {
 
         }
 
+        final String combined = filteredText.toString();
+        final String trimmed = combined.trim();
+
+        // Trimming the start moves everything after it.
+        final int leading = combined.indexOf(trimmed);
+        final List<ReplacedRange> trimmedRanges = new ArrayList<>();
+        for (final ReplacedRange range : replacedRanges) {
+            trimmedRanges.add(range.shift(-leading));
+        }
+
         // Return the newly built FilterResponse.
-        return new TextFilterResult(filteredText.toString().trim(), context, 0,
+        final TextFilterResult combinedResult = new TextFilterResult(trimmed, context, 0,
                 new Explanation(appliedSpans, identifiedSpans), combinedIncrementalRedactions, tokens);
+        combinedResult.setReplacedRanges(trimmedRanges);
+        return combinedResult;
 
     }
 
@@ -134,6 +160,22 @@ public class TextFilterResult extends AbstractFilterResult {
 
     public int getPiece() {
         return piece;
+    }
+
+    /**
+     * Where the redaction put its replacements in {@link #getFilteredText()}. Not serialized.
+     * @return The ranges, ordered by start.
+     */
+    public List<ReplacedRange> getReplacedRanges() {
+        return replacedRanges;
+    }
+
+    /**
+     * Sets where the redaction put its replacements in {@link #getFilteredText()}.
+     * @param replacedRanges The ranges.
+     */
+    public void setReplacedRanges(final List<ReplacedRange> replacedRanges) {
+        this.replacedRanges = replacedRanges == null ? List.of() : List.copyOf(replacedRanges);
     }
 
 }

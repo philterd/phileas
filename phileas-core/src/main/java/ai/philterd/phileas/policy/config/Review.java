@@ -16,6 +16,7 @@
 package ai.philterd.phileas.policy.config;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 public class Review {
@@ -24,6 +25,12 @@ public class Review {
     @SerializedName("samplingRate")
     @Expose
     private double samplingRate = 0.0;
+
+    // A second detection pass over the redacted output. Off when absent.
+    @SerializedName("leftoverCheck")
+    @Expose
+    @JsonAdapter(LeftoverCheck.Adapter.class)
+    private LeftoverCheck leftoverCheck = new LeftoverCheck();
 
     /**
      * Refuses a sampling rate outside 0.0 to 1.0.
@@ -35,6 +42,18 @@ public class Review {
             throw new IllegalArgumentException("The review samplingRate " + samplingRate
                     + " is not valid: it must be a number from 0.0 to 1.0.");
         }
+    }
+
+    /**
+     * The leftover check, never null: a policy without one has the check off.
+     * @return The {@link LeftoverCheck}.
+     */
+    public LeftoverCheck getLeftoverCheck() {
+        return leftoverCheck == null ? new LeftoverCheck() : leftoverCheck;
+    }
+
+    public void setLeftoverCheck(LeftoverCheck leftoverCheck) {
+        this.leftoverCheck = leftoverCheck;
     }
 
     public double getSamplingRate() {

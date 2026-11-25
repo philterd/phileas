@@ -49,9 +49,27 @@ public abstract class TextFilterService extends FilterService {
      * @return A {@link TextFilterResult}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
+    public TextFilterResult filter(final Policy policy, final ContextService contextService,
+                                   final VectorService vectorService, final String context,
+                                   final String input) throws Exception {
+        return filter(policy, contextService, vectorService, context, input, FilterOptions.defaults());
+    }
+
+    /**
+     * Filter text with a per-call {@link ContextService} and {@link VectorService}, and options for the call,
+     * such as a request for the policy's leftover check.
+     * @param policy The {@link Policy} to apply.
+     * @param contextService The {@link ContextService} for this request.
+     * @param vectorService The {@link VectorService} for this request.
+     * @param context The redaction context.
+     * @param input The input document.
+     * @param options The {@link FilterOptions} for this call.
+     * @return A {@link TextFilterResult}.
+     * @throws Exception Thrown if the text cannot be filtered.
+     */
     public abstract TextFilterResult filter(final Policy policy, final ContextService contextService,
                                             final VectorService vectorService, final String context,
-                                            final String input) throws Exception;
+                                            final String input, final FilterOptions options) throws Exception;
 
     /**
      * Redact a list of spans in a text document.

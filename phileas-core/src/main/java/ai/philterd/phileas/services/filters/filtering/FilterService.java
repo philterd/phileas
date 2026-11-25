@@ -17,9 +17,12 @@ package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.Filter;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.FilterPolicyLoader;
+import ai.philterd.phileas.services.LeftoverChecker;
 import ai.philterd.phileas.services.PolicyFiles;
 import ai.philterd.phileas.services.filters.postfilters.IgnoredPatternsFilter;
 import ai.philterd.phileas.services.filters.postfilters.IgnoredTermsFilter;
@@ -60,6 +63,9 @@ public abstract class FilterService {
     // Caches the post-filters built for a policy, keyed by the same policy hash as filterCache.
     protected final Map<String, List<PostFilter>> postFilterCache;
 
+    // The policies the leftover check detects with, keyed by the redaction policy's key and what the check uses.
+    private final Map<String, Policy> leftoverCheckPolicies;
+
     // The regex time budget, so the policy's ignored patterns are bounded as the filters' patterns are.
     private final long regexTimeoutMs;
 
@@ -72,6 +78,7 @@ public abstract class FilterService {
 
         this.filterCache = new ConcurrentHashMap<>();
         this.postFilterCache = new ConcurrentHashMap<>();
+        this.leftoverCheckPolicies = new ConcurrentHashMap<>();
         this.filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, random, httpClient);
         this.regexTimeoutMs = phileasConfiguration.regexTimeoutMs();
         this.policyFiles = PolicyFiles.of(phileasConfiguration);
@@ -99,6 +106,35 @@ public abstract class FilterService {
             throw e;
         }
 
+    }
+
+    /**
+     * Runs the leftover check's detection over redacted text.
+     * @param policy The redaction {@link Policy} whose filters the check is built from.
+     * @param using What the check detects with, from the policy the call was made with.
+     * @param text The redacted text.
+     * @return The spans the check finds, in document order, with offsets into {@code text}.
+     * @throws Exception Thrown if the check's filters cannot be built or fail.
+     */
+    protected List<Span> leftoverSpans(final Policy policy, final LeftoverCheck.Using using, final String text) throws Exception {
+
+        final Policy checkPolicy = leftoverCheckPolicies.computeIfAbsent(policy.getCacheKey() + ":" + using.getValue(),
+                key -> LeftoverChecker.checkPolicy(policy, using));
+
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(checkPolicy, filterCache);
+        final List<PostFilter> postFilters = getPostFiltersForPolicy(checkPolicy);
+
+        return LeftoverChecker.detect(checkPolicy, filters, postFilters, text);
+
+    }
+
+    /**
+     * What the leftover check of a policy detects with.
+     * @param policy The {@link Policy} the call is filtered with.
+     * @return The policy's {@link LeftoverCheck.Using}.
+     */
+    protected static LeftoverCheck.Using leftoverCheckUsing(final Policy policy) {
+        return policy.getConfig().getReview().getLeftoverCheck().getUsing();
     }
 
     private List<PostFilter> buildPostFilters(final Policy policy) throws IOException {

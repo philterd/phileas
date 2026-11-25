@@ -54,9 +54,29 @@ public abstract class BinaryFilterService extends FilterService {
      * @return A {@link BinaryDocumentFilterResult}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
+    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
+                                             final VectorService vectorService, final String context,
+                                             final byte[] input, final MimeType outputMimeType) throws Exception {
+        return filter(policy, contextService, vectorService, context, input, outputMimeType, FilterOptions.defaults());
+    }
+
+    /**
+     * Filter text from a binary document with a per-call {@link ContextService} and {@link VectorService}, and
+     * options for the call, such as a request for the policy's leftover check.
+     * @param policy The {@link Policy} to apply.
+     * @param contextService The {@link ContextService} for this request.
+     * @param vectorService The {@link VectorService} for this request.
+     * @param context The redaction context.
+     * @param input The input document as a byte array.
+     * @param outputMimeType The output {@link MimeType}.
+     * @param options The {@link FilterOptions} for this call.
+     * @return A {@link BinaryDocumentFilterResult}.
+     * @throws Exception Thrown if the text cannot be filtered.
+     */
     public abstract BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
                                                       final VectorService vectorService, final String context,
-                                                      final byte[] input, final MimeType outputMimeType) throws Exception;
+                                                      final byte[] input, final MimeType outputMimeType,
+                                                      final FilterOptions options) throws Exception;
 
     /**
      * Redact a list of spans in a binary document.

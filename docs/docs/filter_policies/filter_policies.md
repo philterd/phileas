@@ -227,6 +227,87 @@ Selection does not change the redacted output. It is reported by `isReviewSample
 request, such as queuing it for a reviewer, is up to the application. For a PDF filtered with page policies, the rate
 of the policy passed to `filter` applies.
 
+### Leftover Check
+
+A policy can run a second detection pass over the redacted output and report anything still detectable, so a
+request can be routed for review because something was left in it:
+
+```
+{
+   "config": {
+      "review": {
+         "leftoverCheck": {
+            "mode": "always",
+            "using": "broad"
+         }
+      }
+   }
+}
+```
+
+`mode` sets when the check runs:
+
+* `off` (default): never.
+* `onRequest`: only when the caller asks for it on that call (see below).
+* `always`: on every call. The caller cannot turn it off.
+
+`using` sets what the check detects with:
+
+* `broad` (default): every filter the policy defines, including custom identifiers, dictionaries, and PhEye filters,
+  configured as written, plus every other built-in identifier at its defaults. It finds kinds of information the
+  policy does not cover. Built-ins that need a model (`person`) or configuration (`identifiers`, `sections`,
+  `dictionaries`, `pheyes`) run only as the policy defines them. A built-in the policy disables runs at its defaults.
+* `samePolicy`: only the policy's own filters, configured as written. It confirms the policy took effect.
+
+The policy's filters run in the check without their own ignore lists (`ignored`, `ignoredFiles`, `ignoredPatterns`),
+and a strategy condition that leaves a value unredacted does not hide it from the check. Only the policy's top-level
+`ignored` and `ignoredPatterns` suppress a finding. Values the redaction inserted, such as `RANDOM_REPLACE` stand-ins
+and redaction labels, are not reported. The check never changes the redacted output, and it uses its own context, so
+it does not read or add to the context used for referential integrity.
+
+The check runs on the whole output after any split pieces are put back together, so a value that spans a boundary
+between pieces is found. In a Word or Excel document it scans the same text the redaction does. In a PDF it scans the
+text of the output: a page with a redaction is flattened to an image and has no text to read, so only pages kept as
+they were (`preserveUnredactedPages`) are checked. An output with no readable text, such as a PDF with every page
+flattened or a PDF redacted to images, is reported as not performed rather than as zero findings.
+
+A `leftoverCheck` that is not an object, has a key other than `mode` and `using`, or has a value outside the lists
+above is refused when the policy is loaded. Values are case-sensitive. In PhiSQL:
+
+```
+CONFIGURE REVIEW (leftoverCheck = (mode = 'always', using = 'broad'));
+```
+
+To ask for the check on a call when the mode is `onRequest`, pass `FilterOptions` to the filter service:
+
+```
+final FilterOptions options = FilterOptions.defaults().withLeftoverCheck(true);
+final TextFilterResult result = filterService.filter(policy, contextService, vectorService, "context", input, options);
+```
+
+`PlainTextFilterService`, its `PreparedPolicy`, `PdfFilterService` (including with page policies), and
+`OoxmlFilterService` accept `FilterOptions`.
+
+The outcome is reported by `getLeftoverCheck()` on the `TextFilterResult` or `BinaryDocumentFilterResult`, and as
+`leftoverCheck` when the result is serialized to JSON (absent when the check was not called for):
+
+* `isPerformed()` (`performed`): whether the check ran.
+* `getReason()` (`reason`): why it did not run: `notRequested`, or `unreadableOutput`.
+* `getFindingCount()` (`findingCount`): the number of findings.
+* `getFindings()` (`findings`): each finding's `filterType`, `classification`, `characterStart` and `characterEnd`,
+  and `confidence`. For a PDF, `pageNumber` (from 0) and `lineNumber`, with offsets into the output's text with its
+  lines joined. For a Word or Excel document, `paragraphNumber` (the paragraph or cell, or -1 for other content such
+  as drawings and comments), with offsets into it. For text, offsets into the filtered text.
+
+Findings do not carry the matched text. An application that shows findings to the user it redacted for can ask for
+it with `FilterOptions.defaults().withLeftoverCheckMatchedText(true)`, and read it from `getMatchedText()`. It is held
+in memory only and is never serialized with the result.
+
+The check is a second detection pass, so it roughly doubles detection cost, and `broad` runs more filters than most
+policies do. Like the redaction itself, it is probabilistic: a finding is worth reviewing, and no finding does not
+mean the output is free of sensitive information. What to do with a result, such as queuing the request for a
+reviewer, is up to the application.
+
 ### Applying a Policy to Text
 
 A policy is applied by passing it to Phileas' filter service along with the text to filter. Using the
