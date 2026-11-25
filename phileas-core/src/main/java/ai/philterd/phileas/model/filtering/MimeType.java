@@ -48,7 +48,17 @@ public enum MimeType {
     /**
      * application/vnd.openxmlformats-officedocument.spreadsheetml.sheet (.xlsx)
      */
-    APPLICATION_XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    APPLICATION_XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+
+    /**
+     * message/rfc822 (.eml)
+     */
+    MESSAGE_RFC822("message/rfc822"),
+
+    /**
+     * application/vnd.ms-outlook (.msg), redacted to message/rfc822
+     */
+    APPLICATION_VND_MS_OUTLOOK("application/vnd.ms-outlook");
 
     private String value;
 

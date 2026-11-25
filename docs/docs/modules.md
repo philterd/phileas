@@ -8,13 +8,14 @@ Phileas is published as several Maven artifacts under the `ai.philterd` group. A
 | `phileas-core` | Text redaction only. | The redaction engine, with no PDFBox. |
 | `phileas-pdf` | PDF redaction. | `phileas-core` and PDFBox. |
 | `phileas-ooxml` | [Word and Excel redaction](word_and_excel.md). | `phileas-core` and the Apache POI package layer. |
+| `phileas-email` | [Email redaction](email.md) (`.eml` and Outlook `.msg`). | `phileas-pdf`, `phileas-ooxml`, Jakarta Mail (Eclipse Angus), and Apache POI's HSMF. |
 | `phileas-pheye-onnx` | [Local PhEye inference](local_inference/index.md), added alongside `phileas` or `phileas-core`. | ONNX Runtime and the DJL tokenizers. |
 
-`phileas` does not include `phileas-ooxml`, which adds Apache POI, so an application that redacts Word and Excel documents depends on it as well, with the same version. `phileas` also does not include `phileas-pheye-onnx`, so the ONNX Runtime and tokenizer native libraries reach an application only if it asks for them. `phileas-pheye-onnx` declares `phileas-core` with `provided` scope, so the application must depend on `phileas` or `phileas-core` itself. Use the same version for all of them.
+`phileas` does not include `phileas-ooxml`, which adds Apache POI, so an application that redacts Word and Excel documents depends on it as well, with the same version. The same holds for `phileas-email`. `phileas` also does not include `phileas-pheye-onnx`, so the ONNX Runtime and tokenizer native libraries reach an application only if it asks for them. `phileas-pheye-onnx` declares `phileas-core` with `provided` scope, so the application must depend on `phileas` or `phileas-core` itself. Use the same version for all of them.
 
 `phileas-parent` is the parent POM of the others. Applications do not depend on it.
 
-`PdfFilterService` is in `phileas-pdf`, and `OoxmlFilterService` in `phileas-ooxml`, in the package `ai.philterd.phileas.services.filters.filtering`, which `phileas-core` also uses. This has no effect on the classpath, but these jars cannot be used together on the Java module path.
+`PdfFilterService` is in `phileas-pdf`, `OoxmlFilterService` in `phileas-ooxml`, and `EmailFilterService` in `phileas-email`, in the package `ai.philterd.phileas.services.filters.filtering`, which `phileas-core` also uses. This has no effect on the classpath, but these jars cannot be used together on the Java module path.
 
 ## Moving from phileas-pheye-onnx 1.x
 

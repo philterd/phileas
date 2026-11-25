@@ -26,6 +26,7 @@ nav:
     - 'Known Limitations': 'filter_policies/limitations.md'
   - 'PDF Redaction': filter_policies/pdf.md
   - 'Word and Excel Redaction': word_and_excel.md
+  - 'Email Redaction': email.md
   - 'Other Features':
     - 'Anonymization': 'other_features/anonymization.md'
     - 'Span Disambiguation': 'other_features/span_disambiguation.md'
