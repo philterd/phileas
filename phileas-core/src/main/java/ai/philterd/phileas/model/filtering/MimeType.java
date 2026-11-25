@@ -36,6 +36,11 @@ public enum MimeType {
     TEXT_CSV("text/csv"),
 
     /**
+     * application/rtf (.rtf)
+     */
+    APPLICATION_RTF("application/rtf"),
+
+    /**
      * application/pdf
      */
     APPLICATION_PDF("application/pdf"),

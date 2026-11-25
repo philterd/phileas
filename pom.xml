@@ -41,6 +41,7 @@
         <module>phileas-core</module>
         <module>phileas-pdf</module>
         <module>phileas-ooxml</module>
+        <module>phileas-rtf</module>
         <module>phileas-email</module>
         <module>phileas-pheye-onnx</module>
         <module>phileas</module>
@@ -369,6 +370,11 @@
             <dependency>
                 <groupId>ai.philterd</groupId>
                 <artifactId>phileas-ooxml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ai.philterd</groupId>
+                <artifactId>phileas-rtf</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

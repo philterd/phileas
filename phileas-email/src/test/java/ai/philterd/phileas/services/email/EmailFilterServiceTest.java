@@ -27,6 +27,7 @@ import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.filters.filtering.EmailFilterService;
 import ai.philterd.phileas.services.filters.filtering.FilterOptions;
+import ai.philterd.phileas.services.rtf.RtfFormatException;
 import com.google.gson.Gson;
 import jakarta.mail.Message;
 import jakarta.mail.Multipart;
@@ -508,6 +509,13 @@ public class EmailFilterServiceTest {
         Assertions.assertFalse(all.contains("fonttbl"), all);
         Assertions.assertTrue(output.getSubject().contains("{{{REDACTED-ssn}}}"));
 
+    }
+
+    @Test
+    public void refusesAnOutlookMessageWhoseRtfOnlyBodyIsMalformed() throws Exception {
+        final byte[] msg = EmailFixtures.msg("Case", "Pat Sender", EMAIL, RECIPIENTS, null, "{\\rtf1 unclosed", true);
+        Assertions.assertThrows(RtfFormatException.class,
+                () -> service().filter(policy(null), "context", msg, MimeType.MESSAGE_RFC822));
     }
 
     @Test

@@ -52,7 +52,7 @@ Other headers are kept as they are unless the policy's `config.email` removes th
 
 ### Outlook messages
 
-From an Outlook message, the subject, sender, recipients (To, Cc, and Bcc), sent date, bodies, and attachments are carried over, and an attached Outlook message becomes a nested message. A message whose only body is RTF has that body read as plain text, so it is redacted rather than dropped. An Outlook message's stored transport headers (`Received` and the like) are not carried over.
+From an Outlook message, the subject, sender, recipients (To, Cc, and Bcc), sent date, bodies, and attachments are carried over, and an attached Outlook message becomes a nested message. A message whose only body is RTF has its visible text read with [`RtfTextExtractor`](rtf.md#reading-text), so it is redacted, as plain text, rather than dropped; an RTF body that is malformed is refused with an `RtfFormatException`. An Outlook message's stored transport headers (`Received` and the like) are not carried over.
 
 ### Signed and encrypted messages
 
