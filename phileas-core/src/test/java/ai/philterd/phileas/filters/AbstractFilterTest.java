@@ -42,6 +42,7 @@ import ai.philterd.phileas.policy.filters.Npi;
 import ai.philterd.phileas.policy.filters.DeaNumber;
 import ai.philterd.phileas.policy.filters.Mbi;
 import ai.philterd.phileas.policy.filters.HealthPlanMemberId;
+import ai.philterd.phileas.policy.filters.MedicalRecordNumber;
 import ai.philterd.phileas.policy.filters.DeviceIdentifier;
 import ai.philterd.phileas.policy.filters.MacAddress;
 import ai.philterd.phileas.policy.filters.PassportNumber;
@@ -84,6 +85,7 @@ import ai.philterd.phileas.services.strategies.rules.NpiFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.DeaNumberFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.MbiFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.HealthPlanMemberIdFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.MedicalRecordNumberFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.DeviceIdentifierFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.MacAddressFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.PassportNumberFilterStrategy;
@@ -197,6 +199,9 @@ public abstract class AbstractFilterTest {
         HealthPlanMemberId healthPlanMemberId = new HealthPlanMemberId();
         healthPlanMemberId.setHealthPlanMemberIdFilterStrategies(List.of(new HealthPlanMemberIdFilterStrategy()));
 
+        MedicalRecordNumber medicalRecordNumber = new MedicalRecordNumber();
+        medicalRecordNumber.setMedicalRecordNumberFilterStrategies(List.of(new MedicalRecordNumberFilterStrategy()));
+
         DeviceIdentifier deviceIdentifier = new DeviceIdentifier();
         deviceIdentifier.setDeviceIdentifierFilterStrategies(List.of(new DeviceIdentifierFilterStrategy()));
 
@@ -276,6 +281,7 @@ public abstract class AbstractFilterTest {
         identifiers.setDeaNumber(deaNumber);
         identifiers.setMbi(mbi);
         identifiers.setHealthPlanMemberId(healthPlanMemberId);
+        identifiers.setMedicalRecordNumber(medicalRecordNumber);
         identifiers.setDeviceIdentifier(deviceIdentifier);
         identifiers.setCanadaSin(canadaSin);
         identifiers.setSsn(ssn);

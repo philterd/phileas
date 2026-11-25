@@ -34,6 +34,9 @@ public final class LeftoverFinding {
     private final int lineNumber;
     private final int paragraphNumber;
 
+    // For an email, the attachment the finding is in; otherwise null.
+    private final String attachment;
+
     // In-process only, and only when asked for.
     private final transient String matchedText;
 
@@ -46,12 +49,34 @@ public final class LeftoverFinding {
      * @param confidence The confidence of the detection.
      * @param pageNumber For a PDF, the page, counting from 0; otherwise 0.
      * @param lineNumber For a PDF, the line, counting from 1; otherwise 0.
-     * @param paragraphNumber For a Word or Excel document, the paragraph or cell, or -1 for other content; otherwise 0.
+     * @param paragraphNumber For a Word or Excel document, the paragraph or cell, or -1 for other content; for an
+     *                        email, the field; otherwise 0.
      * @param matchedText The matched text, or {@code null} when it was not asked for.
      */
     public LeftoverFinding(final FilterType filterType, final String classification, final int characterStart,
                            final int characterEnd, final double confidence, final int pageNumber,
                            final int lineNumber, final int paragraphNumber, final String matchedText) {
+        this(filterType, classification, characterStart, characterEnd, confidence, pageNumber, lineNumber,
+                paragraphNumber, null, matchedText);
+    }
+
+    /**
+     * Creates a finding in an email attachment.
+     * @param filterType The type of the detection.
+     * @param classification The classification of the detection, such as a custom identifier's.
+     * @param characterStart The start of the finding.
+     * @param characterEnd The end of the finding.
+     * @param confidence The confidence of the detection.
+     * @param pageNumber For a PDF, the page, counting from 0; otherwise 0.
+     * @param lineNumber For a PDF, the line, counting from 1; otherwise 0.
+     * @param paragraphNumber For a Word or Excel document, the paragraph or cell; for an email, the field.
+     * @param attachment The filename of the email attachment the finding is in, or {@code null}.
+     * @param matchedText The matched text, or {@code null} when it was not asked for.
+     */
+    public LeftoverFinding(final FilterType filterType, final String classification, final int characterStart,
+                           final int characterEnd, final double confidence, final int pageNumber,
+                           final int lineNumber, final int paragraphNumber, final String attachment,
+                           final String matchedText) {
         this.filterType = filterType;
         this.classification = classification;
         this.characterStart = characterStart;
@@ -60,6 +85,7 @@ public final class LeftoverFinding {
         this.pageNumber = pageNumber;
         this.lineNumber = lineNumber;
         this.paragraphNumber = paragraphNumber;
+        this.attachment = attachment;
         this.matchedText = matchedText;
     }
 
@@ -98,6 +124,25 @@ public final class LeftoverFinding {
 
     public int getParagraphNumber() {
         return paragraphNumber;
+    }
+
+    /**
+     * For a finding in an email attachment, the attachment's filename. The finding's position is then in the
+     * attachment, as for a document of its type.
+     * @return The attachment's filename, or {@code null} when the finding is not in an attachment.
+     */
+    public String getAttachment() {
+        return attachment;
+    }
+
+    /**
+     * This finding, placed in an email attachment.
+     * @param attachment The attachment's filename.
+     * @return A copy of this finding with the attachment set.
+     */
+    public LeftoverFinding inAttachment(final String attachment) {
+        return new LeftoverFinding(filterType, classification, characterStart, characterEnd, confidence, pageNumber,
+                lineNumber, paragraphNumber, attachment, matchedText);
     }
 
     /**

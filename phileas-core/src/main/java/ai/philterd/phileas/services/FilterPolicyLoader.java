@@ -56,6 +56,7 @@ import ai.philterd.phileas.services.filters.regex.ItinFilter;
 import ai.philterd.phileas.services.filters.regex.DeaNumberFilter;
 import ai.philterd.phileas.services.filters.regex.DeviceIdentifierFilter;
 import ai.philterd.phileas.services.filters.regex.HealthPlanMemberIdFilter;
+import ai.philterd.phileas.services.filters.regex.MedicalRecordNumberFilter;
 import ai.philterd.phileas.services.filters.regex.MbiFilter;
 import ai.philterd.phileas.services.filters.regex.NpiFilter;
 import ai.philterd.phileas.services.filters.regex.MacAddressFilter;
@@ -472,6 +473,18 @@ public class FilterPolicyLoader {
                     policy.getIdentifiers().getHealthPlanMemberId().getPatterns(),
                     policy.getIdentifiers().getHealthPlanMemberId().getCueWords(),
                     policy.getIdentifiers().getHealthPlanMemberId().isDefaultCueWords());
+            enabledFilters.add(filter);
+
+        }
+
+        if(policy.getIdentifiers().hasFilter(FilterType.MEDICAL_RECORD_NUMBER) && policy.getIdentifiers().getMedicalRecordNumber().isEnabled()) {
+
+            final FilterConfiguration filterConfiguration = configuration(policy, policy.getIdentifiers().getMedicalRecordNumber(), policy.getIdentifiers().getMedicalRecordNumber().getMedicalRecordNumberFilterStrategies(), replacementGenerators);
+
+            final Filter filter = new MedicalRecordNumberFilter(filterConfiguration,
+                    policy.getIdentifiers().getMedicalRecordNumber().getPatterns(),
+                    policy.getIdentifiers().getMedicalRecordNumber().getCueWords(),
+                    policy.getIdentifiers().getMedicalRecordNumber().isDefaultCueWords());
             enabledFilters.add(filter);
 
         }

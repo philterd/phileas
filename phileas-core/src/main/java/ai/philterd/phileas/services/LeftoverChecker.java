@@ -85,6 +85,7 @@ public final class LeftoverChecker {
         BUILT_IN_FILTERS.put("itin", "itinFilterStrategies");
         BUILT_IN_FILTERS.put("macAddress", "macAddressFilterStrategies");
         BUILT_IN_FILTERS.put("mbi", "mbiFilterStrategies");
+        BUILT_IN_FILTERS.put("medicalRecordNumber", "medicalRecordNumberFilterStrategies");
         BUILT_IN_FILTERS.put("npi", "npiFilterStrategies");
         BUILT_IN_FILTERS.put("passportNumber", "passportNumberFilterStrategies");
         BUILT_IN_FILTERS.put("phoneNumber", "phoneNumberFilterStrategies");

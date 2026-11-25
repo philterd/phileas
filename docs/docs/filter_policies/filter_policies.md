@@ -269,7 +269,9 @@ The check runs on the whole output after any split pieces are put back together,
 between pieces is found. In a Word or Excel document it scans the same text the redaction does. In a PDF it scans the
 text of the output: a page with a redaction is flattened to an image and has no text to read, so only pages kept as
 they were (`preserveUnredactedPages`) are checked. An output with no readable text, such as a PDF with every page
-flattened or a PDF redacted to images, is reported as not performed rather than as zero findings.
+flattened or a PDF redacted to images, is reported as not performed rather than as zero findings. In an email message
+it scans the redacted fields and takes the check of each redacted attachment; see
+[Email Redaction](../email.md#leftover-check).
 
 A `leftoverCheck` that is not an object, has a key other than `mode` and `using`, or has a value outside the lists
 above is refused when the policy is loaded. Values are case-sensitive. In PhiSQL:
@@ -285,8 +287,8 @@ final FilterOptions options = FilterOptions.defaults().withLeftoverCheck(true);
 final TextFilterResult result = filterService.filter(policy, contextService, vectorService, "context", input, options);
 ```
 
-`PlainTextFilterService`, its `PreparedPolicy`, `PdfFilterService` (including with page policies), and
-`OoxmlFilterService` accept `FilterOptions`.
+`PlainTextFilterService`, its `PreparedPolicy`, `PdfFilterService` (including with page policies),
+`OoxmlFilterService`, and `EmailFilterService` accept `FilterOptions`.
 
 The outcome is reported by `getLeftoverCheck()` on the `TextFilterResult` or `BinaryDocumentFilterResult`, and as
 `leftoverCheck` when the result is serialized to JSON (absent when the check was not called for):
@@ -297,7 +299,11 @@ The outcome is reported by `getLeftoverCheck()` on the `TextFilterResult` or `Bi
 * `getFindings()` (`findings`): each finding's `filterType`, `classification`, `characterStart` and `characterEnd`,
   and `confidence`. For a PDF, `pageNumber` (from 0) and `lineNumber`, with offsets into the output's text with its
   lines joined. For a Word or Excel document, `paragraphNumber` (the paragraph or cell, or -1 for other content such
-  as drawings and comments), with offsets into it. For text, offsets into the filtered text.
+  as drawings and comments), with offsets into it. For an email message, `paragraphNumber` (the field), with offsets
+  into it, and for a finding in a redacted attachment, `attachment` (its filename). For text, offsets into the
+  filtered text.
+* `getUncheckedAttachments()` (`uncheckedAttachments`): for an email message, the redacted attachments whose output
+  had no readable text. Absent when there are none.
 
 Findings do not carry the matched text. An application that shows findings to the user it redacted for can ask for
 it with `FilterOptions.defaults().withLeftoverCheckMatchedText(true)`, and read it from `getMatchedText()`. It is held
@@ -307,6 +313,11 @@ The check is a second detection pass, so it roughly doubles detection cost, and 
 policies do. Like the redaction itself, it is probabilistic: a finding is worth reviewing, and no finding does not
 mean the output is free of sensitive information. What to do with a result, such as queuing the request for a
 reviewer, is up to the application.
+
+### Email
+
+The policy's `config.email` decides how an email message is redacted beyond its text: which headers are removed
+outright, and what happens to attachments and inline images. See [Email Redaction](../email.md).
 
 ### Applying a Policy to Text
 

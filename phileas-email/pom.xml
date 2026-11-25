@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ai.philterd</groupId>
+        <artifactId>phileas-parent</artifactId>
+        <version>4.6.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>phileas-email</artifactId>
+    <name>phileas-email</name>
+    <description>Email (.eml, and Outlook .msg written out as .eml) redaction for Phileas.</description>
+    <dependencies>
+        <dependency>
+            <groupId>ai.philterd</groupId>
+            <artifactId>phileas-core</artifactId>
+        </dependency>
+        <dependency>
+            <!-- PDF attachments are redacted through the PDF filter service. -->
+            <groupId>ai.philterd</groupId>
+            <artifactId>phileas-pdf</artifactId>
+        </dependency>
+        <dependency>
+            <!-- Word and Excel attachments are redacted through the Word and Excel filter service. -->
+            <groupId>ai.philterd</groupId>
+            <artifactId>phileas-ooxml</artifactId>
+        </dependency>
+        <dependency>
+            <!-- MIME parsing and writing. -->
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>2.0.5</version>
+        </dependency>
+        <dependency>
+            <!-- Reads Outlook .msg files (HSMF). Formula evaluation and legacy Office support are not needed. -->
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>${poi.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-math3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.zaxxer</groupId>
+                    <artifactId>SparseBitSet</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

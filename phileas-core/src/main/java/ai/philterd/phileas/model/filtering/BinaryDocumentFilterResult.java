@@ -25,6 +25,9 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
 
     private transient final byte[] document;
 
+    // Null unless the document is an email message.
+    private final EmailReport email;
+
     public BinaryDocumentFilterResult(byte[] document, String context, Explanation explanation, long tokens, List<IncrementalRedaction> incrementalRedactions) {
         this(document, context, explanation, tokens, incrementalRedactions, false);
     }
@@ -37,9 +40,16 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
     public BinaryDocumentFilterResult(byte[] document, String context, Explanation explanation, long tokens,
                                       List<IncrementalRedaction> incrementalRedactions, boolean reviewSampled,
                                       LeftoverCheckResult leftoverCheck) {
+        this(document, context, explanation, tokens, incrementalRedactions, reviewSampled, leftoverCheck, null);
+    }
+
+    public BinaryDocumentFilterResult(byte[] document, String context, Explanation explanation, long tokens,
+                                      List<IncrementalRedaction> incrementalRedactions, boolean reviewSampled,
+                                      LeftoverCheckResult leftoverCheck, EmailReport email) {
         super(context, explanation, tokens, incrementalRedactions, reviewSampled, leftoverCheck);
 
         this.document = document;
+        this.email = email;
 
     }
 
@@ -53,6 +63,7 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
                 append(tokens).
                 append(reviewSampled).
                 append(leftoverCheck).
+                append(email).
                 toHashCode();
 
     }
@@ -74,6 +85,14 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
 
     public byte[] getDocument() {
         return document;
+    }
+
+    /**
+     * For an email message, what was left uninspected or taken out beyond the policy's text redaction.
+     * @return The {@link EmailReport}, or {@code null} when the document is not an email message.
+     */
+    public EmailReport getEmail() {
+        return email;
     }
 
 }

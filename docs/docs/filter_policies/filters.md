@@ -50,6 +50,7 @@ Phileas uses several methods to identify person's names.
 | [Email Addresses](filters/common_filters/email-addresses.md)                  | Identifies email addresses                                                      |
 | [Employer Identification Numbers (EIN)](filters/common_filters/ein.md)        | Identifies US Employer Identification Numbers such as `12-3456789`              |
 | [Health Plan Member IDs](filters/common_filters/health-plan-member-ids.md)       | Identifies health plan member IDs after a cue word such as `Member ID`          |
+| [Medical Record Numbers](filters/common_filters/medical-record-numbers.md)       | Identifies medical record numbers after a cue word such as `MRN`                |
 | [Hospitals](filters/locations/hospitals.md)                                   | Identifies common hospital names                                                |
 | [IBAN Codes](filters/common_filters/iban-codes.md)                            | Identifies international bank account numbers                                   |
 | [IP Addresses](filters/common_filters/ip-addresses.md)                        | Identifies IPv4 and IPv6 addresses                                              |
@@ -88,7 +89,7 @@ dictionary's `fuzzy` to `true`, and its `sensitivity` to control how close a wor
 | Type                                                        | Description                                                                                                                                                |
 |-------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [Custom Dictionaries](filters/custom_filters/dictionary.md) | Identifies sensitive information based on dictionary values.                                                                                               |
-| [Custom Identifiers](filters/custom_filters/identifier.md)  | Identifies custom alphanumeric identifiers that may be used for medical record numbers, patient identifiers, account number, or other specific identifier. |
+| [Custom Identifiers](filters/custom_filters/identifier.md)  | Identifies custom alphanumeric identifiers that may be used for patient identifiers, account numbers, or other specific identifiers. |
 
 ## Filter Properties
 

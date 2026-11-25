@@ -40,18 +40,24 @@ public final class LeftoverCheckResult {
 
     }
 
-    private static final LeftoverCheckResult NOT_REQUESTED = new LeftoverCheckResult(false, Reason.NOT_REQUESTED, List.of());
+    private static final LeftoverCheckResult NOT_REQUESTED = new LeftoverCheckResult(false, Reason.NOT_REQUESTED, List.of(), null);
 
     private final boolean performed;
     private final Reason reason;
     private final int findingCount;
     private final List<LeftoverFinding> findings;
 
-    private LeftoverCheckResult(final boolean performed, final Reason reason, final List<LeftoverFinding> findings) {
+    // For an email, the redacted attachments whose own output could not be read; null otherwise.
+    private final List<String> uncheckedAttachments;
+
+    private LeftoverCheckResult(final boolean performed, final Reason reason, final List<LeftoverFinding> findings,
+                                final List<String> uncheckedAttachments) {
         this.performed = performed;
         this.reason = reason;
         this.findings = Collections.unmodifiableList(findings);
         this.findingCount = findings.size();
+        this.uncheckedAttachments = uncheckedAttachments == null || uncheckedAttachments.isEmpty()
+                ? null : List.copyOf(uncheckedAttachments);
     }
 
     /**
@@ -60,7 +66,17 @@ public final class LeftoverCheckResult {
      * @return The {@link LeftoverCheckResult}.
      */
     public static LeftoverCheckResult performed(final List<LeftoverFinding> findings) {
-        return new LeftoverCheckResult(true, null, List.copyOf(findings));
+        return new LeftoverCheckResult(true, null, List.copyOf(findings), null);
+    }
+
+    /**
+     * A check of an email message that ran, where some redacted attachments could not be checked.
+     * @param findings What it found.
+     * @param uncheckedAttachments The filenames of redacted attachments whose output has no readable text.
+     * @return The {@link LeftoverCheckResult}.
+     */
+    public static LeftoverCheckResult performed(final List<LeftoverFinding> findings, final List<String> uncheckedAttachments) {
+        return new LeftoverCheckResult(true, null, List.copyOf(findings), uncheckedAttachments);
     }
 
     /**
@@ -69,7 +85,7 @@ public final class LeftoverCheckResult {
      * @return The {@link LeftoverCheckResult}.
      */
     public static LeftoverCheckResult notPerformed(final Reason reason) {
-        return reason == Reason.NOT_REQUESTED ? NOT_REQUESTED : new LeftoverCheckResult(false, reason, List.of());
+        return reason == Reason.NOT_REQUESTED ? NOT_REQUESTED : new LeftoverCheckResult(false, reason, List.of(), null);
     }
 
     /**
@@ -95,6 +111,15 @@ public final class LeftoverCheckResult {
 
     public List<LeftoverFinding> getFindings() {
         return findings;
+    }
+
+    /**
+     * For an email message, the redacted attachments the check could not read, such as a PDF whose pages were all
+     * flattened to images. Nothing in them was checked.
+     * @return The attachments' filenames; empty when every redacted attachment was checked.
+     */
+    public List<String> getUncheckedAttachments() {
+        return uncheckedAttachments == null ? List.of() : uncheckedAttachments;
     }
 
     @Override

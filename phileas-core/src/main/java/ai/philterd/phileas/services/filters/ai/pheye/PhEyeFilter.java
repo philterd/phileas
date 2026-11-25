@@ -279,6 +279,9 @@ public class PhEyeFilter extends NerFilter {
             final Span span = Span.make(start, end, filterType, context, confidence, text,
                     replacement.getReplacement(), replacement.getSalt(), ignored, replacement.isApplied(), window, priority);
 
+            // The span's classification is the model's label, as the model returned it, so a caller can tell
+            // what the model found even when the label has no filter type of its own.
+            span.setClassification(classification);
             span.setColor(replacement.getColor());
             span.setReplacer(t -> getReplacement(contextService, policy, context, t, window, confidence, classification, null));
 

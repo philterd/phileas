@@ -16,10 +16,12 @@
 package ai.philterd.phileas.policy;
 
 import ai.philterd.phileas.policy.config.Analysis;
+import ai.philterd.phileas.policy.config.Email;
 import ai.philterd.phileas.policy.config.Pdf;
 import ai.philterd.phileas.policy.config.Review;
 import ai.philterd.phileas.policy.config.Splitting;
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 public class Config {
@@ -43,6 +45,11 @@ public class Config {
     @SerializedName("review")
     @Expose
     private Review review = new Review();
+
+    @SerializedName("email")
+    @Expose
+    @JsonAdapter(Email.Adapter.class)
+    private Email email = new Email();
 
     public Splitting getSplitting() {
         return splitting;
@@ -82,6 +89,18 @@ public class Config {
 
     public void setReview(Review review) {
         this.review = review;
+    }
+
+    /**
+     * How an email message is redacted beyond its text.
+     * @return The {@link Email} settings, with the defaults when the policy has none.
+     */
+    public Email getEmail() {
+        return email == null ? new Email() : email;
+    }
+
+    public void setEmail(Email email) {
+        this.email = email;
     }
 
 }

@@ -40,6 +40,7 @@ import ai.philterd.phileas.policy.filters.Npi;
 import ai.philterd.phileas.policy.filters.DeaNumber;
 import ai.philterd.phileas.policy.filters.Mbi;
 import ai.philterd.phileas.policy.filters.HealthPlanMemberId;
+import ai.philterd.phileas.policy.filters.MedicalRecordNumber;
 import ai.philterd.phileas.policy.filters.DeviceIdentifier;
 import ai.philterd.phileas.policy.filters.MacAddress;
 import ai.philterd.phileas.policy.filters.PassportNumber;
@@ -140,6 +141,10 @@ public class Identifiers {
     @SerializedName("deviceIdentifier")
     @Expose
     private DeviceIdentifier deviceIdentifier;
+
+    @SerializedName("medicalRecordNumber")
+    @Expose
+    private MedicalRecordNumber medicalRecordNumber;
 
     @SerializedName("emailAddress")
     @Expose
@@ -252,7 +257,7 @@ public class Identifiers {
                         macAddress, passportNumber, person, phoneNumber,
                         phoneNumberExtension, ssn, state, stateAbbreviation, streetAddress, surname,
                         trackingNumber, url, vin, zipCode, npi, deaNumber, mbi, healthPlanMemberId,
-                        deviceIdentifier)
+                        deviceIdentifier, medicalRecordNumber)
                 .filter(Objects::nonNull)
                 .forEach(filters::add);
 
@@ -312,6 +317,8 @@ public class Identifiers {
                 if(this.getMbi() != null) { return true; } break;
             case HEALTH_PLAN_MEMBER_ID:
                 if(this.getHealthPlanMemberId() != null) { return true; } break;
+            case MEDICAL_RECORD_NUMBER:
+                if(this.getMedicalRecordNumber() != null) { return true; } break;
             case DEVICE_IDENTIFIER:
                 if(this.getDeviceIdentifier() != null) { return true; } break;
             case EMAIL_ADDRESS:
@@ -447,6 +454,14 @@ public class Identifiers {
 
     public void setHealthPlanMemberId(HealthPlanMemberId healthPlanMemberId) {
         this.healthPlanMemberId = healthPlanMemberId;
+    }
+
+    public MedicalRecordNumber getMedicalRecordNumber() {
+        return medicalRecordNumber;
+    }
+
+    public void setMedicalRecordNumber(MedicalRecordNumber medicalRecordNumber) {
+        this.medicalRecordNumber = medicalRecordNumber;
     }
 
     public DeviceIdentifier getDeviceIdentifier() {
