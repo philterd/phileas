@@ -430,6 +430,25 @@ public class CsvFilterServiceTest {
                 && Integer.valueOf(2).equals(f.getColumn())), findings.toString());
     }
 
+    @Test
+    public void theLeftoverCheckDoesNotReportRandomStandIns() throws Exception {
+        // Random stand-ins look like real values. The quoted field holds a delimiter, a line break, and text around
+        // the stand-in, so its replacement must be found by the field it is in.
+        final String policy = "{\"identifiers\":{\"emailAddress\":{\"emailAddressFilterStrategies\":[{\"strategy\":\"RANDOM_REPLACE\"}]}},"
+                + "\"config\":{\"review\":{\"leftoverCheck\":{\"mode\":\"always\",\"using\":\"broad\"}}}}";
+        final String csv = "Name,Note\nJane,\"Write to " + EMAIL + ",\nor call 212-555-0187\"\n";
+
+        final BinaryDocumentFilterResult result = service(CsvRedactionOptions.defaults()).filter(
+                new Gson().fromJson(policy, Policy.class), "ctx", csv.getBytes(StandardCharsets.UTF_8), MimeType.TEXT_CSV,
+                FilterOptions.defaults().withLeftoverCheckMatchedText(true));
+
+        Assertions.assertFalse(new String(result.getDocument(), StandardCharsets.UTF_8).contains(EMAIL));
+        final List<LeftoverFinding> findings = result.getLeftoverCheck().getFindings();
+        Assertions.assertTrue(findings.stream().noneMatch(f -> f.getFilterType() == FilterType.EMAIL_ADDRESS), findings.toString());
+        Assertions.assertTrue(findings.stream().anyMatch(f -> "212-555-0187".equals(f.getMatchedText())
+                && Integer.valueOf(2).equals(f.getRow()) && Integer.valueOf(2).equals(f.getColumn())), findings.toString());
+    }
+
     // --- logging -------------------------------------------------------------------------------------
 
     private interface Action {

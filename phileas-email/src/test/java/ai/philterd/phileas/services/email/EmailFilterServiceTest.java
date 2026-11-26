@@ -607,6 +607,94 @@ public class EmailFilterServiceTest {
 
     }
 
+    // Email addresses and SSNs get random stand-ins, which look like real values.
+    private static Policy randomReplacePolicy(final String email) {
+        return new Gson().fromJson("{\"identifiers\":{"
+                + "\"emailAddress\":{\"emailAddressFilterStrategies\":[{\"strategy\":\"RANDOM_REPLACE\"}]},"
+                + "\"ssn\":{\"ssnFilterStrategies\":[{\"strategy\":\"RANDOM_REPLACE\"}]}},\"config\":{"
+                + (email == null ? "" : "\"email\":" + email + ",")
+                + "\"review\":{\"leftoverCheck\":{\"mode\":\"always\",\"using\":\"broad\"}}}}", Policy.class);
+    }
+
+    private static LeftoverCheckResult leftoverCheck(final Policy policy, final MimeMessage input) throws Exception {
+        return service().filter(policy, new DefaultContextService(), new InMemoryVectorService(), "context", bytes(input),
+                MimeType.MESSAGE_RFC822, FilterOptions.defaults().withLeftoverCheckMatchedText(true)).getLeftoverCheck();
+    }
+
+    @Test
+    public void leftoverCheckDoesNotReportReplacementsInFields() throws Exception {
+        final MimeMessage input = message("SSN " + SSN, text("Write to " + EMAIL + " about " + SSN + ".", "plain"));
+        final LeftoverCheckResult check = leftoverCheck(randomReplacePolicy(null), input);
+        Assertions.assertTrue(check.isPerformed());
+        // Broad still reports what the policy leaves, such as "Lee" in the To display name as a county.
+        Assertions.assertTrue(check.getFindings().stream().noneMatch(finding -> finding.getFilterType() == FilterType.EMAIL_ADDRESS
+                || finding.getFilterType() == FilterType.SSN), check.getFindings().toString());
+    }
+
+    @Test
+    public void leftoverCheckFindsAValueInHtmlByItsVisibleText() throws Exception {
+
+        // The phone number is split by a tag, so only the visible text has it whole.
+        final String html = "<p>Write to <a href=\"mailto:" + OTHER_EMAIL + "\">us</a> or call 212-<b>555</b>-0187.</p>";
+        final MimeMessage input = message("Hello", multipart("alternative", text("Plain.", "plain"), text(html, "html")));
+
+        final LeftoverCheckResult check = leftoverCheck(randomReplacePolicy(null), input);
+
+        final LeftoverFinding phone = check.getFindings().stream()
+                .filter(finding -> finding.getFilterType() == FilterType.PHONE_NUMBER).findFirst().orElseThrow();
+        // Fields: Subject, From, To, Cc, the plain body, then the HTML body. Offsets are into the markup.
+        Assertions.assertEquals(5, phone.getParagraphNumber());
+        Assertions.assertEquals("212-<b>555</b>-0187", phone.getMatchedText());
+
+        // The stand-in for the mailto: address is not reported.
+        Assertions.assertTrue(check.getFindings().stream().noneMatch(finding -> finding.getFilterType() == FilterType.EMAIL_ADDRESS),
+                check.getFindings().toString());
+
+    }
+
+    @Test
+    public void leftoverCheckCoversNestedMessagesAndWorkbookAttachments() throws Exception {
+
+        final MimeMessage forwarded = message("Inner", text("Inner call 212-555-0143, mail " + EMAIL + ".", "plain"));
+        final MimeMessage input = message("Outer", multipart("mixed", text("See below.", "plain"), nested(forwarded),
+                attachment("sheet.xlsx", MimeType.APPLICATION_XLSX.getValue(), EmailFixtures.xlsx("Call 212-555-0199"))));
+
+        final LeftoverCheckResult check = leftoverCheck(randomReplacePolicy("{\"attachments\":\"redact\"}"), input);
+        Assertions.assertTrue(check.isPerformed());
+        Assertions.assertTrue(check.getUncheckedAttachments().isEmpty(), check.getUncheckedAttachments().toString());
+
+        // The nested message's fields follow the outer message's: Subject, From, To, Cc, and body, then the
+        // nested Subject, From, To, Cc, and body.
+        final LeftoverFinding inner = check.getFindings().stream()
+                .filter(finding -> "212-555-0143".equals(finding.getMatchedText())).findFirst().orElseThrow();
+        Assertions.assertEquals(9, inner.getParagraphNumber());
+        Assertions.assertNull(inner.getAttachment());
+
+        final LeftoverFinding inSheet = check.getFindings().stream()
+                .filter(finding -> "212-555-0199".equals(finding.getMatchedText())).findFirst().orElseThrow();
+        Assertions.assertEquals("sheet.xlsx", inSheet.getAttachment());
+
+        Assertions.assertTrue(check.getFindings().stream().noneMatch(finding -> finding.getFilterType() == FilterType.EMAIL_ADDRESS),
+                check.getFindings().toString());
+
+    }
+
+    @Test
+    public void leftoverCheckSkipsAttachmentsKeptOrRemoved() throws Exception {
+
+        for (final String attachments : List.of("keep", "remove")) {
+            final MimeMessage input = message("Hello", multipart("mixed", text("Body.", "plain"),
+                    attachment("letter.docx", MimeType.APPLICATION_DOCX.getValue(), EmailFixtures.docx("Call 212-555-0143."))));
+
+            final LeftoverCheckResult check = leftoverCheck(randomReplacePolicy("{\"attachments\":\"" + attachments + "\"}"), input);
+            Assertions.assertTrue(check.isPerformed(), attachments);
+            Assertions.assertTrue(check.getUncheckedAttachments().isEmpty(), attachments);
+            Assertions.assertTrue(check.getFindings().stream().noneMatch(finding -> finding.getAttachment() != null),
+                    attachments + " " + check.getFindings());
+        }
+
+    }
+
     // --- Service contract --------------------------------------------------------------------------
 
     @Test
