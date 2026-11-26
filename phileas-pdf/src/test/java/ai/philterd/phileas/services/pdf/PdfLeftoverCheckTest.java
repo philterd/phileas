@@ -21,7 +21,9 @@ import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.filters.filtering.FilterOptions;
@@ -109,6 +111,27 @@ public class PdfLeftoverCheckTest {
         Assertions.assertFalse(json.get("performed").getAsBoolean(), json.toString());
         Assertions.assertEquals("unreadableOutput", json.get("reason").getAsString(), json.toString());
 
+    }
+
+    @Test
+    public void aCheckThatFailsIsReportedAsNotPerformed() throws Exception {
+        final PdfFilterService failing = new PdfFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null) {
+            @Override
+            protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text) {
+                throw new IllegalStateException("check failed");
+            }
+        };
+
+        final BinaryDocumentFilterResult result = failing.filter(policy(true, "broad"), new DefaultContextService(),
+                new InMemoryVectorService(), "context", document(), MimeType.APPLICATION_PDF,
+                FilterOptions.defaults().withLeftoverCheck(true));
+
+        // The redaction stands: the first page, which had the SSN, was flattened, so only the second has text.
+        Assertions.assertEquals(List.of(PAGES[1]), new PdfTextExtractor().getLines(result.getDocument()).stream()
+                .map(PdfLine::getText).map(String::strip).toList());
+        Assertions.assertFalse(result.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
     }
 
     @Test

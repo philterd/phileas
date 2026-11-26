@@ -198,7 +198,7 @@ public class EmailFilterService extends BinaryFilterService {
         final Explanation explanation = new Explanation(spans, spans);
 
         final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, options)
-                ? leftoverCheck(policy, result, attachments, options) : null;
+                ? runLeftoverCheck(() -> leftoverCheck(policy, result, attachments, options)) : null;
 
         return new BinaryDocumentFilterResult(result.document(), context, explanation, tokens[0], incrementalRedactions,
                 reviewSampled, leftoverCheck, result.report());

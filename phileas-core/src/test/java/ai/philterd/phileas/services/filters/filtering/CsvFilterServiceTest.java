@@ -18,10 +18,12 @@ package ai.philterd.phileas.services.filters.filtering;
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.csv.CsvLimitExceededException;
 import ai.philterd.phileas.services.csv.CsvRedactionOptions;
@@ -453,6 +455,26 @@ public class CsvFilterServiceTest {
         Assertions.assertTrue(findings.stream().noneMatch(f -> f.getFilterType() == FilterType.EMAIL_ADDRESS), findings.toString());
         Assertions.assertTrue(findings.stream().anyMatch(f -> "212-555-0187".equals(f.getMatchedText())
                 && Integer.valueOf(2).equals(f.getRow()) && Integer.valueOf(2).equals(f.getColumn())), findings.toString());
+    }
+
+    @Test
+    public void aLeftoverCheckThatFailsIsReportedAsNotPerformed() throws Exception {
+        final Policy policy = policy("\"config\":{\"review\":{\"leftoverCheck\":{\"mode\":\"always\",\"using\":\"broad\"}}}");
+        final byte[] input = ("Name,Email\nJane," + EMAIL + "\n").getBytes(StandardCharsets.UTF_8);
+        final CsvFilterService failing = new CsvFilterService(new PhileasConfiguration(new Properties()), new DefaultContextService(),
+                new InMemoryVectorService(), new SecureRandom(), null, CsvRedactionOptions.defaults()) {
+            @Override
+            protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text) {
+                throw new IllegalStateException("check failed");
+            }
+        };
+
+        final BinaryDocumentFilterResult result = failing.filter(policy, "ctx", input, MimeType.TEXT_CSV);
+
+        Assertions.assertArrayEquals(service(CsvRedactionOptions.defaults()).filter(policy, "ctx", input, MimeType.TEXT_CSV)
+                .getDocument(), result.getDocument());
+        Assertions.assertFalse(result.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
     }
 
     // --- logging -------------------------------------------------------------------------------------

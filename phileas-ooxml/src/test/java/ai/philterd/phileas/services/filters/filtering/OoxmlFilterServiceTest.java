@@ -23,6 +23,7 @@ import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.ooxml.OoxmlRedactionOptions;
@@ -331,6 +332,27 @@ public class OoxmlFilterServiceTest {
         Assertions.assertEquals(-1, target.getParagraphNumber());
         Assertions.assertEquals("mailto:" + EMAIL, target.getMatchedText());
 
+    }
+
+    @Test
+    public void aLeftoverCheckThatFailsIsReportedAsNotPerformed() throws Exception {
+        final byte[] input = OoxmlTestFixtures.docx("Email " + EMAIL + ", SSN 123-45-6789.");
+        final Policy policy = leftoverCheckPolicy("{\"emailAddress\":{}}", "broad");
+        final OoxmlFilterService failing = new OoxmlFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null) {
+            @Override
+            protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text) {
+                throw new IllegalStateException("check failed");
+            }
+        };
+
+        final BinaryDocumentFilterResult result = failing.filter(policy, new DefaultContextService(), new InMemoryVectorService(),
+                "ctx", input, MimeType.APPLICATION_DOCX, LEFTOVER_CHECK);
+
+        Assertions.assertEquals(OoxmlTestFixtures.entry(service().filter(policy, "ctx", input, MimeType.APPLICATION_DOCX).getDocument(),
+                "word/document.xml"), OoxmlTestFixtures.entry(result.getDocument(), "word/document.xml"));
+        Assertions.assertFalse(result.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
     }
 
     @Test

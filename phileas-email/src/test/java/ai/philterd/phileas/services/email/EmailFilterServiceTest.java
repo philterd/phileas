@@ -22,7 +22,9 @@ import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.filters.filtering.EmailFilterService;
@@ -757,6 +759,25 @@ public class EmailFilterServiceTest {
             Assertions.assertFalse(finding.has("row") || finding.has("column") || finding.has("matchedText"), finding.toString());
         }
 
+    }
+
+    @Test
+    public void aLeftoverCheckThatFailsIsReportedAsNotPerformed() throws Exception {
+        final EmailFilterService failing = new EmailFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null) {
+            @Override
+            protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text) {
+                throw new IllegalStateException("check failed");
+            }
+        };
+        final MimeMessage input = message("SSN " + SSN, text("Write to " + EMAIL + ".", "plain"));
+        final Policy policy = policy(null, "\"review\":{\"leftoverCheck\":{\"mode\":\"always\",\"using\":\"broad\"}}");
+
+        final BinaryDocumentFilterResult result = failing.filter(policy, "context", bytes(input), MimeType.MESSAGE_RFC822);
+
+        Assertions.assertEquals(allText(parse(filter(policy, bytes(input)).getDocument())), allText(parse(result.getDocument())));
+        Assertions.assertFalse(result.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
     }
 
     @Test

@@ -70,6 +70,10 @@ The policy's [`config.word`](word_and_excel.md#word) settings apply to RTF where
 
 `charts` and `highlight` have no RTF counterpart and are ignored. Whatever the settings, `\author`, `\operator`, `\company`, and `\manager` in `\info` are cleared, a kept comment's author becomes `Redacted` and its initials are cleared, and each author in a kept revision table becomes `Redacted`.
 
+## Leftover check
+
+The [leftover check](filter_policies/filter_policies.md#leftover-check) scans the redacted document's text as the redaction does, after the policy's Word settings, so headers and footers kept with `headersFooters: keep` are not checked. A finding's `paragraphNumber` and offsets are as for a [span](#spans).
+
 ## Reading text
 
 `RtfTextExtractor.extract` returns the visible text of an RTF document's body: its paragraphs, tables, footnotes, and endnotes, without headers and footers, comments, field instructions, hidden text, tracked deletions, or pictures and objects. For RTF that encapsulates HTML, as Outlook writes, the HTML-only parts are left out. [Email redaction](email.md) uses it to read an Outlook message whose only body is RTF.

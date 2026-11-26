@@ -21,7 +21,9 @@ import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.filters.filtering.FilterOptions;
@@ -132,6 +134,28 @@ public class RtfLeftoverCheckTest {
         final List<LeftoverFinding> redacted = filter(policy("broad", "{\"headersFooters\":\"redact\"}"), input, REQUESTED)
                 .getLeftoverCheck().getFindings();
         Assertions.assertTrue(redacted.stream().anyMatch(f -> SSN.equals(f.getMatchedText())), redacted.toString());
+    }
+
+    @Test
+    public void aCheckThatFailsIsReportedAsNotPerformed() throws Exception {
+        final RtfFilterService failing = new RtfFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null) {
+            @Override
+            protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text) {
+                throw new IllegalStateException("check failed");
+            }
+        };
+        // Redaction labels rather than random stand-ins, so the output can be compared byte for byte.
+        final Policy policy = new Gson().fromJson("{\"identifiers\":{\"emailAddress\":{}},\"config\":{\"review\":"
+                + "{\"leftoverCheck\":{\"mode\":\"always\",\"using\":\"broad\"}}}}", Policy.class);
+        final String input = doc("Email " + EMAIL + ", SSN " + SSN + ".\\par ");
+
+        final BinaryDocumentFilterResult result = failing.filter(policy, "ctx", bytes(input), MimeType.APPLICATION_RTF, REQUESTED);
+
+        Assertions.assertArrayEquals(SERVICE.filter(policy, "ctx", bytes(input), MimeType.APPLICATION_RTF).getDocument(),
+                result.getDocument());
+        Assertions.assertFalse(result.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
     }
 
     @Test

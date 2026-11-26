@@ -131,6 +131,6 @@ The policy's [leftover check](filter_policies/filter_policies.md#leftover-check)
 
 * A finding in a field has the field's number as `paragraphNumber` and offsets into the redacted field.
 * A finding in a redacted attachment has the attachment's filename as `attachment` (`getAttachment()`), with its position as for a document of its type.
-* A redacted attachment whose output has no readable text, such as a PDF whose pages were all flattened to images, is listed in `uncheckedAttachments` (`getUncheckedAttachments()`). Nothing in it was checked.
+* A redacted attachment whose output has no readable text, such as a PDF whose pages were all flattened to images, or whose check failed, is listed in `uncheckedAttachments` (`getUncheckedAttachments()`). Nothing in it was checked.
 
 Attachments and inline images that were kept are not checked; the email report lists them.

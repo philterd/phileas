@@ -19,6 +19,7 @@ import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.PolicySchema;
@@ -332,6 +333,48 @@ public class LeftoverCheckTest {
         Assertions.assertFalse(result.getFilteredText().contains("90210"), result.getFilteredText());
         Assertions.assertTrue(result.getLeftoverCheck().isPerformed());
         Assertions.assertEquals(0, result.getLeftoverCheck().getFindingCount(), result.getLeftoverCheck().getFindings().toString());
+    }
+
+    @Test
+    public void aCheckThatFailsIsReportedAsNotPerformedAndTheRedactionStands() throws Exception {
+        final Policy policy = policy("{\"emailAddress\":{}}", "{\"mode\":\"always\",\"using\":\"broad\"}");
+        final PlainTextFilterService failing = new PlainTextFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null) {
+            @Override
+            protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text) {
+                throw new IllegalStateException("check failed");
+            }
+        };
+
+        final TextFilterResult result = failing.filter(policy, "context", INPUT);
+
+        Assertions.assertEquals(service().filter(policy, "context", INPUT).getFilteredText(), result.getFilteredText());
+        Assertions.assertFalse(result.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
+        Assertions.assertEquals(0, result.getLeftoverCheck().getFindingCount());
+
+        final JsonObject json = new Gson().toJsonTree(result).getAsJsonObject().getAsJsonObject("leftoverCheck");
+        Assertions.assertFalse(json.get("performed").getAsBoolean(), json.toString());
+        Assertions.assertEquals("checkFailed", json.get("reason").getAsString(), json.toString());
+    }
+
+    @Test
+    public void anInterruptedCheckKeepsTheThreadsInterruptFlag() throws Exception {
+        final Policy policy = policy("{\"emailAddress\":{}}", "{\"mode\":\"always\",\"using\":\"broad\"}");
+        final PlainTextFilterService interrupted = new PlainTextFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null) {
+            @Override
+            protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text)
+                    throws InterruptedException {
+                throw new InterruptedException();
+            }
+        };
+
+        final TextFilterResult result = interrupted.filter(policy, "context", INPUT);
+
+        // Thread.interrupted() also clears the flag for the tests that follow.
+        Assertions.assertTrue(Thread.interrupted());
+        Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
     }
 
     @Test

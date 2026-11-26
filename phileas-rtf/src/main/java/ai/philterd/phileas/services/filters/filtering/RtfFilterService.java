@@ -140,7 +140,7 @@ public class RtfFilterService extends BinaryFilterService {
                 textFilter(policy, contextService, vectorService, context, incrementalRedactions, tokens), word);
 
         final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, filterOptions)
-                ? leftoverCheck(policy, word, result, filterOptions) : null;
+                ? runLeftoverCheck(() -> leftoverCheck(policy, word, result, filterOptions)) : null;
 
         return new BinaryDocumentFilterResult(result.document(), context, new Explanation(result.spans(), result.spans()),
                 tokens[0], incrementalRedactions, reviewSampled, leftoverCheck);
