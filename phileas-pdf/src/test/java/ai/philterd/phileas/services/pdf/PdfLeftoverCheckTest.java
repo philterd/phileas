@@ -27,6 +27,7 @@ import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.filters.filtering.FilterOptions;
 import ai.philterd.phileas.services.filters.filtering.PdfFilterService;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -103,6 +104,10 @@ public class PdfLeftoverCheckTest {
                 new InMemoryVectorService(), "context", document(), MimeType.IMAGE_JPEG, requested);
         Assertions.assertFalse(images.getLeftoverCheck().isPerformed());
         Assertions.assertEquals(LeftoverCheckResult.Reason.UNREADABLE_OUTPUT, images.getLeftoverCheck().getReason());
+
+        final JsonObject json = new Gson().toJsonTree(flattened).getAsJsonObject().getAsJsonObject("leftoverCheck");
+        Assertions.assertFalse(json.get("performed").getAsBoolean(), json.toString());
+        Assertions.assertEquals("unreadableOutput", json.get("reason").getAsString(), json.toString());
 
     }
 

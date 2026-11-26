@@ -29,6 +29,8 @@ import ai.philterd.phileas.services.filters.filtering.EmailFilterService;
 import ai.philterd.phileas.services.filters.filtering.FilterOptions;
 import ai.philterd.phileas.services.rtf.RtfFormatException;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import jakarta.mail.Message;
 import jakarta.mail.Multipart;
 import jakarta.mail.Part;
@@ -519,6 +521,40 @@ public class EmailFilterServiceTest {
     }
 
     @Test
+    public void leftoverCheckCoversAnOutlookMessageAndItsAttachments() throws Exception {
+
+        final String rtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0{\\fonttbl{\\f0 Arial;}}\\f0\\fs20 "
+                + "Call 212-555-0187 about SSN " + SSN + "\\par Reply to " + EMAIL + "\\par}";
+        final byte[] msg = EmailFixtures.msg(new EmailFixtures.MsgContent("Case " + SSN, "Pat Sender", EMAIL, RECIPIENTS,
+                null, rtf, true, List.of(new EmailFixtures.MsgAttachment("letter.docx", MimeType.APPLICATION_DOCX.getValue(),
+                        EmailFixtures.docx("Call 212-555-0143 today."), null))));
+
+        final BinaryDocumentFilterResult result = service().filter(randomReplacePolicy("{\"attachments\":\"redact\"}"),
+                new DefaultContextService(), new InMemoryVectorService(), "context", msg, MimeType.MESSAGE_RFC822,
+                FilterOptions.defaults().withLeftoverCheckMatchedText(true));
+
+        Assertions.assertFalse(allText(parse(result.getDocument())).contains(SSN));
+
+        final LeftoverCheckResult check = result.getLeftoverCheck();
+        Assertions.assertTrue(check.isPerformed());
+        Assertions.assertTrue(check.getUncheckedAttachments().isEmpty(), check.getUncheckedAttachments().toString());
+
+        // The RTF-only body is read as text and checked.
+        final LeftoverFinding inBody = check.getFindings().stream()
+                .filter(finding -> "212-555-0187".equals(finding.getMatchedText())).findFirst().orElseThrow();
+        Assertions.assertNull(inBody.getAttachment());
+
+        final LeftoverFinding inAttachment = check.getFindings().stream()
+                .filter(finding -> "212-555-0143".equals(finding.getMatchedText())).findFirst().orElseThrow();
+        Assertions.assertEquals("letter.docx", inAttachment.getAttachment());
+
+        // The random stand-ins are not reported.
+        Assertions.assertTrue(check.getFindings().stream().noneMatch(finding -> finding.getFilterType() == FilterType.EMAIL_ADDRESS
+                || finding.getFilterType() == FilterType.SSN), check.getFindings().toString());
+
+    }
+
+    @Test
     public void carriesOutlookBccRecipientsSoTheIdentitySettingDecides() throws Exception {
 
         for (final boolean withTypes : List.of(true, false)) {
@@ -676,6 +712,50 @@ public class EmailFilterServiceTest {
 
         Assertions.assertTrue(check.getFindings().stream().noneMatch(finding -> finding.getFilterType() == FilterType.EMAIL_ADDRESS),
                 check.getFindings().toString());
+
+    }
+
+    @Test
+    public void leftoverCheckOnRequestReachesAttachments() throws Exception {
+
+        final MimeMessage input = message("Hello", multipart("mixed", text("Body.", "plain"),
+                attachment("letter.docx", MimeType.APPLICATION_DOCX.getValue(), EmailFixtures.docx("Call 212-555-0143."))));
+        final Policy policy = policy("{\"attachments\":\"redact\"}",
+                "\"review\":{\"leftoverCheck\":{\"mode\":\"onRequest\",\"using\":\"broad\"}}");
+
+        final BinaryDocumentFilterResult unrequested = service().filter(policy, new DefaultContextService(),
+                new InMemoryVectorService(), "context", bytes(input), MimeType.MESSAGE_RFC822, FilterOptions.defaults());
+        Assertions.assertFalse(unrequested.getLeftoverCheck().isPerformed());
+
+        // The request reaches the attachment, so it is checked rather than listed as unchecked.
+        final LeftoverCheckResult check = service().filter(policy, new DefaultContextService(), new InMemoryVectorService(),
+                "context", bytes(input), MimeType.MESSAGE_RFC822, FilterOptions.defaults().withLeftoverCheck(true)).getLeftoverCheck();
+        Assertions.assertTrue(check.isPerformed());
+        Assertions.assertTrue(check.getUncheckedAttachments().isEmpty(), check.getUncheckedAttachments().toString());
+        Assertions.assertTrue(check.getFindings().stream().anyMatch(finding -> "letter.docx".equals(finding.getAttachment())
+                && finding.getFilterType() == FilterType.PHONE_NUMBER), check.getFindings().toString());
+
+    }
+
+    @Test
+    public void leftoverCheckSerializesAttachmentsAndUncheckedAttachments() throws Exception {
+
+        final MimeMessage input = message("Hello", multipart("mixed", text("Body.", "plain"),
+                attachment("letter.docx", MimeType.APPLICATION_DOCX.getValue(), EmailFixtures.docx("Call 212-555-0143.")),
+                attachment("scan.pdf", "application/pdf", EmailFixtures.pdf("SSN " + SSN))));
+        final Policy policy = policy("{\"attachments\":\"redact\"}",
+                "\"review\":{\"leftoverCheck\":{\"mode\":\"always\",\"using\":\"broad\"}}");
+
+        final JsonObject json = new Gson().toJsonTree(filter(policy, bytes(input))).getAsJsonObject().getAsJsonObject("leftoverCheck");
+
+        Assertions.assertEquals(List.of("scan.pdf"), json.getAsJsonArray("uncheckedAttachments").asList().stream()
+                .map(JsonElement::getAsString).toList());
+        final List<JsonObject> findings = json.getAsJsonArray("findings").asList().stream().map(JsonElement::getAsJsonObject).toList();
+        Assertions.assertTrue(findings.stream().anyMatch(finding -> finding.has("attachment")
+                && "letter.docx".equals(finding.get("attachment").getAsString())), findings.toString());
+        for (final JsonObject finding : findings) {
+            Assertions.assertFalse(finding.has("row") || finding.has("column") || finding.has("matchedText"), finding.toString());
+        }
 
     }
 

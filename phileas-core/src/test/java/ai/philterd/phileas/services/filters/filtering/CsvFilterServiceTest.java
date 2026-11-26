@@ -27,6 +27,7 @@ import ai.philterd.phileas.services.csv.CsvLimitExceededException;
 import ai.philterd.phileas.services.csv.CsvRedactionOptions;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
@@ -428,6 +429,11 @@ public class CsvFilterServiceTest {
         final List<LeftoverFinding> findings = result.getLeftoverCheck().getFindings();
         Assertions.assertTrue(findings.stream().anyMatch(f -> Integer.valueOf(2).equals(f.getRow())
                 && Integer.valueOf(2).equals(f.getColumn())), findings.toString());
+        final JsonObject finding = new Gson().toJsonTree(result).getAsJsonObject().getAsJsonObject("leftoverCheck")
+                .getAsJsonArray("findings").get(0).getAsJsonObject();
+        Assertions.assertEquals(2, finding.get("row").getAsInt(), finding.toString());
+        Assertions.assertEquals(2, finding.get("column").getAsInt(), finding.toString());
+        Assertions.assertFalse(finding.has("attachment"), finding.toString());
     }
 
     @Test

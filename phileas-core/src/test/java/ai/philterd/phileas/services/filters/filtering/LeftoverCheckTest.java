@@ -309,6 +309,32 @@ public class LeftoverCheckTest {
     }
 
     @Test
+    public void aTextFindingSerializesWithoutTheFieldsOfOtherFormats() throws Exception {
+        final TextFilterResult result = service().filter(policy("{\"emailAddress\":{}}",
+                "{\"mode\":\"always\",\"using\":\"broad\"}"), "context", INPUT);
+        final JsonObject leftoverCheck = new Gson().toJsonTree(result).getAsJsonObject().getAsJsonObject("leftoverCheck");
+        Assertions.assertFalse(leftoverCheck.has("reason"), leftoverCheck.toString());
+        Assertions.assertFalse(leftoverCheck.has("uncheckedAttachments"), leftoverCheck.toString());
+        final JsonObject finding = leftoverCheck.getAsJsonArray("findings").get(0).getAsJsonObject();
+        for (final String absent : new String[]{"row", "column", "attachment"}) {
+            Assertions.assertFalse(finding.has(absent), absent + " in " + finding);
+        }
+    }
+
+    @Test
+    public void aMatchTheFiltersOwnSettingsRejectIsNotReported() throws Exception {
+        // With validation, a zip code not in the zip code database is found but not applied, so the redaction
+        // leaves it and the check, which runs the filter as configured, does not report it.
+        final String input = "Ship to 99999 or 90210.";
+        final TextFilterResult result = service().filter(policy("{\"zipCode\":{\"validate\":true}}",
+                "{\"mode\":\"always\",\"using\":\"samePolicy\"}"), "context", input);
+        Assertions.assertTrue(result.getFilteredText().contains("99999"), result.getFilteredText());
+        Assertions.assertFalse(result.getFilteredText().contains("90210"), result.getFilteredText());
+        Assertions.assertTrue(result.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(0, result.getLeftoverCheck().getFindingCount(), result.getLeftoverCheck().getFindings().toString());
+    }
+
+    @Test
     public void resultWithoutTheCheckSerializesAsBefore() throws Exception {
         final TextFilterResult result = service().filter(policy("{\"emailAddress\":{}}", null), "context", INPUT);
         Assertions.assertFalse(new Gson().toJsonTree(result).getAsJsonObject().has("leftoverCheck"));
