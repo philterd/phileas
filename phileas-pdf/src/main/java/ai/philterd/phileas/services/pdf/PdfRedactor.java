@@ -181,7 +181,7 @@ public class PdfRedactor extends PDFTextStripper {
 
                 final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-                final ImageWriter writer = ImageIO.getImageWritersByFormatName("png").next();
+                final ImageWriter writer = ImageIO.getImageWritersByFormatName("JPEG").next();
                 final ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
                 imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                 imageWriteParam.setCompressionQuality(pdfRedactionOptions.getCompressionQuality());
@@ -189,7 +189,7 @@ public class PdfRedactor extends PDFTextStripper {
                 writer.write(null, new IIOImage(bufferedImage, null, null), imageWriteParam);
 
                 // Add the image to the zip file to be returned.
-                ZipEntry zipEntry = new ZipEntry("page-" + x + ".png");
+                ZipEntry zipEntry = new ZipEntry("page-" + x + ".jpg");
                 zipEntry.setSize(byteArrayOutputStream.size());
 
                 zipOut.putNextEntry(zipEntry);
