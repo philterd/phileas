@@ -58,7 +58,7 @@ public class WordLeftoverCheckTest {
 
     /**
      * Asserts that no stand-in is reported, and that the phone number is reported in the paragraph or cell where
-     * the redaction put the stand-in for {@link #EMAIL}, after that stand-in.
+     * the redaction put the stand-in for {@link #EMAIL}, after that stand-in and any earlier stand-ins there.
      */
     static void assertLinedUp(final String label, final BinaryDocumentFilterResult result) {
 
@@ -72,7 +72,14 @@ public class WordLeftoverCheckTest {
         final LeftoverFinding phone = findings.stream().filter(f -> PHONE.equals(f.getMatchedText())).findFirst()
                 .orElseThrow(() -> new AssertionError(label + " " + findings));
 
-        final int start = "Mail ".length() + email.getReplacement().length() + " or call ".length();
+        // Where the stand-in for EMAIL starts in the output, after any earlier stand-ins in its paragraph.
+        int shift = 0;
+        for (final Span span : result.getExplanation().appliedSpans()) {
+            if (span.getParagraphNumber() == email.getParagraphNumber() && span.getCharacterStart() < email.getCharacterStart()) {
+                shift += span.getReplacement().length() - (span.getCharacterEnd() - span.getCharacterStart());
+            }
+        }
+        final int start = email.getCharacterStart() + shift + email.getReplacement().length() + " or call ".length();
         Assertions.assertEquals(email.getParagraphNumber(), phone.getParagraphNumber(), label);
         Assertions.assertEquals(start, phone.getCharacterStart(), label);
         Assertions.assertEquals(start + PHONE.length(), phone.getCharacterEnd(), label);
@@ -101,6 +108,14 @@ public class WordLeftoverCheckTest {
                 .filter(span -> OTHER_EMAIL.equals(span.getText()))
                 .filter(span -> span.getParagraphNumber() >= 0 && span.getParagraphNumber() < target).count());
 
+    }
+
+    @Test
+    public void afterHiddenTextInTheSameParagraph() throws Exception {
+        final byte[] input = WordDocs.createRaw("<w:p><w:r><w:rPr><w:vanish/></w:rPr><w:t xml:space=\"preserve\">Secret "
+                + OTHER_EMAIL + " </w:t></w:r><w:r><w:t xml:space=\"preserve\">" + TARGET + "</w:t></w:r></w:p>");
+        assertLinedUp("removed", filter(null, input, MimeType.APPLICATION_DOCX));
+        assertLinedUp("redacted", filter("\"word\":{\"hiddenText\":\"redact\"}", input, MimeType.APPLICATION_DOCX));
     }
 
 }

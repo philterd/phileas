@@ -123,6 +123,29 @@ public class RtfLeftoverCheckTest {
     }
 
     @Test
+    public void offsetsAccountForHiddenTextInTheSameParagraph() throws Exception {
+
+        final String other = "john.roe@example.com";
+        final String input = doc("{\\v Secret " + other + " }Mail " + EMAIL + " or call " + PHONE + ".\\par ");
+
+        for (final String word : List.of("{\"hiddenText\":\"remove\"}", "{\"hiddenText\":\"redact\"}")) {
+
+            final Policy policy = policy("broad", word);
+            final BinaryDocumentFilterResult result = filter(policy, input, REQUESTED);
+            final List<LeftoverFinding> findings = result.getLeftoverCheck().getFindings();
+            Assertions.assertTrue(findings.stream().noneMatch(f -> f.getFilterType() == FilterType.EMAIL_ADDRESS), word + " " + findings);
+
+            final LeftoverFinding phone = findings.stream().filter(f -> PHONE.equals(f.getMatchedText())).findFirst().orElseThrow();
+            final String paragraph = RtfRedactor.readParagraphs(result.getDocument(), policy.getConfig().getWord())
+                    .get(phone.getParagraphNumber());
+            Assertions.assertEquals(PHONE, paragraph.substring(phone.getCharacterStart(), phone.getCharacterEnd()), word);
+            Assertions.assertEquals(word.contains("redact"), paragraph.startsWith("Secret "), word + " " + paragraph);
+
+        }
+
+    }
+
+    @Test
     public void headersAndFootersKeptAreNotChecked() throws Exception {
         final String input = doc("{\\header\\pard Header " + SSN + "\\par}Body " + PHONE + ".\\par ");
 

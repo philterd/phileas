@@ -458,6 +458,23 @@ public class CsvFilterServiceTest {
     }
 
     @Test
+    public void anOnRequestLeftoverCheckRunsOnlyWhenAsked() throws Exception {
+        final Policy policy = new Gson().fromJson("{\"identifiers\":{\"emailAddress\":{}},\"config\":{\"review\":"
+                + "{\"leftoverCheck\":{\"mode\":\"onRequest\",\"using\":\"broad\"}}}}", Policy.class);
+        final byte[] input = ("Name,SSN\nJane," + SSN + "\n").getBytes(StandardCharsets.UTF_8);
+        final CsvFilterService service = service(CsvRedactionOptions.defaults());
+
+        Assertions.assertFalse(service.filter(policy, "ctx", input, MimeType.TEXT_CSV).getLeftoverCheck().isPerformed());
+        Assertions.assertFalse(service.filter(policy, "ctx", input, MimeType.TEXT_CSV, FilterOptions.defaults())
+                .getLeftoverCheck().isPerformed());
+
+        final List<LeftoverFinding> findings = service.filter(policy, new DefaultContextService(), new InMemoryVectorService(),
+                "ctx", input, MimeType.TEXT_CSV, FilterOptions.defaults().withLeftoverCheck(true).withLeftoverCheckMatchedText(true))
+                .getLeftoverCheck().getFindings();
+        Assertions.assertTrue(findings.stream().anyMatch(f -> SSN.equals(f.getMatchedText())), findings.toString());
+    }
+
+    @Test
     public void aLeftoverCheckThatFailsIsReportedAsNotPerformed() throws Exception {
         final Policy policy = policy("\"config\":{\"review\":{\"leftoverCheck\":{\"mode\":\"always\",\"using\":\"broad\"}}}");
         final byte[] input = ("Name,Email\nJane," + EMAIL + "\n").getBytes(StandardCharsets.UTF_8);
