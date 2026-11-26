@@ -173,7 +173,7 @@ public class EmailFilterService extends BinaryFilterService {
         final List<RedactedAttachment> attachments = new ArrayList<>();
 
         final EmailRedactor.AttachmentRedactor attachmentRedactor = (name, document, type) -> {
-            final BinaryFilterService service = type == MimeType.APPLICATION_PDF ? pdfFilterService : ooxmlFilterService;
+            final BinaryFilterService service = attachmentService(type);
             final BinaryDocumentFilterResult result = service.filter(policy, contextService, vectorService, context,
                     document, type, options);
             tokens[0] += result.getTokens();
@@ -203,6 +203,15 @@ public class EmailFilterService extends BinaryFilterService {
         return new BinaryDocumentFilterResult(result.document(), context, explanation, tokens[0], incrementalRedactions,
                 reviewSampled, leftoverCheck, result.report());
 
+    }
+
+    /**
+     * The service that redacts an attachment: the PDF service for a PDF, and the Word and Excel service otherwise.
+     * @param type The attachment's {@link MimeType}, {@link MimeType#APPLICATION_PDF}, a Word, or an Excel type.
+     * @return The {@link BinaryFilterService}.
+     */
+    protected BinaryFilterService attachmentService(final MimeType type) {
+        return type == MimeType.APPLICATION_PDF ? pdfFilterService : ooxmlFilterService;
     }
 
     /*
@@ -272,7 +281,7 @@ public class EmailFilterService extends BinaryFilterService {
         };
 
         final EmailRedactor.AttachmentRedactor attachmentRedactor = (name, document, type) -> {
-            final BinaryFilterService service = type == MimeType.APPLICATION_PDF ? pdfFilterService : ooxmlFilterService;
+            final BinaryFilterService service = attachmentService(type);
             return service.filter(policy, contextService, vectorService, "default", document, type).getDocument();
         };
 

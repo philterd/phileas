@@ -29,11 +29,22 @@ import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 
 import java.util.List;
 import java.util.Properties;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class LeftoverCheckTest {
 
@@ -224,6 +235,69 @@ public class LeftoverCheckTest {
         Assertions.assertTrue(result.getFilteredText().contains("{{{REDACTED-id}}}"), result.getFilteredText());
         Assertions.assertTrue(result.getLeftoverCheck().isPerformed());
         Assertions.assertEquals(0, result.getLeftoverCheck().getFindingCount(), result.getLeftoverCheck().getFindings().toString());
+    }
+
+    // A PhEye service that finds "Ann" in PHEYE_INPUT, labeled Person.
+    private static final String PHEYE_INPUT = "Ann was seen today.";
+
+    private static HttpClient phEyeFindingAnn() throws Exception {
+        final HttpClient httpClient = mock(HttpClient.class);
+        when(httpClient.execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>>any())).thenAnswer(invocation -> {
+            final HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+            final ClassicHttpResponse response = mock(ClassicHttpResponse.class);
+            when(response.getCode()).thenReturn(200);
+            when(response.getEntity()).thenReturn(new StringEntity(
+                    "[{\"start\": 0, \"end\": 3, \"label\": \"Person\", \"text\": \"Ann\", \"score\": 0.9}]"));
+            return handler.handleResponse(response);
+        });
+        return httpClient;
+    }
+
+    @Test
+    public void runsThePolicysPhEyeFiltersAsConfigured() throws Exception {
+
+        // Each filter's own ignore list leaves "Ann" unredacted, so only the check, which runs the filter without
+        // its ignore list, can report it.
+        final String endpoint = "\"phEyeConfiguration\":{\"endpoint\":\"http://localhost:18080\",\"labels\":[\"Person\"]},"
+                + "\"ignored\":[\"Ann\"]";
+
+        for (final String identifiers : new String[]{"{\"pheyes\":[{" + endpoint + "}]}", "{\"person\":{" + endpoint + "}}"}) {
+            for (final String using : new String[]{"broad", "samePolicy"}) {
+
+                final HttpClient httpClient = phEyeFindingAnn();
+                final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()),
+                        new DefaultContextService(), new InMemoryVectorService(), httpClient);
+
+                final TextFilterResult result = service.filter(policy(identifiers,
+                        "{\"mode\":\"always\",\"using\":\"" + using + "\"}"), "context", PHEYE_INPUT);
+
+                Assertions.assertEquals(PHEYE_INPUT, result.getFilteredText(), identifiers);
+                final LeftoverFinding ann = result.getLeftoverCheck().getFindings().stream()
+                        .filter(f -> "Person".equals(f.getClassification())).findFirst()
+                        .orElseThrow(() -> new AssertionError(identifiers + " " + using + " " + result.getLeftoverCheck().getFindings()));
+                Assertions.assertEquals(0, ann.getCharacterStart());
+                Assertions.assertEquals(3, ann.getCharacterEnd());
+
+            }
+        }
+
+    }
+
+    @Test
+    public void broadDoesNotAddAPhEyeFilter() throws Exception {
+        final HttpClient httpClient = phEyeFindingAnn();
+        final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), httpClient);
+
+        final String disabled = "{\"emailAddress\":{},\"pheyes\":[{\"enabled\":false,"
+                + "\"phEyeConfiguration\":{\"endpoint\":\"http://localhost:18080\"}}]}";
+        for (final String identifiers : new String[]{"{\"emailAddress\":{}}", disabled}) {
+            final TextFilterResult result = service.filter(policy(identifiers, "{\"mode\":\"always\",\"using\":\"broad\"}"),
+                    "context", PHEYE_INPUT);
+            Assertions.assertTrue(result.getLeftoverCheck().isPerformed(), identifiers);
+        }
+
+        verify(httpClient, never()).execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>>any());
     }
 
     @Test

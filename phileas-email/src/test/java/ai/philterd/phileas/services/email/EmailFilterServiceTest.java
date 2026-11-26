@@ -27,8 +27,10 @@ import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
+import ai.philterd.phileas.services.filters.filtering.BinaryFilterService;
 import ai.philterd.phileas.services.filters.filtering.EmailFilterService;
 import ai.philterd.phileas.services.filters.filtering.FilterOptions;
+import ai.philterd.phileas.services.filters.filtering.OoxmlFilterService;
 import ai.philterd.phileas.services.rtf.RtfFormatException;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -778,6 +780,47 @@ public class EmailFilterServiceTest {
         Assertions.assertEquals(allText(parse(filter(policy, bytes(input)).getDocument())), allText(parse(result.getDocument())));
         Assertions.assertFalse(result.getLeftoverCheck().isPerformed());
         Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
+    }
+
+    @Test
+    public void anAttachmentWhoseCheckFailsIsListedAsUnchecked() throws Exception {
+
+        // Word and Excel attachments are redacted by a service whose leftover check fails.
+        final EmailFilterService service = new EmailFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null) {
+            private final OoxmlFilterService failing = new OoxmlFilterService(new PhileasConfiguration(new Properties()), null) {
+                @Override
+                protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text) {
+                    throw new IllegalStateException("check failed");
+                }
+            };
+
+            @Override
+            protected BinaryFilterService attachmentService(final MimeType type) {
+                return type == MimeType.APPLICATION_PDF ? super.attachmentService(type) : failing;
+            }
+        };
+
+        final MimeMessage input = message("Hello", multipart("mixed", text("Call 212-555-0187 about it.", "plain"),
+                attachment("letter.docx", MimeType.APPLICATION_DOCX.getValue(), EmailFixtures.docx("Write to " + EMAIL + "."))));
+        final Policy policy = policy("{\"attachments\":\"redact\"}",
+                "\"review\":{\"leftoverCheck\":{\"mode\":\"always\",\"using\":\"broad\"}}");
+
+        final BinaryDocumentFilterResult result = service.filter(policy, new DefaultContextService(), new InMemoryVectorService(),
+                "context", bytes(input), MimeType.MESSAGE_RFC822, FilterOptions.defaults().withLeftoverCheckMatchedText(true));
+
+        // The attachment is still redacted.
+        final List<MimeBodyPart> attachments = attachments(parse(result.getDocument()));
+        Assertions.assertFalse(EmailFixtures.packageXml(content(attachments.get(0))).contains(EMAIL));
+
+        // The message's own fields are checked, and the attachment is listed as unchecked.
+        final LeftoverCheckResult check = result.getLeftoverCheck();
+        Assertions.assertTrue(check.isPerformed());
+        Assertions.assertEquals(List.of("letter.docx"), check.getUncheckedAttachments());
+        Assertions.assertTrue(check.getFindings().stream().anyMatch(f -> "212-555-0187".equals(f.getMatchedText())
+                && f.getAttachment() == null), check.getFindings().toString());
+        Assertions.assertTrue(check.getFindings().stream().noneMatch(f -> f.getAttachment() != null), check.getFindings().toString());
+
     }
 
     @Test
