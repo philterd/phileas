@@ -73,4 +73,13 @@ public class XlsxLeftoverCheckTest {
         assertFoundOutsideCells(findings(input), "212-555-0143");
     }
 
+    @Test
+    public void numbersCellsAsTheRedactionDidAcrossWorksheets() throws Exception {
+        final byte[] input = SpreadsheetDocs.createXlsxWithSecondSheet(
+                List.<String[]>of(new String[]{"Contact", WordLeftoverCheckTest.OTHER_EMAIL}), "First",
+                List.<String[]>of(new String[]{"Note", WordLeftoverCheckTest.TARGET}), "Second");
+        WordLeftoverCheckTest.assertLinedUp("two worksheets",
+                WordLeftoverCheckTest.filter(null, input, MimeType.APPLICATION_XLSX));
+    }
+
 }
