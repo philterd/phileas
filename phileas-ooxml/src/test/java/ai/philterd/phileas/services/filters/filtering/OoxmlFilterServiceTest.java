@@ -23,6 +23,7 @@ import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.ooxml.OoxmlRedactionOptions;
@@ -280,6 +281,88 @@ public class OoxmlFilterServiceTest {
                 new DefaultContextService(), new InMemoryVectorService(), "ctx", input, null, LEFTOVER_CHECK);
         Assertions.assertTrue(samePolicy.getLeftoverCheck().isPerformed());
         Assertions.assertEquals(0, samePolicy.getLeftoverCheck().getFindingCount(), samePolicy.getLeftoverCheck().getFindings().toString());
+    }
+
+    private static final String RANDOM_EMAIL = "{\"emailAddress\":{\"emailAddressFilterStrategies\":[{\"strategy\":\"RANDOM_REPLACE\"}]}}";
+
+    @Test
+    public void leftoverCheckDoesNotReportReplacementsInAWorkbookCell() throws Exception {
+        final byte[] input = OoxmlTestFixtures.xlsx(List.of(
+                new String[]{"Contact"},
+                new String[]{"Write to " + EMAIL + " or call 212-555-0187."}));
+
+        final BinaryDocumentFilterResult result = service().filter(leftoverCheckPolicy(RANDOM_EMAIL, "broad"),
+                new DefaultContextService(), new InMemoryVectorService(), "ctx", input, null, LEFTOVER_CHECK);
+
+        final List<LeftoverFinding> findings = result.getLeftoverCheck().getFindings();
+        Assertions.assertTrue(findings.stream().noneMatch(finding -> finding.getFilterType() == FilterType.EMAIL_ADDRESS),
+                findings.toString());
+        final LeftoverFinding phone = findings.stream()
+                .filter(finding -> finding.getFilterType() == FilterType.PHONE_NUMBER).findFirst().orElseThrow();
+        Assertions.assertEquals(1, phone.getParagraphNumber());
+        Assertions.assertEquals("212-555-0187", phone.getMatchedText());
+    }
+
+    @Test
+    public void leftoverCheckOfTextOutsideParagraphs() throws Exception {
+
+        // A field instruction is not a paragraph, so its findings have no paragraph.
+        final byte[] input = OoxmlTestFixtures.docxWithSimpleField("HYPERLINK \"mailto:" + EMAIL + "\"", "write to us");
+        final BinaryDocumentFilterResult found = service().filter(leftoverCheckPolicy("{\"ssn\":{}}", "broad"),
+                new DefaultContextService(), new InMemoryVectorService(), "ctx", input, MimeType.APPLICATION_DOCX, LEFTOVER_CHECK);
+        final LeftoverFinding email = found.getLeftoverCheck().getFindings().stream()
+                .filter(finding -> finding.getFilterType() == FilterType.EMAIL_ADDRESS).findFirst().orElseThrow();
+        Assertions.assertEquals(-1, email.getParagraphNumber());
+        Assertions.assertEquals(EMAIL, email.getMatchedText());
+
+        // The random stand-in the redaction put in the instruction is not reported.
+        final BinaryDocumentFilterResult replaced = service().filter(leftoverCheckPolicy(RANDOM_EMAIL, "samePolicy"),
+                new DefaultContextService(), new InMemoryVectorService(), "ctx", input, MimeType.APPLICATION_DOCX, LEFTOVER_CHECK);
+        Assertions.assertFalse(OoxmlTestFixtures.allXml(replaced.getDocument()).contains(EMAIL));
+        Assertions.assertEquals(0, replaced.getLeftoverCheck().getFindingCount(), replaced.getLeftoverCheck().getFindings().toString());
+
+        // A hyperlink target the policy flags is replaced whole with a placeholder, which is not reported, and one
+        // it leaves is reported whole.
+        final byte[] link = OoxmlTestFixtures.docxWithHyperlink("write to us", "mailto:" + EMAIL);
+        Assertions.assertEquals(0, service().filter(leftoverCheckPolicy(RANDOM_EMAIL, "samePolicy"), new DefaultContextService(),
+                new InMemoryVectorService(), "ctx", link, MimeType.APPLICATION_DOCX, LEFTOVER_CHECK).getLeftoverCheck().getFindingCount());
+        final LeftoverFinding target = service().filter(leftoverCheckPolicy("{\"ssn\":{}}", "broad"), new DefaultContextService(),
+                new InMemoryVectorService(), "ctx", link, MimeType.APPLICATION_DOCX, LEFTOVER_CHECK).getLeftoverCheck().getFindings()
+                .stream().filter(finding -> finding.getFilterType() == FilterType.EMAIL_ADDRESS).findFirst().orElseThrow();
+        Assertions.assertEquals(-1, target.getParagraphNumber());
+        Assertions.assertEquals("mailto:" + EMAIL, target.getMatchedText());
+
+    }
+
+    @Test
+    public void aLeftoverCheckThatFailsIsReportedAsNotPerformed() throws Exception {
+        final byte[] input = OoxmlTestFixtures.docx("Email " + EMAIL + ", SSN 123-45-6789.");
+        final Policy policy = leftoverCheckPolicy("{\"emailAddress\":{}}", "broad");
+        final OoxmlFilterService failing = new OoxmlFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null) {
+            @Override
+            protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text) {
+                throw new IllegalStateException("check failed");
+            }
+        };
+
+        final BinaryDocumentFilterResult result = failing.filter(policy, new DefaultContextService(), new InMemoryVectorService(),
+                "ctx", input, MimeType.APPLICATION_DOCX, LEFTOVER_CHECK);
+
+        Assertions.assertEquals(OoxmlTestFixtures.entry(service().filter(policy, "ctx", input, MimeType.APPLICATION_DOCX).getDocument(),
+                "word/document.xml"), OoxmlTestFixtures.entry(result.getDocument(), "word/document.xml"));
+        Assertions.assertFalse(result.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
+    }
+
+    @Test
+    public void leftoverCheckHoldsMatchedTextOnlyWhenAsked() throws Exception {
+        final byte[] input = OoxmlTestFixtures.docx("SSN 123-45-6789.");
+        final BinaryDocumentFilterResult result = service().filter(leftoverCheckPolicy("{\"emailAddress\":{}}", "broad"),
+                new DefaultContextService(), new InMemoryVectorService(), "ctx", input, MimeType.APPLICATION_DOCX,
+                FilterOptions.defaults().withLeftoverCheck(true));
+        Assertions.assertTrue(result.getLeftoverCheck().getFindingCount() > 0);
+        result.getLeftoverCheck().getFindings().forEach(finding -> Assertions.assertNull(finding.getMatchedText()));
     }
 
 }

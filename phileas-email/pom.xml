@@ -26,6 +26,11 @@
             <artifactId>phileas-ooxml</artifactId>
         </dependency>
         <dependency>
+            <!-- Reads the text of an Outlook message's RTF-only body. -->
+            <groupId>ai.philterd</groupId>
+            <artifactId>phileas-rtf</artifactId>
+        </dependency>
+        <dependency>
             <!-- MIME parsing and writing. -->
             <groupId>org.eclipse.angus</groupId>
             <artifactId>angus-mail</artifactId>

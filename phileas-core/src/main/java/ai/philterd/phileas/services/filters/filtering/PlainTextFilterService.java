@@ -246,7 +246,7 @@ public class PlainTextFilterService extends TextFilterService {
 
         // Run on the whole output, after any pieces are put back together, so a value across a seam is found.
         final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, options)
-                ? leftoverCheck(policy, textFilterResult, options) : null;
+                ? runLeftoverCheck(() -> leftoverCheck(policy, textFilterResult, options)) : null;
 
         if (!reviewSampled && leftoverCheck == null) {
             return textFilterResult;

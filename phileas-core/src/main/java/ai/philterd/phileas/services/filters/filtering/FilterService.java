@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.Filter;
+import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
@@ -32,6 +33,8 @@ import ai.philterd.phileas.services.filters.postfilters.TrailingPeriodPostFilter
 import ai.philterd.phileas.services.filters.postfilters.TrailingSpacePostFilter;
 import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.security.SecureRandom;
 
@@ -54,6 +57,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * should share one instance rather than locking around {@code filter()}.
  */
 public abstract class FilterService {
+
+    private static final Logger LOGGER = LogManager.getLogger(FilterService.class);
 
     protected final FilterPolicyLoader filterPolicyLoader;
 
@@ -126,6 +131,32 @@ public abstract class FilterService {
 
         return LeftoverChecker.detect(checkPolicy, filters, postFilters, text);
 
+    }
+
+    /** A leftover check of one call's output. */
+    @FunctionalInterface
+    protected interface LeftoverCheckRun {
+        LeftoverCheckResult run() throws Exception;
+    }
+
+    /**
+     * Runs a leftover check. The redaction has already succeeded, so a check that fails is reported as not
+     * performed with {@link LeftoverCheckResult.Reason#CHECK_FAILED} rather than failing the call.
+     * @param check The check.
+     * @return The check's result.
+     */
+    protected static LeftoverCheckResult runLeftoverCheck(final LeftoverCheckRun check) {
+        try {
+            return check.run();
+        } catch (final Exception e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            // Only the exception's type: its message can hold document text.
+            LOGGER.warn("The leftover check failed with {}; it is reported as not performed.",
+                    e.getClass().getName());
+            return LeftoverCheckResult.notPerformed(LeftoverCheckResult.Reason.CHECK_FAILED);
+        }
     }
 
     /**

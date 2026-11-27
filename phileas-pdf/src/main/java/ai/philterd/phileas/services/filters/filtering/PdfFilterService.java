@@ -320,7 +320,7 @@ public class PdfFilterService extends BinaryFilterService {
         final Explanation explanation = new Explanation(spansList, spansList);
 
         final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, options)
-                ? leftoverCheck(policy, pagePolicies, redacted, outputMimeType, options) : null;
+                ? runLeftoverCheck(() -> leftoverCheck(policy, pagePolicies, redacted, outputMimeType, options)) : null;
 
         return new BinaryDocumentFilterResult(redacted, context, explanation, tokens, incrementalRedactions,
                 reviewSampled, leftoverCheck);

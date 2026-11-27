@@ -18,15 +18,18 @@ package ai.philterd.phileas.services.filters.filtering;
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.csv.CsvLimitExceededException;
 import ai.philterd.phileas.services.csv.CsvRedactionOptions;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
@@ -428,6 +431,67 @@ public class CsvFilterServiceTest {
         final List<LeftoverFinding> findings = result.getLeftoverCheck().getFindings();
         Assertions.assertTrue(findings.stream().anyMatch(f -> Integer.valueOf(2).equals(f.getRow())
                 && Integer.valueOf(2).equals(f.getColumn())), findings.toString());
+        final JsonObject finding = new Gson().toJsonTree(result).getAsJsonObject().getAsJsonObject("leftoverCheck")
+                .getAsJsonArray("findings").get(0).getAsJsonObject();
+        Assertions.assertEquals(2, finding.get("row").getAsInt(), finding.toString());
+        Assertions.assertEquals(2, finding.get("column").getAsInt(), finding.toString());
+        Assertions.assertFalse(finding.has("attachment"), finding.toString());
+    }
+
+    @Test
+    public void theLeftoverCheckDoesNotReportRandomStandIns() throws Exception {
+        // Random stand-ins look like real values. The quoted field holds a delimiter, a line break, and text around
+        // the stand-in, so its replacement must be found by the field it is in.
+        final String policy = "{\"identifiers\":{\"emailAddress\":{\"emailAddressFilterStrategies\":[{\"strategy\":\"RANDOM_REPLACE\"}]}},"
+                + "\"config\":{\"review\":{\"leftoverCheck\":{\"mode\":\"always\",\"using\":\"broad\"}}}}";
+        final String csv = "Name,Note\nJane,\"Write to " + EMAIL + ",\nor call 212-555-0187\"\n";
+
+        final BinaryDocumentFilterResult result = service(CsvRedactionOptions.defaults()).filter(
+                new Gson().fromJson(policy, Policy.class), "ctx", csv.getBytes(StandardCharsets.UTF_8), MimeType.TEXT_CSV,
+                FilterOptions.defaults().withLeftoverCheckMatchedText(true));
+
+        Assertions.assertFalse(new String(result.getDocument(), StandardCharsets.UTF_8).contains(EMAIL));
+        final List<LeftoverFinding> findings = result.getLeftoverCheck().getFindings();
+        Assertions.assertTrue(findings.stream().noneMatch(f -> f.getFilterType() == FilterType.EMAIL_ADDRESS), findings.toString());
+        Assertions.assertTrue(findings.stream().anyMatch(f -> "212-555-0187".equals(f.getMatchedText())
+                && Integer.valueOf(2).equals(f.getRow()) && Integer.valueOf(2).equals(f.getColumn())), findings.toString());
+    }
+
+    @Test
+    public void anOnRequestLeftoverCheckRunsOnlyWhenAsked() throws Exception {
+        final Policy policy = new Gson().fromJson("{\"identifiers\":{\"emailAddress\":{}},\"config\":{\"review\":"
+                + "{\"leftoverCheck\":{\"mode\":\"onRequest\",\"using\":\"broad\"}}}}", Policy.class);
+        final byte[] input = ("Name,SSN\nJane," + SSN + "\n").getBytes(StandardCharsets.UTF_8);
+        final CsvFilterService service = service(CsvRedactionOptions.defaults());
+
+        Assertions.assertFalse(service.filter(policy, "ctx", input, MimeType.TEXT_CSV).getLeftoverCheck().isPerformed());
+        Assertions.assertFalse(service.filter(policy, "ctx", input, MimeType.TEXT_CSV, FilterOptions.defaults())
+                .getLeftoverCheck().isPerformed());
+
+        final List<LeftoverFinding> findings = service.filter(policy, new DefaultContextService(), new InMemoryVectorService(),
+                "ctx", input, MimeType.TEXT_CSV, FilterOptions.defaults().withLeftoverCheck(true).withLeftoverCheckMatchedText(true))
+                .getLeftoverCheck().getFindings();
+        Assertions.assertTrue(findings.stream().anyMatch(f -> SSN.equals(f.getMatchedText())), findings.toString());
+    }
+
+    @Test
+    public void aLeftoverCheckThatFailsIsReportedAsNotPerformed() throws Exception {
+        final Policy policy = policy("\"config\":{\"review\":{\"leftoverCheck\":{\"mode\":\"always\",\"using\":\"broad\"}}}");
+        final byte[] input = ("Name,Email\nJane," + EMAIL + "\n").getBytes(StandardCharsets.UTF_8);
+        final CsvFilterService failing = new CsvFilterService(new PhileasConfiguration(new Properties()), new DefaultContextService(),
+                new InMemoryVectorService(), new SecureRandom(), null, CsvRedactionOptions.defaults()) {
+            @Override
+            protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text) {
+                throw new IllegalStateException("check failed");
+            }
+        };
+
+        final BinaryDocumentFilterResult result = failing.filter(policy, "ctx", input, MimeType.TEXT_CSV);
+
+        Assertions.assertArrayEquals(service(CsvRedactionOptions.defaults()).filter(policy, "ctx", input, MimeType.TEXT_CSV)
+                .getDocument(), result.getDocument());
+        Assertions.assertFalse(result.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
     }
 
     // --- logging -------------------------------------------------------------------------------------

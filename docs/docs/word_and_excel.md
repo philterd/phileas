@@ -101,7 +101,7 @@ The policy's `config.word` and `config.excel` set how a document is redacted bey
 | `uninspectableObjects` | `remove` | As for Word. |
 | `removeDocumentProperties` | `true` | As for Word. |
 
-Cell text and comments are always redacted. A Word or Excel document embedded in another follows the same settings. A setting with an unknown key or value is refused when the policy loads.
+Cell text and comments are always redacted. A Word or Excel document embedded in another follows the same settings. The Word settings also apply to [RTF documents](rtf.md#policy-settings), where RTF has the corresponding part. A setting with an unknown key or value is refused when the policy loads.
 
 ## Per-call options
 

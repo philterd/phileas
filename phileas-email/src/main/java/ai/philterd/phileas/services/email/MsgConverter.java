@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.email;
 
+import ai.philterd.phileas.services.rtf.RtfTextExtractor;
 import jakarta.activation.DataHandler;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
@@ -149,7 +150,7 @@ final class MsgConverter {
         if (bodies.isEmpty()) {
             final String rtf = read(() -> msg.getRtfBody());
             if (!isBlank(rtf)) {
-                bodies.add(textPart(RtfText.extract(rtf), "plain"));
+                bodies.add(textPart(RtfTextExtractor.extract(rtf), "plain"));
             }
         }
 

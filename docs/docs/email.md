@@ -52,7 +52,7 @@ Other headers are kept as they are unless the policy's `config.email` removes th
 
 ### Outlook messages
 
-From an Outlook message, the subject, sender, recipients (To, Cc, and Bcc), sent date, bodies, and attachments are carried over, and an attached Outlook message becomes a nested message. A message whose only body is RTF has that body read as plain text, so it is redacted rather than dropped. An Outlook message's stored transport headers (`Received` and the like) are not carried over.
+From an Outlook message, the subject, sender, recipients (To, Cc, and Bcc), sent date, bodies, and attachments are carried over, and an attached Outlook message becomes a nested message. A message whose only body is RTF has its visible text read with [`RtfTextExtractor`](rtf.md#reading-text), so it is redacted, as plain text, rather than dropped; an RTF body that is malformed is refused with an `RtfFormatException`. An Outlook message's stored transport headers (`Received` and the like) are not carried over.
 
 ### Signed and encrypted messages
 
@@ -131,6 +131,6 @@ The policy's [leftover check](filter_policies/filter_policies.md#leftover-check)
 
 * A finding in a field has the field's number as `paragraphNumber` and offsets into the redacted field.
 * A finding in a redacted attachment has the attachment's filename as `attachment` (`getAttachment()`), with its position as for a document of its type.
-* A redacted attachment whose output has no readable text, such as a PDF whose pages were all flattened to images, is listed in `uncheckedAttachments` (`getUncheckedAttachments()`). Nothing in it was checked.
+* A redacted attachment whose output has no readable text, such as a PDF whose pages were all flattened to images, or whose check failed, is listed in `uncheckedAttachments` (`getUncheckedAttachments()`). Nothing in it was checked.
 
 Attachments and inline images that were kept are not checked; the email report lists them.

@@ -19,6 +19,7 @@ import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.PolicySchema;
@@ -28,11 +29,22 @@ import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 
 import java.util.List;
 import java.util.Properties;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class LeftoverCheckTest {
 
@@ -225,6 +237,69 @@ public class LeftoverCheckTest {
         Assertions.assertEquals(0, result.getLeftoverCheck().getFindingCount(), result.getLeftoverCheck().getFindings().toString());
     }
 
+    // A PhEye service that finds "Ann" in PHEYE_INPUT, labeled Person.
+    private static final String PHEYE_INPUT = "Ann was seen today.";
+
+    private static HttpClient phEyeFindingAnn() throws Exception {
+        final HttpClient httpClient = mock(HttpClient.class);
+        when(httpClient.execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>>any())).thenAnswer(invocation -> {
+            final HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+            final ClassicHttpResponse response = mock(ClassicHttpResponse.class);
+            when(response.getCode()).thenReturn(200);
+            when(response.getEntity()).thenReturn(new StringEntity(
+                    "[{\"start\": 0, \"end\": 3, \"label\": \"Person\", \"text\": \"Ann\", \"score\": 0.9}]"));
+            return handler.handleResponse(response);
+        });
+        return httpClient;
+    }
+
+    @Test
+    public void runsThePolicysPhEyeFiltersAsConfigured() throws Exception {
+
+        // Each filter's own ignore list leaves "Ann" unredacted, so only the check, which runs the filter without
+        // its ignore list, can report it.
+        final String endpoint = "\"phEyeConfiguration\":{\"endpoint\":\"http://localhost:18080\",\"labels\":[\"Person\"]},"
+                + "\"ignored\":[\"Ann\"]";
+
+        for (final String identifiers : new String[]{"{\"pheyes\":[{" + endpoint + "}]}", "{\"person\":{" + endpoint + "}}"}) {
+            for (final String using : new String[]{"broad", "samePolicy"}) {
+
+                final HttpClient httpClient = phEyeFindingAnn();
+                final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()),
+                        new DefaultContextService(), new InMemoryVectorService(), httpClient);
+
+                final TextFilterResult result = service.filter(policy(identifiers,
+                        "{\"mode\":\"always\",\"using\":\"" + using + "\"}"), "context", PHEYE_INPUT);
+
+                Assertions.assertEquals(PHEYE_INPUT, result.getFilteredText(), identifiers);
+                final LeftoverFinding ann = result.getLeftoverCheck().getFindings().stream()
+                        .filter(f -> "Person".equals(f.getClassification())).findFirst()
+                        .orElseThrow(() -> new AssertionError(identifiers + " " + using + " " + result.getLeftoverCheck().getFindings()));
+                Assertions.assertEquals(0, ann.getCharacterStart());
+                Assertions.assertEquals(3, ann.getCharacterEnd());
+
+            }
+        }
+
+    }
+
+    @Test
+    public void broadDoesNotAddAPhEyeFilter() throws Exception {
+        final HttpClient httpClient = phEyeFindingAnn();
+        final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), httpClient);
+
+        final String disabled = "{\"emailAddress\":{},\"pheyes\":[{\"enabled\":false,"
+                + "\"phEyeConfiguration\":{\"endpoint\":\"http://localhost:18080\"}}]}";
+        for (final String identifiers : new String[]{"{\"emailAddress\":{}}", disabled}) {
+            final TextFilterResult result = service.filter(policy(identifiers, "{\"mode\":\"always\",\"using\":\"broad\"}"),
+                    "context", PHEYE_INPUT);
+            Assertions.assertTrue(result.getLeftoverCheck().isPerformed(), identifiers);
+        }
+
+        verify(httpClient, never()).execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>>any());
+    }
+
     @Test
     public void topLevelIgnoreListsSuppressAFinding() throws Exception {
         final String leftoverCheck = "{\"mode\":\"always\",\"using\":\"broad\"}";
@@ -306,6 +381,74 @@ public class LeftoverCheckTest {
         Assertions.assertEquals("SSN", leftoverCheck.getAsJsonArray("findings").asList().stream()
                 .map(e -> e.getAsJsonObject().get("filterType").getAsString())
                 .filter("SSN"::equals).findFirst().orElseThrow());
+    }
+
+    @Test
+    public void aTextFindingSerializesWithoutTheFieldsOfOtherFormats() throws Exception {
+        final TextFilterResult result = service().filter(policy("{\"emailAddress\":{}}",
+                "{\"mode\":\"always\",\"using\":\"broad\"}"), "context", INPUT);
+        final JsonObject leftoverCheck = new Gson().toJsonTree(result).getAsJsonObject().getAsJsonObject("leftoverCheck");
+        Assertions.assertFalse(leftoverCheck.has("reason"), leftoverCheck.toString());
+        Assertions.assertFalse(leftoverCheck.has("uncheckedAttachments"), leftoverCheck.toString());
+        final JsonObject finding = leftoverCheck.getAsJsonArray("findings").get(0).getAsJsonObject();
+        for (final String absent : new String[]{"row", "column", "attachment"}) {
+            Assertions.assertFalse(finding.has(absent), absent + " in " + finding);
+        }
+    }
+
+    @Test
+    public void aMatchTheFiltersOwnSettingsRejectIsNotReported() throws Exception {
+        // With validation, a zip code not in the zip code database is found but not applied, so the redaction
+        // leaves it and the check, which runs the filter as configured, does not report it.
+        final String input = "Ship to 99999 or 90210.";
+        final TextFilterResult result = service().filter(policy("{\"zipCode\":{\"validate\":true}}",
+                "{\"mode\":\"always\",\"using\":\"samePolicy\"}"), "context", input);
+        Assertions.assertTrue(result.getFilteredText().contains("99999"), result.getFilteredText());
+        Assertions.assertFalse(result.getFilteredText().contains("90210"), result.getFilteredText());
+        Assertions.assertTrue(result.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(0, result.getLeftoverCheck().getFindingCount(), result.getLeftoverCheck().getFindings().toString());
+    }
+
+    @Test
+    public void aCheckThatFailsIsReportedAsNotPerformedAndTheRedactionStands() throws Exception {
+        final Policy policy = policy("{\"emailAddress\":{}}", "{\"mode\":\"always\",\"using\":\"broad\"}");
+        final PlainTextFilterService failing = new PlainTextFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null) {
+            @Override
+            protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text) {
+                throw new IllegalStateException("check failed");
+            }
+        };
+
+        final TextFilterResult result = failing.filter(policy, "context", INPUT);
+
+        Assertions.assertEquals(service().filter(policy, "context", INPUT).getFilteredText(), result.getFilteredText());
+        Assertions.assertFalse(result.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
+        Assertions.assertEquals(0, result.getLeftoverCheck().getFindingCount());
+
+        final JsonObject json = new Gson().toJsonTree(result).getAsJsonObject().getAsJsonObject("leftoverCheck");
+        Assertions.assertFalse(json.get("performed").getAsBoolean(), json.toString());
+        Assertions.assertEquals("checkFailed", json.get("reason").getAsString(), json.toString());
+    }
+
+    @Test
+    public void anInterruptedCheckKeepsTheThreadsInterruptFlag() throws Exception {
+        final Policy policy = policy("{\"emailAddress\":{}}", "{\"mode\":\"always\",\"using\":\"broad\"}");
+        final PlainTextFilterService interrupted = new PlainTextFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null) {
+            @Override
+            protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text)
+                    throws InterruptedException {
+                throw new InterruptedException();
+            }
+        };
+
+        final TextFilterResult result = interrupted.filter(policy, "context", INPUT);
+
+        // Thread.interrupted() also clears the flag for the tests that follow.
+        Assertions.assertTrue(Thread.interrupted());
+        Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
     }
 
     @Test

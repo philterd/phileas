@@ -14,6 +14,13 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
+      - name: Install LibreOffice
+        # RtfOpensInLibreOfficeTest converts redacted RTF with headless LibreOffice. The variable makes the test
+        # fail rather than skip when LibreOffice is missing.
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libreoffice-writer-nogui
+          echo "PHILEAS_REQUIRE_LIBREOFFICE=true" >> "$GITHUB_ENV"
       - name: Run the Maven verify phase
         run: mvn --batch-mode --update-snapshots package
       - uses: actions/setup-dotnet@v4

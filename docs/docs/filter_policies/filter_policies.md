@@ -290,13 +290,14 @@ final TextFilterResult result = filterService.filter(policy, contextService, vec
 ```
 
 `PlainTextFilterService`, its `PreparedPolicy`, `PdfFilterService` (including with page policies),
-`OoxmlFilterService`, and `EmailFilterService` accept `FilterOptions`.
+`OoxmlFilterService`, `CsvFilterService`, `RtfFilterService`, and `EmailFilterService` accept `FilterOptions`.
 
 The outcome is reported by `getLeftoverCheck()` on the `TextFilterResult` or `BinaryDocumentFilterResult`, and as
 `leftoverCheck` when the result is serialized to JSON (absent when the check was not called for):
 
 * `isPerformed()` (`performed`): whether the check ran.
-* `getReason()` (`reason`): why it did not run: `notRequested`, or `unreadableOutput`.
+* `getReason()` (`reason`): why it did not run: `notRequested`, `unreadableOutput`, or `checkFailed` (the check
+  failed with an error; the redaction is returned unaffected, and the error's type is logged as a warning).
 * `getFindingCount()` (`findingCount`): the number of findings.
 * `getFindings()` (`findings`): each finding's `filterType`, `classification`, `characterStart` and `characterEnd`,
   and `confidence`. For a PDF, `pageNumber` (from 0) and `lineNumber`, with offsets into the output's text with its
@@ -305,7 +306,7 @@ The outcome is reported by `getLeftoverCheck()` on the `TextFilterResult` or `Bi
   into it, and for a finding in a redacted attachment, `attachment` (its filename). For text, offsets into the
   filtered text.
 * `getUncheckedAttachments()` (`uncheckedAttachments`): for an email message, the redacted attachments whose output
-  had no readable text. Absent when there are none.
+  had no readable text, or whose check failed. Absent when there are none.
 
 Findings do not carry the matched text. An application that shows findings to the user it redacted for can ask for
 it with `FilterOptions.defaults().withLeftoverCheckMatchedText(true)`, and read it from `getMatchedText()`. It is held

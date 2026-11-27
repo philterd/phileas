@@ -108,4 +108,4 @@ These settings in [Settings](settings.md) bound the documents redacted. A docume
 * The delimiter, quote, and encoding are not detected from the document; they come from the policy.
 * Malformed quoting is read leniently: text after a closing quote is part of the value, and a quote that is never closed runs to the end of the document.
 * A replacement character the encoding cannot represent, such as a non-Latin character from `RANDOM_REPLACE` in an `ISO-8859-1` document, is written as `?`.
-* Fields are not checked for spreadsheet formulas. A value that starts with `=`, `+`, `-`, or `@` is kept as it is, so a spreadsheet that opens the output may treat it as a formula.
+* Fields are not checked for spreadsheet formulas. A value that starts with `=`, `+`, `-`, or `@` is kept as it is, so a spreadsheet that opens the output may treat it as a formula. A replacement can also start a field with one of these characters: one the policy chooses (`STATIC_REPLACE`, a `redactionFormat`, or `MAP_REPLACE`), or an empty replacement, which leaves the rest of the field at its start.

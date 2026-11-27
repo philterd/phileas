@@ -267,7 +267,7 @@ public class CsvFilterService extends BinaryFilterService {
         final byte[] bytes = encode(output, decoded);
 
         final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, filterOptions)
-                ? leftoverCheck(policy, csv, output, plan, replaced, document, filterOptions) : null;
+                ? runLeftoverCheck(() -> leftoverCheck(policy, csv, output, plan, replaced, document, filterOptions)) : null;
 
         return new BinaryDocumentFilterResult(bytes, context, new Explanation(spans, spans), tokens[0],
                 incrementalRedactions, reviewSampled, leftoverCheck);
