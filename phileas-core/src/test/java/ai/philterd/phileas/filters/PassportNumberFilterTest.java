@@ -172,6 +172,33 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterPrefixNumberAfterStructuredKey() throws Exception {
+
+        // Keys in JSON, CSV, and logs join the words, so they are cue words too.
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PassportNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PassportNumberFilter filter = new PassportNumberFilter(filterConfiguration);
+
+        for (final String input : List.of("{\"passport_number\": \"2012345\"}", "passportNumber=2012345",
+                "passport_no,2012345", "PassportNo: 2012345", "Passports 2012345", "{\"passportNumber\":\"20AB1234\"}")) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+            showSpans(filtered.getSpans());
+            Assertions.assertEquals(1, filtered.getSpans().size(), input);
+            Assertions.assertEquals(input.contains("20AB1234") ? "20AB1234" : "2012345", filtered.getSpans().get(0).getText(), input);
+        }
+
+        // A word that only begins with "passport" is not a cue word.
+        final Filtered other = filter.filter(contextService, getPolicy(), "context", PIECE, "passportholder 2012345");
+        showSpans(other.getSpans());
+        Assertions.assertEquals(0, other.getSpans().size());
+
+    }
+
+    @Test
     public void filterNineDigitPrefixNumberWithoutCueWord() throws Exception {
 
         // A nine-digit number needs no cue word and keeps its own confidence, 0.55, even when its first two

@@ -81,9 +81,15 @@ public class PassportNumberFilter extends RegexFilter {
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("passport");
-        // A cue word ends at punctuation, so the hyphenated forms are cue words of their own.
+        this.contextualTerms.add("passports");
+        // A cue word must be followed by punctuation or a space, so joined forms, such as the keys of JSON,
+        // CSV, and logs, are cue words of their own. Text is compared lower-cased, so passportNumber matches.
         this.contextualTerms.add("passport-number");
         this.contextualTerms.add("passport-no.");
+        this.contextualTerms.add("passport_number");
+        this.contextualTerms.add("passport_no");
+        this.contextualTerms.add("passportnumber");
+        this.contextualTerms.add("passportno");
         this.cueWords = new CueWords(contextualTerms, null, true);
 
         this.analyzer = new Analyzer(contextualTerms,
