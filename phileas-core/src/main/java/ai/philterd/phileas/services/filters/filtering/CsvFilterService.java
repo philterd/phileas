@@ -25,6 +25,7 @@ import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.RedactedTextBuilder;
 import ai.philterd.phileas.model.filtering.ReplacedRange;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
@@ -59,6 +60,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -170,7 +172,12 @@ public class CsvFilterService extends BinaryFilterService {
                                              final byte[] input, final MimeType outputMimeType,
                                              final FilterOptions filterOptions) throws Exception {
 
-        requireCsv(outputMimeType);
+        final boolean textOutput = filterOptions != null && filterOptions.isTextOutput();
+
+        // A call for text has no output document, so its type is not checked.
+        if (!textOutput) {
+            requireCsv(outputMimeType);
+        }
 
         final boolean reviewSampled = ReviewSampler.isSelected(policy);
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
@@ -192,6 +199,7 @@ public class CsvFilterService extends BinaryFilterService {
         final Map<CsvDocument.Field, List<ReplacedRange>> replaced = new HashMap<>();
         final Map<List<String>, Function<String, TextFilterResult>> keyFilters = new HashMap<>();
         final List<Span> spans = new ArrayList<>();
+        final Set<CsvDocument.Field> unscanned = new HashSet<>();
 
         final List<List<CsvDocument.Field>> rows = document.rows();
         for (int r = 0; r < rows.size(); r++) {
@@ -224,6 +232,7 @@ public class CsvFilterService extends BinaryFilterService {
                     final Tabular.Column rule = plan.rules().ruleFor(column);
                     final Tabular.Action action = rule != null ? rule.getAction() : unlistedAction(plan.rules().sheet());
                     if (action == Tabular.Action.IGNORE) {
+                        unscanned.add(field);
                         continue;
                     }
                     if (action == Tabular.Action.REDACT) {
@@ -261,6 +270,14 @@ public class CsvFilterService extends BinaryFilterService {
 
             }
 
+        }
+
+        if (textOutput) {
+            final RedactedTextBuilder text = text(rows, plan.headerRows(), values, replaced, unscanned);
+            final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, filterOptions)
+                    ? runLeftoverCheck(() -> textLeftoverCheck(policy, text.parts(), filterOptions)) : null;
+            return new BinaryDocumentFilterResult(null, text.build(), context, new Explanation(spans, spans), tokens[0],
+                    incrementalRedactions, reviewSampled, leftoverCheck, null);
         }
 
         final String output = document.write(values);
@@ -369,6 +386,67 @@ public class CsvFilterService extends BinaryFilterService {
         } catch (final Exception e) {
             throw new IllegalStateException("Unable to build the filters of a tabular column rule.", e);
         }
+    }
+
+    /** The label of a CSV document's one segment of redacted text. */
+    public static final String ROWS_LABEL = "rows";
+
+    /*
+     * The rows as the redaction leaves them, one "header: value" line per field with text and a blank line between
+     * rows. A column's header is its field in the last header row as redaction leaves it, or "column N" without one.
+     * Header rows are not lines of their own, and fields an ignore rule leaves unscanned are left out.
+     */
+    private static RedactedTextBuilder text(final List<List<CsvDocument.Field>> rows, final int headerRows,
+                                            final Map<CsvDocument.Field, String> values,
+                                            final Map<CsvDocument.Field, List<ReplacedRange>> replaced,
+                                            final Set<CsvDocument.Field> unscanned) {
+
+        final RedactedTextBuilder text = new RedactedTextBuilder();
+        text.ensure(ROWS_LABEL);
+
+        final Map<Integer, CsvDocument.Field> headers = new HashMap<>();
+        if (headerRows > 0 && rows.size() >= headerRows) {
+            final List<CsvDocument.Field> last = rows.get(headerRows - 1);
+            for (int c = 0; c < last.size(); c++) {
+                headers.put(c + 1, last.get(c));
+            }
+        }
+
+        boolean previousRow = false;
+        for (int r = headerRows; r < rows.size(); r++) {
+            boolean thisRow = false;
+            final List<CsvDocument.Field> row = rows.get(r);
+            for (int c = 0; c < row.size(); c++) {
+                final CsvDocument.Field field = row.get(c);
+                if (field.value().isEmpty() || unscanned.contains(field)) {
+                    continue;
+                }
+                if (previousRow && !thisRow) {
+                    text.line(ROWS_LABEL, "", List.of());
+                }
+                thisRow = true;
+                final CsvDocument.Field headerField = headers.get(c + 1);
+                final String header = headerField == null ? ""
+                        : RedactedTextBuilder.flatten(values.getOrDefault(headerField, headerField.value()));
+                final List<ReplacedRange> ranges = new ArrayList<>();
+                final String name;
+                if (header.isBlank()) {
+                    name = "column " + (c + 1);
+                } else {
+                    name = header;
+                    ranges.addAll(replaced.getOrDefault(headerField, List.of()));
+                }
+                final String prefix = name + ": ";
+                for (final ReplacedRange range : replaced.getOrDefault(field, List.of())) {
+                    ranges.add(range.shift(prefix.length()));
+                }
+                text.line(ROWS_LABEL, prefix + RedactedTextBuilder.flatten(values.getOrDefault(field, field.value())), ranges);
+            }
+            previousRow |= thisRow;
+        }
+
+        return text;
+
     }
 
     // --- fields ------------------------------------------------------------------------------------

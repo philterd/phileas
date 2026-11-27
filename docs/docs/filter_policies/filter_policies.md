@@ -270,7 +270,8 @@ it does not read or add to the context used for referential integrity.
 The check runs on the whole output after any split pieces are put back together, so a value that spans a boundary
 between pieces is found. In a Word or Excel document it scans the same text the redaction does. In a PDF it scans the
 text of the output: a page with a redaction is flattened to an image and has no text to read, so only pages kept as
-they were (`preserveUnredactedPages`) are checked. An output with no readable text, such as a PDF with every page
+they were (`preserveUnredactedPages`) are checked. For a document filtered to
+[text output](pdf.md#redacted-text-output), it scans the returned text instead. An output with no readable text, such as a PDF with every page
 flattened or a PDF redacted to images, is reported as not performed rather than as zero findings. In an email message
 it scans the redacted fields and takes the check of each redacted attachment; see
 [Email Redaction](../email.md#leftover-check).
@@ -304,7 +305,7 @@ The outcome is reported by `getLeftoverCheck()` on the `TextFilterResult` or `Bi
   lines joined. For a Word or Excel document, `paragraphNumber` (the paragraph or cell, or -1 for other content such
   as drawings and comments), with offsets into it. For an email message, `paragraphNumber` (the field), with offsets
   into it, and for a finding in a redacted attachment, `attachment` (its filename). For text, offsets into the
-  filtered text.
+  filtered text. For text output, `segment` (the label of the segment), with offsets into its text; absent otherwise.
 * `getUncheckedAttachments()` (`uncheckedAttachments`): for an email message, the redacted attachments whose output
   had no readable text, or whose check failed. Absent when there are none.
 

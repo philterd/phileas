@@ -134,3 +134,27 @@ The policy's [leftover check](filter_policies/filter_policies.md#leftover-check)
 * A redacted attachment whose output has no readable text, such as a PDF whose pages were all flattened to images, or whose check failed, is listed in `uncheckedAttachments` (`getUncheckedAttachments()`). Nothing in it was checked.
 
 Attachments and inline images that were kept are not checked; the email report lists them.
+
+## Redacted text output
+
+`EmailFilterService` can return the message's redacted plain text in place of the redacted message. Ask for it with
+`FilterOptions.defaults().withOutput(FilterOptions.Output.TEXT)`; `getText()` then returns the text as labeled
+segments and `getDocument()` returns `null`. A call returns either the text or the document, not both, and the output
+`MimeType` is not checked. The text comes from the same walk and the same detection the document redaction uses, so
+each value has the replacement the document would have, and it is not included when the result is serialized to JSON.
+The segments and their statuses (`TEXT`, `NO_TEXT`, `NOT_SCANNED`) are described under
+[PDF redacted text output](filter_policies/pdf.md#redacted-text-output). The policy's
+[leftover check](filter_policies/filter_policies.md#leftover-check) scans each segment's text, leaving out values the
+redaction inserted, and each finding's `segment` is the label of its segment, with offsets into that segment's text.
+
+| Label | Content |
+|---|---|
+| `headers` | The headers that are redacted and kept (`Subject`, `From`, `To`, and `Cc`), one `Name: value` line each. A header the policy removes is not included, and other headers, which are not scanned, are not included either. Always present. |
+| `body` | The text bodies. When a message has a plain text body, its HTML bodies are not included; an HTML-only body is its visible text, with a line break at each block element and without scripts and styles. Always present. |
+| `attached message N / headers`, `attached message N / body` | The same, for the Nth message attached to the message. |
+| `attachment: <name> / <segment>` | Each attachment `attachments: redact` redacts, as the PDF, Word, or Excel service returns its text, such as `attachment: report.pdf / page 1`. |
+
+Attachments that are kept are not scanned and are not included, and an attachment that is removed is not included;
+`getEmail()` reports both as for the document. Each redacted attachment is redacted once, to text. The leftover check
+scans the message's own segments and takes each attachment's check of its own text, with `attachment` set on its
+findings; an attachment whose check was not performed is listed in `uncheckedAttachments`. `withTextMetadata(true)` is passed to the attachments; a message has no metadata segment of its own.

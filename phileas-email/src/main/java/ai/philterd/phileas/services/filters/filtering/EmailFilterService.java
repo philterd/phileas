@@ -23,6 +23,8 @@ import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.RedactedTextBuilder;
+import ai.philterd.phileas.model.filtering.ReplacedRange;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
@@ -38,6 +40,7 @@ import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
 import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.services.email.EmailFields;
 import ai.philterd.phileas.services.email.EmailRedactor;
+import ai.philterd.phileas.services.email.EmailText;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
@@ -47,7 +50,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Redacts email messages: {@code .eml} ({@code message/rfc822}) and Outlook {@code .msg}
@@ -150,7 +155,12 @@ public class EmailFilterService extends BinaryFilterService {
                                              final byte[] input, final MimeType outputMimeType,
                                              final FilterOptions options) throws Exception {
 
-        requireEmailOutput(outputMimeType);
+        final boolean textOutput = options != null && options.isTextOutput();
+
+        // A call for text has no output document, so its type is not checked.
+        if (!textOutput) {
+            requireEmailOutput(outputMimeType);
+        }
 
         // One draw for the message, not one per field or attachment.
         final boolean reviewSampled = ReviewSampler.isSelected(policy);
@@ -179,7 +189,8 @@ public class EmailFilterService extends BinaryFilterService {
             tokens[0] += result.getTokens();
             incrementalRedactions.addAll(result.getIncrementalRedactions());
             attachments.add(new RedactedAttachment(name, result));
-            return result.getDocument();
+            // With text output the attachment's text is kept instead, and the message it would go in is not returned.
+            return textOutput ? document : result.getDocument();
         };
 
         final EmailRedactor.Result result = EmailRedactor.redact(input, policy.getConfig().getEmail(),
@@ -197,11 +208,108 @@ public class EmailFilterService extends BinaryFilterService {
         // As with PDF and Word, the identified and applied spans are reported as the same list.
         final Explanation explanation = new Explanation(spans, spans);
 
+        if (textOutput) {
+            final RedactedTextBuilder text = text(result, attachments);
+            final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, options)
+                    ? runLeftoverCheck(() -> textLeftoverCheck(policy, text, attachments, options)) : null;
+            return new BinaryDocumentFilterResult(null, text.build(), context, explanation, tokens[0],
+                    incrementalRedactions, reviewSampled, leftoverCheck, result.report());
+        }
+
         final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, options)
                 ? runLeftoverCheck(() -> leftoverCheck(policy, result, attachments, options)) : null;
 
         return new BinaryDocumentFilterResult(result.document(), context, explanation, tokens[0], incrementalRedactions,
                 reviewSampled, leftoverCheck, result.report());
+
+    }
+
+    /** Segment labels of an email message's redacted text. */
+    public static final String HEADERS_LABEL = "headers";
+    public static final String BODY_LABEL = "body";
+    private static final String ATTACHMENT_PREFIX = "attachment: ";
+
+    /*
+     * The message's fields as text: the headers it keeps, one "Name: value" line each, and its bodies, the plain
+     * ones, or the HTML ones as visible text when it has no plain body. A nested message's segments are prefixed
+     * with its number, and each redacted attachment's segments with its name.
+     */
+    private static RedactedTextBuilder text(final EmailRedactor.Result result, final List<RedactedAttachment> attachments) {
+
+        final RedactedTextBuilder text = new RedactedTextBuilder();
+        text.ensure(HEADERS_LABEL);
+        text.ensure(BODY_LABEL);
+
+        final Set<Integer> withPlainBody = new HashSet<>();
+        for (final EmailRedactor.Field field : result.fields()) {
+            if (isBody(field) && !field.html()) {
+                withPlainBody.add(field.messageNumber());
+            }
+        }
+
+        for (final EmailRedactor.Field field : result.fields()) {
+            final String prefix = field.messageNumber() == 0 ? "" : "attached message " + field.messageNumber() + " / ";
+            if (isBody(field)) {
+                if (field.html() && withPlainBody.contains(field.messageNumber())) {
+                    continue;
+                }
+                final EmailText.Rendered body = field.html()
+                        ? EmailText.html(field.output(), field.replacedRanges())
+                        : EmailText.plain(field.output(), field.replacedRanges());
+                text.line(prefix + BODY_LABEL, body.text(), body.replacedRanges());
+            } else {
+                final String name = field.label() + ": ";
+                final List<ReplacedRange> ranges = new ArrayList<>();
+                for (final ReplacedRange range : field.replacedRanges()) {
+                    ranges.add(range.shift(name.length()));
+                }
+                text.line(prefix + HEADERS_LABEL, name + RedactedTextBuilder.flatten(field.output()), ranges);
+            }
+        }
+
+        for (final RedactedAttachment attachment : attachments) {
+            if (attachment.result().getText() != null) {
+                text.include(ATTACHMENT_PREFIX + attachment.name() + " / ", attachment.result().getText(), List.of());
+            }
+        }
+
+        return text;
+
+    }
+
+    private static boolean isBody(final EmailRedactor.Field field) {
+        return field.label().startsWith("Body (");
+    }
+
+    /*
+     * Scans the message's own segments, and takes each attachment's check of its own text, naming the attachment
+     * in its findings. An attachment whose check was not performed is listed as unchecked.
+     */
+    private LeftoverCheckResult textLeftoverCheck(final Policy policy, final RedactedTextBuilder text,
+                                                  final List<RedactedAttachment> attachments,
+                                                  final FilterOptions options) throws Exception {
+
+        final List<RedactedTextBuilder.Part> own = text.parts().stream()
+                .filter(part -> !part.label().startsWith(ATTACHMENT_PREFIX)).toList();
+        final LeftoverCheckResult ownCheck = textLeftoverCheck(policy, own, options);
+
+        final List<LeftoverFinding> findings = new ArrayList<>(ownCheck.isPerformed() ? ownCheck.getFindings() : List.of());
+        final List<String> unchecked = new ArrayList<>();
+        for (final RedactedAttachment attachment : attachments) {
+            final LeftoverCheckResult check = attachment.result().getLeftoverCheck();
+            if (check.isPerformed()) {
+                for (final LeftoverFinding finding : check.getFindings()) {
+                    findings.add(finding.inAttachment(attachment.name()));
+                }
+            } else {
+                unchecked.add(attachment.name());
+            }
+        }
+
+        if (!ownCheck.isPerformed() && unchecked.size() == attachments.size()) {
+            return ownCheck;
+        }
+        return LeftoverCheckResult.performed(findings, unchecked);
 
     }
 

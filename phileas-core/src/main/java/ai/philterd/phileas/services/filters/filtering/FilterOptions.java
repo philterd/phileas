@@ -20,14 +20,30 @@ package ai.philterd.phileas.services.filters.filtering;
  */
 public final class FilterOptions {
 
-    private static final FilterOptions DEFAULTS = new FilterOptions(false, false);
+    /** What a binary document filter call returns. */
+    public enum Output {
+
+        /** The redacted document, in the format the call asks for. */
+        DOCUMENT,
+
+        /** The document's redacted plain text, in labeled segments, in place of the redacted document. */
+        TEXT
+
+    }
+
+    private static final FilterOptions DEFAULTS = new FilterOptions(false, false, Output.DOCUMENT, false);
 
     private final boolean leftoverCheckRequested;
     private final boolean leftoverCheckMatchedText;
+    private final Output output;
+    private final boolean textMetadata;
 
-    private FilterOptions(final boolean leftoverCheckRequested, final boolean leftoverCheckMatchedText) {
+    private FilterOptions(final boolean leftoverCheckRequested, final boolean leftoverCheckMatchedText,
+                          final Output output, final boolean textMetadata) {
         this.leftoverCheckRequested = leftoverCheckRequested;
         this.leftoverCheckMatchedText = leftoverCheckMatchedText;
+        this.output = output;
+        this.textMetadata = textMetadata;
     }
 
     /**
@@ -46,7 +62,7 @@ public final class FilterOptions {
      * @return Options with the request set.
      */
     public FilterOptions withLeftoverCheck(final boolean requested) {
-        return new FilterOptions(requested, leftoverCheckMatchedText);
+        return new FilterOptions(requested, leftoverCheckMatchedText, output, textMetadata);
     }
 
     /**
@@ -56,7 +72,31 @@ public final class FilterOptions {
      * @return Options with the setting.
      */
     public FilterOptions withLeftoverCheckMatchedText(final boolean matchedText) {
-        return new FilterOptions(leftoverCheckRequested, matchedText);
+        return new FilterOptions(leftoverCheckRequested, matchedText, output, textMetadata);
+    }
+
+    /**
+     * Chooses what a binary document filter call returns: the redacted document (the default) or the document's
+     * redacted plain text, from the same detection. Every binary document service supports both. A call for text
+     * ignores the output {@link ai.philterd.phileas.model.filtering.MimeType}.
+     * @param output The {@link Output}.
+     * @return Options with the output set.
+     */
+    public FilterOptions withOutput(final Output output) {
+        if (output == null) {
+            throw new IllegalArgumentException("The output must not be null.");
+        }
+        return new FilterOptions(leftoverCheckRequested, leftoverCheckMatchedText, output, textMetadata);
+    }
+
+    /**
+     * Includes the document's metadata, redacted, as a segment of the text output. It is left out by default.
+     * Has no effect when the output is the document.
+     * @param include Whether to include the metadata.
+     * @return Options with the setting.
+     */
+    public FilterOptions withTextMetadata(final boolean include) {
+        return new FilterOptions(leftoverCheckRequested, leftoverCheckMatchedText, output, include);
     }
 
     public boolean isLeftoverCheckRequested() {
@@ -65,6 +105,18 @@ public final class FilterOptions {
 
     public boolean isLeftoverCheckMatchedText() {
         return leftoverCheckMatchedText;
+    }
+
+    public Output getOutput() {
+        return output;
+    }
+
+    public boolean isTextOutput() {
+        return output == Output.TEXT;
+    }
+
+    public boolean isTextMetadata() {
+        return textMetadata;
     }
 
 }

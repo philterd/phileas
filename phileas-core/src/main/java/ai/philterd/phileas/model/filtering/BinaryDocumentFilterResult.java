@@ -28,6 +28,9 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
     // Null unless the document is an email message.
     private final EmailReport email;
 
+    // Null unless the call asked for text. Transient, as the document is, so the text does not reach a log.
+    private transient final RedactedText text;
+
     public BinaryDocumentFilterResult(byte[] document, String context, Explanation explanation, long tokens, List<IncrementalRedaction> incrementalRedactions) {
         this(document, context, explanation, tokens, incrementalRedactions, false);
     }
@@ -46,9 +49,21 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
     public BinaryDocumentFilterResult(byte[] document, String context, Explanation explanation, long tokens,
                                       List<IncrementalRedaction> incrementalRedactions, boolean reviewSampled,
                                       LeftoverCheckResult leftoverCheck, EmailReport email) {
+        this(document, null, context, explanation, tokens, incrementalRedactions, reviewSampled, leftoverCheck, email);
+    }
+
+    /**
+     * A result holding the redacted document or the document's redacted text.
+     * @param document The redacted document, or {@code null} when the call asked for text.
+     * @param text The redacted text, or {@code null} when the call asked for the document.
+     */
+    public BinaryDocumentFilterResult(byte[] document, RedactedText text, String context, Explanation explanation,
+                                      long tokens, List<IncrementalRedaction> incrementalRedactions,
+                                      boolean reviewSampled, LeftoverCheckResult leftoverCheck, EmailReport email) {
         super(context, explanation, tokens, incrementalRedactions, reviewSampled, leftoverCheck);
 
         this.document = document;
+        this.text = text;
         this.email = email;
 
     }
@@ -64,6 +79,7 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
                 append(reviewSampled).
                 append(leftoverCheck).
                 append(email).
+                append(text).
                 toHashCode();
 
     }
@@ -83,8 +99,21 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
 
     }
 
+    /**
+     * The redacted document.
+     * @return The document, or {@code null} when the call asked for text.
+     */
     public byte[] getDocument() {
         return document;
+    }
+
+    /**
+     * The document's redacted plain text, when the call asked for it with
+     * {@code FilterOptions.withOutput(Output.TEXT)}.
+     * @return The {@link RedactedText}, or {@code null} when the call asked for the document.
+     */
+    public RedactedText getText() {
+        return text;
     }
 
     /**

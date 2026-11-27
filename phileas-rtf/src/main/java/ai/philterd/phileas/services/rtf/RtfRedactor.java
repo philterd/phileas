@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.services.rtf;
 
+import ai.philterd.phileas.model.filtering.RedactedTextBuilder;
+import ai.philterd.phileas.model.filtering.ReplacedRange;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.config.Word;
@@ -23,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +54,201 @@ public final class RtfRedactor {
     public record Result(byte[] document, List<Span> spans) {
     }
 
+    /** Segment labels of an RTF document's redacted text. */
+    public static final String BODY_LABEL = "body";
+    public static final String HEADERS_FOOTERS_LABEL = "headers and footers";
+    public static final String FOOTNOTES_LABEL = "footnotes";
+    public static final String COMMENTS_LABEL = "comments";
+    public static final String TRACKED_CHANGES_LABEL = "tracked changes";
+
+    // The document properties removeDocumentProperties clears, by destination, and their labels in the text.
+    private static final Map<String, String> PROPERTIES = new LinkedHashMap<>();
+
+    static {
+        PROPERTIES.put("title", "title");
+        PROPERTIES.put("subject", "subject");
+        PROPERTIES.put("keywords", "keywords");
+        PROPERTIES.put("category", "category");
+        PROPERTIES.put("doccomm", "comments");
+    }
+
+    /**
+     * A document's redacted text and the redactions that produced it.
+     * @param text The redacted text.
+     * @param spans The redactions, as {@link #redact} reports them.
+     */
+    public record TextResult(RedactedTextBuilder text, List<Span> spans) {
+    }
+
+    // A span to apply and the units of its run it replaces.
+    private record Planned(Span span, int first, int end) {
+    }
+
     private RtfRedactor() {
+    }
+
+    /**
+     * Redacts a document's text without producing a document: one line per paragraph or table cell, in the body
+     * (with shape text), headers and footers, footnotes, comments, and tracked deletions, after the
+     * {@code config.word} settings, as {@link #redact} reads them. Each run is detected once, and a replacement
+     * takes the place of the same characters it does in the document. Headers and footers kept by
+     * {@code headersFooters} are left unscanned and left out. Field instructions and HTML tags are not included,
+     * nor, in RTF that encapsulates HTML, the RTF-only text ({@code \htmlrtf}) that stands in for the HTML when
+     * an RTF reader shows it, as {@link RtfTextExtractor} leaves it out.
+     * @param input The RTF document.
+     * @param filter Detects what to redact in a run of text.
+     * @param word The {@code config.word} settings.
+     * @param metadata Whether to add the document properties the settings keep, redacted, as a last segment.
+     * @return The text and its spans.
+     * @throws RtfFormatException when the document is malformed or exceeds a limit.
+     */
+    public static TextResult redactToText(final byte[] input, final Function<String, TextFilterResult> filter,
+                                          final Word word, final boolean metadata) {
+
+        final List<RtfToken> tokens = RtfTokenizer.tokenize(prepare(read(input), word));
+        final RtfAnalysis analysis = new RtfAnalysis(tokens);
+        final RedactedTextBuilder text = new RedactedTextBuilder();
+        final List<Span> spans = new ArrayList<>();
+        text.ensure(BODY_LABEL);
+
+        for (int i = 0; i < analysis.targets.size(); i++) {
+            final RtfAnalysis.Target target = analysis.targets.get(i);
+            final String label = label(target.kind);
+            if (label == null) {
+                continue;
+            }
+            if (!scanned(target, word)) {
+                text.notScanned(label);
+                continue;
+            }
+            final String original = target.text();
+            final List<Planned> planned = plan(target, detected(filter.apply(original), original));
+            final Rendered rendered = rendered(target, planned);
+            text.line(label, rendered.text(), rendered.ranges());
+            for (final Planned p : planned) {
+                p.span().setParagraphNumber(i);
+                spans.add(p.span());
+            }
+        }
+
+        if (metadata) {
+            if (word.isRemoveDocumentProperties()) {
+                text.notScanned(RedactedTextBuilder.METADATA_LABEL);
+            } else {
+                metadata(tokens, analysis, filter, text);
+            }
+        }
+
+        return new TextResult(text, spans);
+
+    }
+
+    // The segment a run's text goes in, or null for text that is not included.
+    private static String label(final RtfAnalysis.Kind kind) {
+        return switch (kind) {
+            case BODY, SHAPE_TEXT -> BODY_LABEL;
+            case HEADER_FOOTER -> HEADERS_FOOTERS_LABEL;
+            case FOOTNOTE -> FOOTNOTES_LABEL;
+            case ANNOTATION -> COMMENTS_LABEL;
+            case DELETED -> TRACKED_CHANGES_LABEL;
+            case FIELD_INSTRUCTION, HTML_TAG -> null;
+        };
+    }
+
+    private record Rendered(String text, List<ReplacedRange> ranges) {
+    }
+
+    // A run's text as redaction leaves it: each planned replacement in place of its units, and the RTF-only text of
+    // encapsulated HTML left out.
+    private static Rendered rendered(final RtfAnalysis.Target target, final List<Planned> planned) {
+        final Map<Integer, Planned> byFirst = new HashMap<>();
+        for (final Planned p : planned) {
+            byFirst.put(p.first(), p);
+        }
+        final StringBuilder sb = new StringBuilder();
+        final List<ReplacedRange> ranges = new ArrayList<>();
+        int u = 0;
+        while (u < target.units.size()) {
+            final Planned p = byFirst.get(u);
+            if (p != null && rtfOnly(target, p)) {
+                // A value wholly in RTF-only text is left out with that text.
+                u = p.end() + 1;
+            } else if (p != null) {
+                final int start = sb.length();
+                sb.append(p.span().getReplacement() == null ? "" : p.span().getReplacement());
+                ranges.add(new ReplacedRange(start, sb.length()));
+                u = p.end() + 1;
+            } else {
+                final RtfAnalysis.Unit unit = target.units.get(u);
+                if (!unit.htmlOnly) {
+                    sb.append(unit.text);
+                }
+                u++;
+            }
+        }
+        return new Rendered(sb.toString(), ranges);
+    }
+
+    private static boolean rtfOnly(final RtfAnalysis.Target target, final Planned planned) {
+        for (int u = planned.first(); u <= planned.end(); u++) {
+            if (!target.units.get(u).htmlOnly) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Each kept property, read as body text of a document with this one's header, so its characters are decoded
+    // with the document's code page and fonts, then redacted together, one "key: value" line each.
+    private static void metadata(final List<RtfToken> tokens, final RtfAnalysis analysis,
+                                 final Function<String, TextFilterResult> filter, final RedactedTextBuilder text) {
+        text.ensure(RedactedTextBuilder.METADATA_LABEL);
+        final List<int[]> info = analysis.groups("info");
+        if (info.isEmpty()) {
+            return;
+        }
+        final StringBuilder header = new StringBuilder();
+        for (int t = 0; t < info.get(0)[0]; t++) {
+            header.append(tokens.get(t).raw());
+        }
+        final List<String> lines = new ArrayList<>();
+        for (final Map.Entry<String, String> property : PROPERTIES.entrySet()) {
+            for (final int[] group : analysis.groups(property.getKey())) {
+                final StringBuilder content = new StringBuilder();
+                for (int t = analysis.destinationWord(group[0]) + 1; t < group[1]; t++) {
+                    content.append(tokens.get(t).raw());
+                }
+                final String document = header + "{\\pard " + content + "\\par}}";
+                final StringBuilder value = new StringBuilder();
+                for (final RtfAnalysis.Target target : new RtfAnalysis(RtfTokenizer.tokenize(document)).targets) {
+                    value.append(target.text());
+                }
+                if (!value.toString().isBlank()) {
+                    lines.add(property.getValue() + ": " + RedactedTextBuilder.flatten(value.toString().strip()));
+                }
+            }
+        }
+        final String original = String.join(RedactedTextBuilder.LINE_SEPARATOR, lines);
+        if (original.isEmpty()) {
+            return;
+        }
+        final List<Span> found = detected(filter.apply(original), original);
+        found.sort(Comparator.comparingInt(Span::getCharacterStart));
+        final StringBuilder sb = new StringBuilder();
+        final List<ReplacedRange> ranges = new ArrayList<>();
+        int copiedTo = 0;
+        for (final Span span : found) {
+            if (span.getCharacterStart() < copiedTo) {
+                continue;
+            }
+            sb.append(original, copiedTo, span.getCharacterStart());
+            final int start = sb.length();
+            sb.append(span.getReplacement() == null ? "" : span.getReplacement());
+            ranges.add(new ReplacedRange(start, sb.length()));
+            copiedTo = span.getCharacterEnd();
+        }
+        sb.append(original, copiedTo, original.length());
+        text.line(RedactedTextBuilder.METADATA_LABEL, sb.toString(), ranges);
     }
 
     /**
@@ -166,9 +363,9 @@ public final class RtfRedactor {
         return out;
     }
 
-    // Replaces each span's text in the run, in place: the replacement goes before the span's first unit, and the
-    // span's units are removed. A span that overlaps an earlier one is not applied. Returns the spans applied.
-    private static List<Span> replace(final RtfAnalysis.Target target, final List<Span> spans, final RtfEdits edits) {
+    // The spans to apply to a run, in order, each with the units it replaces: a span replaces every unit any of
+    // its characters came from. A span that overlaps an earlier one is not applied.
+    private static List<Planned> plan(final RtfAnalysis.Target target, final List<Span> spans) {
         final List<RtfAnalysis.Unit> units = target.units;
         // The unit each character of the run's text came from.
         final List<Integer> unitAt = new ArrayList<>();
@@ -180,31 +377,34 @@ public final class RtfRedactor {
         final List<Span> sorted = new ArrayList<>(spans);
         sorted.sort(Comparator.comparingInt(Span::getCharacterStart)
                 .thenComparing(Comparator.comparingInt(Span::getCharacterEnd).reversed()));
-        final List<Span> applied = new ArrayList<>();
+        final List<Planned> planned = new ArrayList<>();
         int last = 0;
         for (final Span span : sorted) {
             if (span.getCharacterStart() < last || span.getCharacterEnd() > unitAt.size()
                     || span.getCharacterEnd() <= span.getCharacterStart()) {
                 continue;
             }
-            final int first = unitAt.get(span.getCharacterStart());
-            final int end = unitAt.get(span.getCharacterEnd() - 1);
-            edits.insertText(units.get(first).refs.get(0), span.getReplacement() == null ? "" : span.getReplacement());
-            for (int u = first; u <= end; u++) {
-                edits.remove(units.get(u));
-            }
-            applied.add(span);
+            planned.add(new Planned(span, unitAt.get(span.getCharacterStart()), unitAt.get(span.getCharacterEnd() - 1)));
             last = span.getCharacterEnd();
+        }
+        return planned;
+    }
+
+    // Replaces each span's text in the run, in place: the replacement goes before the span's first unit, and the
+    // span's units are removed. Returns the spans applied.
+    private static List<Span> replace(final RtfAnalysis.Target target, final List<Span> spans, final RtfEdits edits) {
+        final List<Span> applied = new ArrayList<>();
+        for (final Planned p : plan(target, spans)) {
+            edits.insertText(target.units.get(p.first()).refs.get(0),
+                    p.span().getReplacement() == null ? "" : p.span().getReplacement());
+            for (int u = p.first(); u <= p.end(); u++) {
+                edits.remove(target.units.get(u));
+            }
+            applied.add(p.span());
         }
         return applied;
     }
 
-    // --- settings ------------------------------------------------------------------------------------
-
-    /*
-     * Applies the config.word settings that remove or clear parts of the document, and always clears authorship,
-     * before any text is read, so redaction, detection, and applying spans read the same runs of text.
-     */
     static String prepare(final String rtf, final Word word) {
 
         final List<RtfToken> tokens = RtfTokenizer.tokenize(rtf);

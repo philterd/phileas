@@ -22,8 +22,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Clears who wrote and edited a document, whatever the policy: an author name is wholly identifying, so it is
@@ -274,6 +276,37 @@ final class AuthorshipCleaner {
                 pkg.markDirty(custom);
             }
         }
+    }
+
+    /**
+     * The properties {@link #clearContentProperties} would clear, with text: title, subject, keywords, category,
+     * and description from docProps/core.xml, then each custom property by name. Authorship is not included.
+     */
+    static Map<String, String> contentProperties(final OoxmlPackage pkg) {
+        final Map<String, String> out = new LinkedHashMap<>();
+        final PackagePart core = pkg.packagePartByRelationshipType(REL_CORE);
+        final Document coreDom = core == null ? null : pkg.dom(core);
+        if (coreDom != null) {
+            final List<String> names = List.of(DC, "title", DC, "subject", CORE, "keywords", CORE, "category", DC, "description");
+            for (int i = 0; i < names.size(); i += 2) {
+                for (final Element e : elements(coreDom, names.get(i), names.get(i + 1))) {
+                    if (!e.getTextContent().isBlank()) {
+                        out.put(names.get(i + 1), e.getTextContent());
+                    }
+                }
+            }
+        }
+        final PackagePart custom = pkg.packagePartByRelationshipType(REL_CUSTOM);
+        final Document customDom = custom == null ? null : pkg.dom(custom);
+        if (customDom != null) {
+            for (final Element property : elements(customDom, CUSTOM, "property")) {
+                final String name = property.getAttribute("name");
+                if (!name.isBlank() && !property.getTextContent().isBlank()) {
+                    out.put(name, property.getTextContent().strip());
+                }
+            }
+        }
+        return out;
     }
 
     // Empties each named element's text, keeping the element, as Word and Excel write an unset property.
