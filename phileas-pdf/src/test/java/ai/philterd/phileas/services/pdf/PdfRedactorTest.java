@@ -182,6 +182,34 @@ public class PdfRedactorTest {
     }
 
     /**
+     * Each page in the JPEG output is a JPEG image with a .jpg name (issue #95).
+     */
+    @Test
+    public void jpegOutputPagesAreJpegImages() throws IOException {
+
+        final byte[] document = load(SMALL_PDF);
+
+        final byte[] redacted = new PdfRedactor(new Policy(), List.of(), lowDpiOptions())
+                .process(document, MimeType.IMAGE_JPEG);
+
+        int entries = 0;
+        try (ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(redacted))) {
+            ZipEntry entry;
+            while ((entry = zip.getNextEntry()) != null) {
+                final byte[] imageBytes = zip.readAllBytes();
+                Assertions.assertEquals("page-" + entries + ".jpg", entry.getName());
+                // A JPEG file starts with the SOI marker FF D8.
+                Assertions.assertTrue(imageBytes.length > 2
+                                && (imageBytes[0] & 0xFF) == 0xFF && (imageBytes[1] & 0xFF) == 0xD8,
+                        "zip entry should be a JPEG image: " + entry.getName());
+                entries++;
+            }
+        }
+
+        Assertions.assertEquals(pageCount(document), entries, "there should be one image per page");
+    }
+
+    /**
      * A large multi-page document is rasterized in full: page count is preserved and no text is
      * recoverable from the output.
      */
