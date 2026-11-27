@@ -17,6 +17,9 @@ package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.Filter;
+import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
+import ai.philterd.phileas.model.filtering.LeftoverFinding;
+import ai.philterd.phileas.model.filtering.RedactedTextBuilder;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
@@ -32,10 +35,13 @@ import ai.philterd.phileas.services.filters.postfilters.TrailingPeriodPostFilter
 import ai.philterd.phileas.services.filters.postfilters.TrailingSpacePostFilter;
 import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.security.SecureRandom;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +60,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * should share one instance rather than locking around {@code filter()}.
  */
 public abstract class FilterService {
+
+    private static final Logger LOGGER = LogManager.getLogger(FilterService.class);
 
     protected final FilterPolicyLoader filterPolicyLoader;
 
@@ -126,6 +134,64 @@ public abstract class FilterService {
 
         return LeftoverChecker.detect(checkPolicy, filters, postFilters, text);
 
+    }
+
+    /**
+     * The leftover check of text output: each segment's text whole, with the check built from {@code policy},
+     * leaving out what the redaction inserted. A finding's offsets are into its segment, and its segment is set.
+     * Text output with no text in any segment is reported as not performed.
+     * @param policy The {@link Policy} the call is filtered with.
+     * @param parts The segments that have text, from {@link RedactedTextBuilder#parts()}.
+     * @param options The call's {@link FilterOptions}.
+     * @return The check's result.
+     * @throws Exception Thrown if the check's filters cannot be built or fail.
+     */
+    protected LeftoverCheckResult textLeftoverCheck(final Policy policy, final List<RedactedTextBuilder.Part> parts,
+                                                    final FilterOptions options) throws Exception {
+
+        if (parts.isEmpty()) {
+            return LeftoverCheckResult.notPerformed(LeftoverCheckResult.Reason.UNREADABLE_OUTPUT);
+        }
+
+        final LeftoverCheck.Using using = leftoverCheckUsing(policy);
+        final List<LeftoverFinding> findings = new ArrayList<>();
+
+        for (final RedactedTextBuilder.Part part : parts) {
+            for (final Span span : leftoverSpans(policy, using, part.text())) {
+                if (!LeftoverChecker.isInserted(span, part.replacedRanges())) {
+                    findings.add(LeftoverChecker.finding(span, part.text(), options).inSegment(part.label()));
+                }
+            }
+        }
+
+        return LeftoverCheckResult.performed(findings);
+
+    }
+
+    /** A leftover check of one call's output. */
+    @FunctionalInterface
+    protected interface LeftoverCheckRun {
+        LeftoverCheckResult run() throws Exception;
+    }
+
+    /**
+     * Runs a leftover check. The redaction has already succeeded, so a check that fails is reported as not
+     * performed with {@link LeftoverCheckResult.Reason#CHECK_FAILED} rather than failing the call.
+     * @param check The check.
+     * @return The check's result.
+     */
+    protected static LeftoverCheckResult runLeftoverCheck(final LeftoverCheckRun check) {
+        try {
+            return check.run();
+        } catch (final Exception e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            // Only the exception's type: its message can hold document text.
+            LOGGER.warn("The leftover check failed with {}; it is reported as not performed.",
+                    e.getClass().getName());
+            return LeftoverCheckResult.notPerformed(LeftoverCheckResult.Reason.CHECK_FAILED);
+        }
     }
 
     /**

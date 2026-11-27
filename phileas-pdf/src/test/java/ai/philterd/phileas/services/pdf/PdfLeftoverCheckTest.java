@@ -21,12 +21,15 @@ import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.filters.filtering.FilterOptions;
 import ai.philterd.phileas.services.filters.filtering.PdfFilterService;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -36,6 +39,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 import java.util.Properties;
 
 public class PdfLeftoverCheckTest {
@@ -103,6 +107,31 @@ public class PdfLeftoverCheckTest {
         Assertions.assertFalse(images.getLeftoverCheck().isPerformed());
         Assertions.assertEquals(LeftoverCheckResult.Reason.UNREADABLE_OUTPUT, images.getLeftoverCheck().getReason());
 
+        final JsonObject json = new Gson().toJsonTree(flattened).getAsJsonObject().getAsJsonObject("leftoverCheck");
+        Assertions.assertFalse(json.get("performed").getAsBoolean(), json.toString());
+        Assertions.assertEquals("unreadableOutput", json.get("reason").getAsString(), json.toString());
+
+    }
+
+    @Test
+    public void aCheckThatFailsIsReportedAsNotPerformed() throws Exception {
+        final PdfFilterService failing = new PdfFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null) {
+            @Override
+            protected List<Span> leftoverSpans(final Policy p, final LeftoverCheck.Using using, final String text) {
+                throw new IllegalStateException("check failed");
+            }
+        };
+
+        final BinaryDocumentFilterResult result = failing.filter(policy(true, "broad"), new DefaultContextService(),
+                new InMemoryVectorService(), "context", document(), MimeType.APPLICATION_PDF,
+                FilterOptions.defaults().withLeftoverCheck(true));
+
+        // The redaction stands: the first page, which had the SSN, was flattened, so only the second has text.
+        Assertions.assertEquals(List.of(PAGES[1]), new PdfTextExtractor().getLines(result.getDocument()).stream()
+                .map(PdfLine::getText).map(String::strip).toList());
+        Assertions.assertFalse(result.getLeftoverCheck().isPerformed());
+        Assertions.assertEquals(LeftoverCheckResult.Reason.CHECK_FAILED, result.getLeftoverCheck().getReason());
     }
 
     @Test
@@ -116,18 +145,75 @@ public class PdfLeftoverCheckTest {
 
     }
 
+    @Test
+    public void findingsHaveTheirLinesAndOffsetsIntoTheJoinedLines() throws Exception {
+
+        // Nothing here is redacted, so every page is kept as text.
+        final byte[] input = document(new String[]{"Call 212-555-0187 now.", "Mail test@example.com later."},
+                new String[]{"Visit 10.1.2.3 today."});
+
+        final BinaryDocumentFilterResult result = service().filter(policy(true, "broad"), new DefaultContextService(),
+                new InMemoryVectorService(), "context", input, MimeType.APPLICATION_PDF,
+                FilterOptions.defaults().withLeftoverCheck(true).withLeftoverCheckMatchedText(true));
+
+        final List<PdfLine> lines = new PdfTextExtractor().getLines(result.getDocument());
+        final String joined = String.join("", lines.stream().map(PdfLine::getText).toList());
+
+        final List<LeftoverFinding> findings = result.getLeftoverCheck().getFindings();
+        Assertions.assertEquals(List.of("212-555-0187|0|1", "test@example.com|0|2", "10.1.2.3|1|3"), findings.stream()
+                .filter(finding -> finding.getFilterType() == FilterType.PHONE_NUMBER
+                        || finding.getFilterType() == FilterType.EMAIL_ADDRESS || finding.getFilterType() == FilterType.IP_ADDRESS)
+                .map(finding -> finding.getMatchedText() + "|" + finding.getPageNumber() + "|" + finding.getLineNumber())
+                .toList());
+
+        for (final LeftoverFinding finding : findings) {
+            Assertions.assertEquals(finding.getMatchedText(), joined.substring(finding.getCharacterStart(), finding.getCharacterEnd()));
+        }
+
+    }
+
+    @Test
+    public void eachPageIsCheckedWithItsPolicyAndTheDocumentsUsing() throws Exception {
+
+        // The page policy's identifier ignores its value, so the redaction leaves it and both pages stay text. The
+        // check drops the identifier's ignore list, so it reports the value on the page it applies to, and only there.
+        final Policy pagePolicy = new Gson().fromJson("{\"identifiers\":{\"identifiers\":[{\"pattern\":\"CASE-[0-9]{4}\","
+                + "\"classification\":\"case-number\",\"ignored\":[\"CASE-1234\"]}]}}", Policy.class);
+        final byte[] input = document(new String[]{"Filed as CASE-1234."}, new String[]{"Filed as CASE-1234."});
+
+        final BinaryDocumentFilterResult result = service().filter(policy(true, "samePolicy"), new DefaultContextService(),
+                new InMemoryVectorService(), "context", input, MimeType.APPLICATION_PDF,
+                new PdfPagePolicies().assign("2", pagePolicy, "cases"),
+                FilterOptions.defaults().withLeftoverCheck(true).withLeftoverCheckMatchedText(true));
+
+        final LeftoverCheckResult check = result.getLeftoverCheck();
+        Assertions.assertTrue(check.isPerformed());
+        Assertions.assertEquals(List.of("case-number|1|CASE-1234"), check.getFindings().stream()
+                .map(finding -> finding.getClassification() + "|" + finding.getPageNumber() + "|" + finding.getMatchedText())
+                .toList());
+
+    }
+
     private static byte[] document() throws Exception {
+        return document(new String[][]{{PAGES[0]}, {PAGES[1]}});
+    }
+
+    // Each argument is a page, and each of its strings a line.
+    private static byte[] document(final String[]... pages) throws Exception {
 
         try (PDDocument document = new PDDocument(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            for (final String line : PAGES) {
+            for (final String[] lines : pages) {
                 final PDPage page = new PDPage();
                 document.addPage(page);
                 try (PDPageContentStream content = new PDPageContentStream(document, page)) {
                     content.beginText();
                     content.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
                     content.newLineAtOffset(72, 700);
-                    content.showText(line);
+                    for (final String line : lines) {
+                        content.showText(line);
+                        content.newLineAtOffset(0, -20);
+                    }
                     content.endText();
                 }
             }

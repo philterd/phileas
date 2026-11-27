@@ -270,7 +270,8 @@ it does not read or add to the context used for referential integrity.
 The check runs on the whole output after any split pieces are put back together, so a value that spans a boundary
 between pieces is found. In a Word or Excel document it scans the same text the redaction does. In a PDF it scans the
 text of the output: a page with a redaction is flattened to an image and has no text to read, so only pages kept as
-they were (`preserveUnredactedPages`) are checked. An output with no readable text, such as a PDF with every page
+they were (`preserveUnredactedPages`) are checked. For a document filtered to
+[text output](pdf.md#redacted-text-output), it scans the returned text instead. An output with no readable text, such as a PDF with every page
 flattened or a PDF redacted to images, is reported as not performed rather than as zero findings. In an email message
 it scans the redacted fields and takes the check of each redacted attachment; see
 [Email Redaction](../email.md#leftover-check).
@@ -290,22 +291,23 @@ final TextFilterResult result = filterService.filter(policy, contextService, vec
 ```
 
 `PlainTextFilterService`, its `PreparedPolicy`, `PdfFilterService` (including with page policies),
-`OoxmlFilterService`, and `EmailFilterService` accept `FilterOptions`.
+`OoxmlFilterService`, `CsvFilterService`, `RtfFilterService`, and `EmailFilterService` accept `FilterOptions`.
 
 The outcome is reported by `getLeftoverCheck()` on the `TextFilterResult` or `BinaryDocumentFilterResult`, and as
 `leftoverCheck` when the result is serialized to JSON (absent when the check was not called for):
 
 * `isPerformed()` (`performed`): whether the check ran.
-* `getReason()` (`reason`): why it did not run: `notRequested`, or `unreadableOutput`.
+* `getReason()` (`reason`): why it did not run: `notRequested`, `unreadableOutput`, or `checkFailed` (the check
+  failed with an error; the redaction is returned unaffected, and the error's type is logged as a warning).
 * `getFindingCount()` (`findingCount`): the number of findings.
 * `getFindings()` (`findings`): each finding's `filterType`, `classification`, `characterStart` and `characterEnd`,
   and `confidence`. For a PDF, `pageNumber` (from 0) and `lineNumber`, with offsets into the output's text with its
   lines joined. For a Word or Excel document, `paragraphNumber` (the paragraph or cell, or -1 for other content such
   as drawings and comments), with offsets into it. For an email message, `paragraphNumber` (the field), with offsets
   into it, and for a finding in a redacted attachment, `attachment` (its filename). For text, offsets into the
-  filtered text.
+  filtered text. For text output, `segment` (the label of the segment), with offsets into its text; absent otherwise.
 * `getUncheckedAttachments()` (`uncheckedAttachments`): for an email message, the redacted attachments whose output
-  had no readable text. Absent when there are none.
+  had no readable text, or whose check failed. Absent when there are none.
 
 Findings do not carry the matched text. An application that shows findings to the user it redacted for can ask for
 it with `FilterOptions.defaults().withLeftoverCheckMatchedText(true)`, and read it from `getMatchedText()`. It is held

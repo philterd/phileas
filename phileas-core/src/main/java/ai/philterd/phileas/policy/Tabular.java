@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.policy;
 
+import ai.philterd.phileas.model.filtering.RedactionWarning;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.ColumnFilterStrategy;
 import com.google.gson.Gson;
@@ -261,7 +262,7 @@ public class Tabular {
         public ResolvedColumns resolve(final Map<Integer, String> headers) {
 
             final Map<Integer, Column> rules = new LinkedHashMap<>();
-            final List<String> warnings = new ArrayList<>();
+            final List<RedactionWarning> warnings = new ArrayList<>();
 
             for (final Column column : getColumns()) {
 
@@ -279,8 +280,7 @@ public class Tabular {
                     }
                 }
                 if (!matched) {
-                    warnings.add("The column rule for header '" + wanted + "' matches no column"
-                            + (worksheet == null ? "." : " in worksheet '" + worksheet + "'."));
+                    warnings.add(RedactionWarning.unmatchedHeader(wanted, worksheet));
                 }
 
             }
@@ -314,7 +314,7 @@ public class Tabular {
     }
 
     /** A sheet's column rules resolved against its headers. */
-    public record ResolvedColumns(Sheet sheet, Map<Integer, Column> rules, List<String> warnings) {
+    public record ResolvedColumns(Sheet sheet, Map<Integer, Column> rules, List<RedactionWarning> warnings) {
 
         /** The rule for a 1-based column, or {@code null} when it follows {@code unlistedColumns}. */
         public Column ruleFor(final int column) {

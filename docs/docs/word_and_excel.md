@@ -185,7 +185,7 @@ Each entry in `sheets` applies to the worksheet named by `worksheet`, compared c
 
 A rule picks its column by exactly one of:
 
-* `header`: the displayed text of the column's cell in the last header row, trimmed. A formula is matched by its result, rich text as plain text, a boolean as `TRUE` or `FALSE`, and a merged cell by the value of its top-left cell. A number or date is matched by its stored value, as described under [Limitations](#limitations), so a date header shown as `1/1/2025` is matched as `45658`. When several columns have the header, the rule applies to all of them. A header that matches no column is logged as a warning, so one policy can cover workbooks whose columns differ.
+* `header`: the displayed text of the column's cell in the last header row, trimmed. A formula is matched by its result, rich text as plain text, a boolean as `TRUE` or `FALSE`, and a merged cell by the value of its top-left cell. A number or date is matched by its stored value, as described under [Limitations](#limitations), so a date header shown as `1/1/2025` is matched as `45658`. When several columns have the header, the rule applies to all of them. A header that matches no column is not an error, so one policy can cover workbooks whose columns differ; it is reported as a [warning](#unmatched-column-rules).
 * `index`: the column's position, counting from 1 (column A is 1).
 
 When a header rule and an index rule pick the same column, the more protective one applies: `redact`, then `filter`, then `ignore`. Two `filter` rules scan the column with the filters of both, and of two `redact` rules the one listed first applies.
@@ -200,7 +200,7 @@ Detection in `filter` and `identifiers` columns is probabilistic, as it is elsew
 
 `strategies` and `unlistedStrategies` take the [filter strategies](filter_policies/filter_strategies.md) every filter supports (`REDACT`, `MASK`, `RANDOM_REPLACE`, `STATIC_REPLACE`, `CRYPTO_REPLACE`, `FPE_ENCRYPT_REPLACE`, `HASH_SHA256_REPLACE`, `LAST_4`, `TRUNCATE`, `ABBREVIATE`, and `MAP_REPLACE`) with their options, including `replacementScope`. They cannot have a `condition`, since a rule replaces every cell. `CRYPTO_REPLACE` and `FPE_ENCRYPT_REPLACE` use the policy's `crypto` and `fpe` keys. `%t` in `redactionFormat` is `full-column`, and each replaced cell is reported as a span with the classification `full-column`.
 
-Column rules apply to cells: those of the workbook, and those of every workbook embedded in it or in a Word document, including the source workbook a chart keeps. An embedded workbook's worksheets are matched to sheet entries by their own names. The `fullyRedactedColumns` and `worksheet` options do not apply to embedded workbooks, and a header that matches no column in one is not reported.
+Column rules apply to cells: those of the workbook, and those of every workbook embedded in it or in a Word document, including the source workbook a chart keeps. An embedded workbook's worksheets are matched to sheet entries by their own names. The `fullyRedactedColumns` and `worksheet` options do not apply to embedded workbooks, and a header that matches no column in one is reported as a warning marked as embedded.
 
 Other content, such as comments, print headers and footers, shapes, chart labels and cached chart values, and pivot caches, is scanned with every filter in `identifiers`. Charts and pivot caches keep copies of the values in the columns they are built from, and those copies are scanned, not replaced by column. A value in a `redact` column that no filter detects, such as a partial SSN, is replaced in its cell but can remain in a chart label or a pivot cache built from that column. A value in an `ignore` column or a header row is scanned there and can be redacted.
 
@@ -209,6 +209,15 @@ The `fullyRedactedColumns` and `worksheet` options override the rules for a call
 The [leftover check](filter_policies/filter_policies.md#leftover-check) does not scan header rows or ignored columns, since the redaction leaves them as they are.
 
 A policy that is not what the schema allows, such as an unknown key or action, a `redact` rule without `strategies`, or two rules for the same header, is refused when it loads.
+
+### Unmatched column rules
+
+A `header` rule that matches no column does nothing, and the column follows its sheet entry's `unlistedColumns`, which can leave sensitive values in the output:
+
+* With `unlistedColumns: ignore`, the column is left unchanged, and the leftover check, which skips ignored columns, does not report it. A `redact` rule for `SSN` on a workbook whose header reads `Social Security` leaves that column as it was.
+* With the default `unlistedColumns: identifiers`, the column is scanned with every filter, so values only the rule would replace, such as a partial SSN, can remain.
+
+Each such rule is returned as a warning by `BinaryDocumentFilterResult.getWarnings()`, and logged. A warning (`RedactionWarning`) has the code `unmatched-header` (`getCode()`), the rule's `header`, the sheet entry's `worksheet` when the entry names one, and whether it is about an embedded workbook (`isEmbedded()`). It holds only values from the policy, never the document's sheet names or cell text. A rule that matches no column on several worksheets is reported once, and an `index` rule is never reported. A serialized result has `warnings` only when there are any. [Text output](#redacted-text-output) has the warnings of the worksheets it includes; it does not include embedded workbooks, so it has none of theirs. Review the output of a document with warnings, or fix the policy.
 
 ## What is redacted
 
@@ -262,6 +271,88 @@ In Excel, authors are cleared on every worksheet, including when `worksheet` sel
 are kept is redacted with the policy like any other text. `removeDocumentProperties` clears the other properties in
 `docProps/core.xml` (`dc:title`, `dc:subject`, `cp:keywords`, `cp:category`, and `dc:description`) and every property in
 `docProps/custom.xml`.
+
+## Redacted text output
+
+`OoxmlFilterService` can return a Word or Excel document's redacted plain text in place of the redacted document, for
+pipelines that need text, such as preparing documents for AI training or a search index:
+
+```java
+final FilterOptions options = FilterOptions.defaults().withOutput(FilterOptions.Output.TEXT);
+
+final BinaryDocumentFilterResult result = ooxmlFilterService.filter(policy, contextService, vectorService, context,
+        document, MimeType.APPLICATION_DOCX, options);
+
+for (final TextSegment segment : result.getText().getSegments()) {
+    System.out.println(segment.getLabel() + ": " + segment.getText());
+}
+```
+
+A call returns either the text or the document, not both. With text output, `getDocument()` returns `null`, no
+document is written, and the output `MimeType` is not checked; the document's type is read from its content. The text comes from the same walk and the same detection the document redaction uses, after the
+policy's settings are applied, so it holds what the redacted document would hold, and each value has the replacement
+the document would have. Like the document, the text is not included when the result is serialized to JSON. The
+segments and their statuses (`TEXT`, `NO_TEXT`, `NOT_SCANNED`) are described under
+[PDF redacted text output](filter_policies/pdf.md#redacted-text-output).
+
+### Word segments
+
+One paragraph per line, in these segments, each present when the document has that part. Segments are in the order
+their part first appears, with the metadata last:
+
+| Label | Content |
+|---|---|
+| `body` | The body, including tables and text boxes. Always present. |
+| `headers` | Header paragraphs. `NOT_SCANNED`, with no text, when `headersFooters` is `keep`. |
+| `footers` | Footer paragraphs. `NOT_SCANNED`, with no text, when `headersFooters` is `keep`. |
+| `footnotes` | Footnote paragraphs. |
+| `endnotes` | Endnote paragraphs. |
+| `comments` | Comment paragraphs, when `comments` is `redact`. With the default `remove`, comments are removed, so there is no segment. |
+| `tracked changes` | The deleted text of tracked changes, one line per paragraph with a deletion, when `trackedChanges` is `redact`. With the default `accept`, deletions are removed, so there is no segment; inserted text is part of the paragraphs it is in. |
+
+Runs `hiddenText` removes are not included. A text box's fallback copy for older versions of Word is not repeated,
+and the separator notes Word keeps above footnotes and endnotes are left out.
+Drawing text outside text boxes, hyperlink targets, field instructions, charts, and embedded objects are not included
+in the text.
+
+### Excel segments
+
+One segment per worksheet, in workbook order, labeled `sheet: ` and the worksheet's name (`sheet: People`). Each data
+row is a set of `header: value` lines, one per cell with text, with a blank line between rows:
+
+```
+Name: Row one
+Email: {{{REDACTED-email-address}}}
+Phone: {{{REDACTED-phone-number}}}
+
+Name: Row two
+Phone: none
+```
+
+A column's header is the text of the last header row: the sheet entry's `headerRows` under
+[column rules](#column-rules), or the first row otherwise. Under column rules the header row is not redacted, as in the
+document; without them the first row is redacted like any other. A column whose header cell is empty, or is a cell redaction does not
+read, is named by its letter (`B: free text`). Column rules give the same values as in the document: a `redact` column holds the rule's
+replacement, and a `filter` column is scanned with the rule's filters. Cells redaction does not scan are left out: an
+`ignore` column, boolean and error cells, and formula cells unless `formulaCaches` is `redact`. A value is the cell's
+stored value, as detection reads it (see [Limitations](#limitations)), so a date is its serial number. A line break in a
+cell is written as a space. The `worksheet` per-call option limits the text to that worksheet. Comments, shapes, charts,
+print headers and footers, pivot caches, and embedded objects are not included.
+
+### Metadata
+
+`withTextMetadata(true)` adds a last segment labeled `metadata`, one `key: value` line per property, redacted with the
+policy: `title`, `subject`, `keywords`, `category`, and `description` from `docProps/core.xml`, then each custom
+property by name. It follows `removeDocumentProperties`: with the default `true`, the document drops these properties,
+so the segment is `NOT_SCANNED` with no text. Authorship (`dc:creator`, `cp:lastModifiedBy`, `Company`, and `Manager`)
+is always cleared from the document and is never included. The segment is left out unless asked for.
+
+### Leftover check
+
+With text output, the policy's [leftover check](filter_policies/filter_policies.md#leftover-check) scans each segment's
+text whole, rather than the redacted document, leaving out values the redaction inserted. Each finding's `segment` is
+the label of its segment, with offsets into that segment's text. Text output with no text in any segment is reported as
+not performed (`unreadableOutput`).
 
 ## Limitations
 

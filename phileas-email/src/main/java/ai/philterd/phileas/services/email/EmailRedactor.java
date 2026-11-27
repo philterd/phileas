@@ -42,6 +42,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -122,19 +123,29 @@ public final class EmailRedactor {
 
     }
 
-    /** Redacts an attachment that is a PDF, Word, or Excel document. */
+    /** Redacts an attachment that is a PDF, Word, Excel, RTF, CSV, or plain-text document. */
     public interface AttachmentRedactor {
 
         /**
          * Redacts an attachment.
          * @param name The attachment's filename, or its media type when it has none.
          * @param document The attachment.
-         * @param type The attachment's type: PDF, Word, or Excel.
+         * @param type The attachment's type: PDF, Word, Excel, RTF, CSV, or plain text.
+         * @param charset The character set the attachment's part declares, or {@code null} when it declares none.
          * @return The redacted attachment.
          * @throws Exception Thrown if the attachment cannot be redacted.
          */
-        byte[] redact(String name, byte[] document, MimeType type) throws Exception;
+        RedactedAttachment redact(String name, byte[] document, MimeType type, Charset charset) throws Exception;
 
+    }
+
+    /**
+     * A redacted attachment.
+     * @param document The redacted attachment.
+     * @param charset For a text type, the character set it is written in; otherwise {@code null}. A part that
+     *                declared no charset is labeled with it, so the label matches the bytes.
+     */
+    public record RedactedAttachment(byte[] document, Charset charset) {
     }
 
     /** The redacted message, its fields, and what was left uninspected or taken out. */
@@ -149,7 +160,8 @@ public final class EmailRedactor {
      * @param input The {@code .eml} or {@code .msg} bytes.
      * @param settings The policy's {@code config.email}.
      * @param fieldRedactor Redacts each text field.
-     * @param attachmentRedactor Redacts PDF, Word, and Excel attachments under {@code attachments: redact}.
+     * @param attachmentRedactor Redacts PDF, Word, Excel, RTF, CSV, and plain-text attachments under
+     *                           {@code attachments: redact}.
      * @return The {@link Result}, with the message as {@code .eml}.
      * @throws EncryptedEmailException Thrown if the message, or a message nested in it, is encrypted.
      * @throws IllegalArgumentException Thrown if the input is not an email message.
@@ -510,17 +522,17 @@ public final class EmailRedactor {
                         removedAttachments.add(reportPart(part, messageNumber, EmailReport.RemovalReason.UNSUPPORTED_TYPE));
                         return Outcome.REMOVE;
                     }
-                    final byte[] redacted;
+                    final RedactedAttachment redacted;
                     try {
-                        redacted = attachmentRedactor.redact(name(part), document, documentType);
+                        redacted = attachmentRedactor.redact(name(part), document, documentType, declaredCharset(part));
                     } catch (final EncryptedEmailException e) {
                         throw e;
                     } catch (final Exception e) {
                         removedAttachments.add(reportPart(part, messageNumber, EmailReport.RemovalReason.REDACTION_FAILED));
                         return Outcome.REMOVE;
                     }
-                    final String contentType = part.getContentType();
-                    part.setDataHandler(new DataHandler(new ByteArrayDataSource(redacted, contentType)));
+                    final String contentType = labeled(part.getContentType(), redacted.charset());
+                    part.setDataHandler(new DataHandler(new ByteArrayDataSource(redacted.document(), contentType)));
                     part.setHeader("Content-Type", contentType);
                     return Outcome.KEEP;
                 }
@@ -561,7 +573,39 @@ public final class EmailRedactor {
         }
     }
 
-    // A PDF, Word, or Excel attachment's type, from its media type, its filename, or its content; otherwise null.
+    // A content type with the charset a text attachment was written in, when it declares none.
+    private static String labeled(final String contentType, final Charset charset) {
+        if (charset == null) {
+            return contentType;
+        }
+        try {
+            final ContentType type = new ContentType(contentType);
+            // Only a text type takes a charset; mail would otherwise add UTF-8 to one without it.
+            if (!"text".equalsIgnoreCase(type.getPrimaryType()) || type.getParameter("charset") != null) {
+                return contentType;
+            }
+            type.setParameter("charset", charset.name());
+            return type.toString();
+        } catch (final ParseException e) {
+            return contentType;
+        }
+    }
+
+    // The charset a part's content type declares, or null when it declares none. One Java cannot use is refused.
+    private static Charset declaredCharset(final Part part) throws MessagingException {
+        final String charset;
+        try {
+            charset = new ContentType(part.getContentType()).getParameter("charset");
+        } catch (final ParseException | NullPointerException e) {
+            return null;
+        }
+        return charset == null || charset.isBlank() ? null : Charset.forName(charset.strip());
+    }
+
+    /*
+     * An attachment's type, from its media type, its filename, or its content; otherwise null. A plain-text
+     * attachment is one by its media type: a part only gets here as an attachment, since body text is handled first.
+     */
     static MimeType documentType(final String type, final String fileName, final byte[] document) {
 
         final String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
@@ -575,6 +619,15 @@ public final class EmailRedactor {
         if (MimeType.APPLICATION_XLSX.getValue().equals(type) || name.endsWith(".xlsx")) {
             return MimeType.APPLICATION_XLSX;
         }
+        if (MimeType.TEXT_CSV.getValue().equals(type) || name.endsWith(".csv")) {
+            return MimeType.TEXT_CSV;
+        }
+        if (MimeType.APPLICATION_RTF.getValue().equals(type) || "text/rtf".equals(type) || name.endsWith(".rtf")) {
+            return MimeType.APPLICATION_RTF;
+        }
+        if (MimeType.TEXT_PLAIN.getValue().equals(type)) {
+            return MimeType.TEXT_PLAIN;
+        }
 
         // A generic type with no telling name: look at the content.
         if ("application/octet-stream".equals(type) && name.lastIndexOf('.') < 0) {
@@ -584,6 +637,9 @@ public final class EmailRedactor {
             final OoxmlDocumentType ooxml = OoxmlDocumentType.of(document);
             if (ooxml != null) {
                 return ooxml.mimeType();
+            }
+            if (document.length >= 5 && new String(document, 0, 5, StandardCharsets.US_ASCII).equals("{\\rtf")) {
+                return MimeType.APPLICATION_RTF;
             }
         }
 

@@ -87,11 +87,41 @@ Pass `CsvRedactionOptions` to the service's constructor:
 
 ## Column rules
 
-The policy's [column rules](word_and_excel.md#column-rules) apply to a CSV document as to one worksheet: the `tabular` sheet entry without a `worksheet` applies, and an entry that names a worksheet does not. Under column rules, the entry's `headerRows` decide which rows are header rows, and header rows are never redacted. A `header` rule is matched against the last header row's value, trimmed.
+The policy's [column rules](word_and_excel.md#column-rules) apply to a CSV document as to one worksheet: the `tabular` sheet entry without a `worksheet` applies, and an entry that names a worksheet does not. Under column rules, the entry's `headerRows` decide which rows are header rows, and header rows are never redacted. A `header` rule is matched against the last header row's value, trimmed. A `header` rule that matches no column is returned by `BinaryDocumentFilterResult.getWarnings()` and logged, as for [Excel](word_and_excel.md#unmatched-column-rules): with `unlistedColumns: ignore`, the column is left unredacted and the leftover check does not report it.
 
 ## Leftover check
 
 The [leftover check](filter_policies/filter_policies.md#leftover-check) scans each field of the redacted document, as the redaction does. Under column rules it skips header rows and ignored columns. A finding's `row` and `column` give its field, and its offsets are into the field's value.
+
+## Redacted text output
+
+`CsvFilterService` can return the document's redacted plain text in place of the redacted document. Ask for it with
+`FilterOptions.defaults().withOutput(FilterOptions.Output.TEXT)`; `getText()` then returns the text as labeled
+segments and `getDocument()` returns `null`. A call returns either the text or the document, not both, and the output
+`MimeType` is not checked. The text comes from the same walk and the same detection the document redaction uses, so
+each value has the replacement the document would have, and it is not included when the result is serialized to JSON.
+The segments and their statuses (`TEXT`, `NO_TEXT`, `NOT_SCANNED`) are described under
+[PDF redacted text output](filter_policies/pdf.md#redacted-text-output). The policy's
+[leftover check](filter_policies/filter_policies.md#leftover-check) scans each segment's text, leaving out values the
+redaction inserted, and each finding's `segment` is the label of its segment, with offsets into that segment's text.
+
+The text is one segment labeled `rows`, decoded with the policy's `config.csv` `encoding`. Each data row is a set of
+`header: value` lines, one per field with text, with a blank line between rows:
+
+```
+Name: Row one
+Email: {{{REDACTED-email-address}}}
+
+Name: Row two
+SSN: none
+```
+
+A column's header is its field in the last header row (the sheet entry's `headerRows` under column rules, or the first
+row with `headerRow`), as the redaction leaves it: under column rules the header row is not redacted, and without them
+it is redacted like any other row. A column without a header is named by its number (`column 2`). Column rules give
+the same values as in the document, and a field an `ignore` rule leaves unscanned is left out, where the document keeps
+it as it was. A field's value is its text without quoting, with line breaks written as spaces. `withTextMetadata` has
+no effect, since a CSV document has no metadata.
 
 ## Limits
 

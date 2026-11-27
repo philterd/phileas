@@ -255,6 +255,35 @@ final class WordDocs {
         return pkg.toBytes();
     }
 
+    /**
+     * A .docx whose endnote is {@code endnoteText}, after text the Word settings remove or skip, each holding
+     * {@code text}: a hidden-text paragraph, a tracked deletion, a header and footer, and a footnote, all numbered
+     * before the endnote. It also has a comment, which is numbered after it.
+     */
+    static byte[] createWithEverythingBeforeAnEndnote(final String text, final String endnoteText) {
+        final TestPackage pkg = new TestPackage();
+        pkg.rel("/", TestPackage.REL_OFFICE_DOCUMENT, DOCUMENT);
+        final String headerId = pkg.rel(DOCUMENT, REL + "header", "/word/header1.xml");
+        final String footerId = pkg.rel(DOCUMENT, REL + "footer", "/word/footer1.xml");
+        pkg.part("/word/header1.xml", CT_HEADER, "<w:hdr " + DOC_NAMESPACES + ">" + paraXml("Head " + text) + "</w:hdr>");
+        pkg.part("/word/footer1.xml", CT_FOOTER, "<w:ftr " + DOC_NAMESPACES + ">" + paraXml("Foot " + text) + "</w:ftr>");
+        pkg.rel(DOCUMENT, REL + "comments", "/word/comments.xml");
+        pkg.part("/word/comments.xml", CT_COMMENTS, "<w:comments " + DOC_NAMESPACES + ">"
+                + comment(1, "Reviewer", "R", "Ask " + text) + "</w:comments>");
+        pkg.rel(DOCUMENT, REL + "footnotes", "/word/footnotes.xml");
+        pkg.part("/word/footnotes.xml", CT_FOOTNOTES, notesXml("footnote", new String[]{"Note " + text}));
+        pkg.rel(DOCUMENT, REL + "endnotes", "/word/endnotes.xml");
+        pkg.part("/word/endnotes.xml", CT_ENDNOTES, notesXml("endnote", new String[]{endnoteText}));
+        pkg.part(DOCUMENT, TestPackage.CT_DOCX_MAIN, documentXml(
+                "<w:p><w:r><w:rPr><w:vanish/></w:rPr><w:t xml:space=\"preserve\">Hidden " + escape(text) + "</w:t></w:r></w:p>"
+                + "<w:p><w:del w:id=\"2\" w:author=\"Reviewer\" w:date=\"2024-01-01T00:00:00Z\"><w:r>"
+                + "<w:delText xml:space=\"preserve\">Gone " + escape(text) + "</w:delText></w:r></w:del></w:p>"
+                + paraXml("Body.")
+                + "<w:sectPr><w:headerReference w:type=\"default\" r:id=\"" + headerId + "\"/>"
+                + "<w:footerReference w:type=\"default\" r:id=\"" + footerId + "\"/></w:sectPr>"));
+        return pkg.toBytes();
+    }
+
     /** A .docx whose footnote #1 is the supplied raw WordprocessingML. */
     static byte[] createWithRawFootnote(final String footnoteInnerXml, final String... bodyParagraphs) {
         final TestPackage pkg = docx(paras(bodyParagraphs));

@@ -36,7 +36,11 @@ public final class LeftoverCheckResult {
 
         /** The output has no readable text, such as a PDF whose pages were all flattened to images. */
         @SerializedName("unreadableOutput")
-        UNREADABLE_OUTPUT
+        UNREADABLE_OUTPUT,
+
+        /** The check failed with an error. The redaction it was checking is unaffected. */
+        @SerializedName("checkFailed")
+        CHECK_FAILED
 
     }
 
@@ -115,7 +119,7 @@ public final class LeftoverCheckResult {
 
     /**
      * For an email message, the redacted attachments the check could not read, such as a PDF whose pages were all
-     * flattened to images. Nothing in them was checked.
+     * flattened to images, or whose check failed. Nothing in them was checked.
      * @return The attachments' filenames; empty when every redacted attachment was checked.
      */
     public List<String> getUncheckedAttachments() {

@@ -88,6 +88,11 @@ public final class OoxmlTestFixtures {
         return pkg.toBytes();
     }
 
+    /** A .docx with a simple field whose instruction is {@code instruction} and cached result {@code resultText}. */
+    public static byte[] docxWithSimpleField(final String instruction, final String resultText) {
+        return WordDocs.createWithSimpleField(instruction, resultText);
+    }
+
     /** A .docx with one paragraph and an embedded Excel workbook (Insert, Object). */
     public static byte[] docxWithEmbeddedXlsx(final String paragraph, final byte[] workbook) {
         final TestPackage pkg = docxPackage(paragraph);

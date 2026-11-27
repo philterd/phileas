@@ -95,6 +95,11 @@ final class HtmlText {
 
     }
 
+    /** The characters a character reference (without its "&" and ";") stands for, or null when it is not one. */
+    static String decodeReference(final String reference) {
+        return decode(reference);
+    }
+
     // The characters a reference stands for, or null when it is not one.
     private static String decode(final String reference) {
         try {

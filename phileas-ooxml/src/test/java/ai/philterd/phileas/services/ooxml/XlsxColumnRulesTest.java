@@ -18,6 +18,7 @@ package ai.philterd.phileas.services.ooxml;
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.RedactionWarning;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
@@ -408,8 +409,7 @@ public class XlsxColumnRulesTest {
         final OoxmlRedactionResult result = redactWithRules(patients(), "[{\"columns\":["
                 + "{\"header\":\"Social Security\",\"action\":\"redact\",\"strategies\":[{}]}]}]");
 
-        Assertions.assertEquals(1, result.warnings().size());
-        Assertions.assertTrue(result.warnings().get(0).contains("'Social Security'"), result.warnings().get(0));
+        Assertions.assertEquals(List.of(RedactionWarning.unmatchedHeader("Social Security", null)), result.warnings());
         // The rest of the sheet is still redacted.
         Assertions.assertEquals("E", SpreadsheetDocs.cellText(result.document(), "C2"));
 

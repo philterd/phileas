@@ -70,9 +70,47 @@ The policy's [`config.word`](word_and_excel.md#word) settings apply to RTF where
 
 `charts` and `highlight` have no RTF counterpart and are ignored. Whatever the settings, `\author`, `\operator`, `\company`, and `\manager` in `\info` are cleared, a kept comment's author becomes `Redacted` and its initials are cleared, and each author in a kept revision table becomes `Redacted`.
 
+## Leftover check
+
+The [leftover check](filter_policies/filter_policies.md#leftover-check) scans the redacted document's text as the redaction does, after the policy's Word settings, so headers and footers kept with `headersFooters: keep` are not checked. A finding's `paragraphNumber` and offsets are as for a [span](#spans).
+
 ## Reading text
 
 `RtfTextExtractor.extract` returns the visible text of an RTF document's body: its paragraphs, tables, footnotes, and endnotes, without headers and footers, comments, field instructions, hidden text, tracked deletions, or pictures and objects. For RTF that encapsulates HTML, as Outlook writes, the HTML-only parts are left out. [Email redaction](email.md) uses it to read an Outlook message whose only body is RTF.
+
+## Redacted text output
+
+`RtfFilterService` can return the document's redacted plain text in place of the redacted document. Ask for it with
+`FilterOptions.defaults().withOutput(FilterOptions.Output.TEXT)`; `getText()` then returns the text as labeled
+segments and `getDocument()` returns `null`. A call returns either the text or the document, not both, and the output
+`MimeType` is not checked. The text comes from the same walk and the same detection the document redaction uses, so
+each value has the replacement the document would have, and it is not included when the result is serialized to JSON.
+The segments and their statuses (`TEXT`, `NO_TEXT`, `NOT_SCANNED`) are described under
+[PDF redacted text output](filter_policies/pdf.md#redacted-text-output). The policy's
+[leftover check](filter_policies/filter_policies.md#leftover-check) scans each segment's text, leaving out values the
+redaction inserted, and each finding's `segment` is the label of its segment, with offsets into that segment's text.
+
+One paragraph or table cell per line, in these segments, each present when the document has that part, after the
+policy's `config.word` settings are applied:
+
+| Label | Content |
+|---|---|
+| `body` | The body, including shape text. Always present. |
+| `headers and footers` | Header and footer paragraphs. `NOT_SCANNED`, with no text, when `headersFooters` is `keep`. |
+| `footnotes` | Footnote and endnote paragraphs. |
+| `comments` | Comment text, when `comments` is `redact`. |
+| `tracked changes` | Deleted text, one line per run of deletion, when `trackedChanges` is `redact`. |
+
+Hidden text is included only when `hiddenText` is `redact`. Field instructions and HTML tags are not included. In RTF
+that encapsulates HTML, as Outlook writes it, the RTF-only text (`\htmlrtf`) that stands in for the HTML in an RTF
+reader is not included either, as `RtfTextExtractor` leaves it out; the document still redacts it. A replacement takes
+the place of every character its value was read from, as in the document.
+
+`withTextMetadata(true)` adds a last segment labeled `metadata`, one `key: value` line per property, redacted with the
+policy: `title`, `subject`, `keywords`, `category`, and `comments` (`\doccomm`). With the default
+`removeDocumentProperties: true` the document drops them, so the segment is `NOT_SCANNED` with no text. Authorship
+(`\author`, `\operator`, `\company`, `\manager`) is always cleared and never included, and `\userprops` is not
+included.
 
 ## Untrusted input
 
