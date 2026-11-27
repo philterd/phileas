@@ -56,6 +56,24 @@ public final class IdentifierSeparators {
         return first + "(?:" + WRAP + second + WRAP + "|\\h" + second + "\\h|" + second + ")" + third;
     }
 
+    /**
+     * The initial confidence of an identifier written one digit to a box. Any run of single digits
+     * written this way matches, such as a row of scores in a table, so it is lower than the other
+     * forms, and a strategy condition can tell the two apart.
+     */
+    public static final double SPACED_DIGITS_CONFIDENCE = 0.75;
+
+    /**
+     * Joins single-digit patterns with one horizontal whitespace character between each. An
+     * identifier written one digit to a box, as in the SSN fields on Form 1040, is read from the form
+     * with a space between every digit: {@code 5 1 2 4 8 7 3 2 9}. Each pattern matches one digit and
+     * may start with a lookahead, which sees the spaces too. A match may not be part of a longer run
+     * of digits written this way, and may not touch a letter or digit. See issue #544.
+     */
+    public static String spacedDigits(final String... digits) {
+        return "(?<!\\w)(?<!\\d\\h)" + String.join("\\h", digits) + "(?!\\h\\d)(?!\\w)";
+    }
+
     private IdentifierSeparators() {
         // Constants only.
     }

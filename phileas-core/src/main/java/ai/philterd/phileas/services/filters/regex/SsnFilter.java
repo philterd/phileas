@@ -47,12 +47,21 @@ public class SsnFilter extends RegexFilter {
         final Pattern ssnPattern = Pattern.compile("(?<!\\w)(?:" + ssn + "){1,8}(?!\\w)");
         final FilterPattern ssn1 = new FilterPattern.FilterPatternBuilder(ssnPattern, 0.90).build();
 
+        // One digit to a box, as in the SSN fields on Form 1040, with the same area, group, and serial
+        // checks written to allow for the spaces. See issue #544.
+        final String digit = "\\d";
+        final Pattern spacedPattern = Pattern.compile(IdentifierSeparators.spacedDigits(
+                "(?!0\\h0\\h0|6\\h6\\h6|9)" + digit, digit, digit,
+                "(?!0\\h0)" + digit, digit,
+                "(?!0\\h0\\h0\\h0)" + digit, digit, digit, digit));
+        final FilterPattern ssn2 = new FilterPattern.FilterPatternBuilder(spacedPattern, IdentifierSeparators.SPACED_DIGITS_CONFIDENCE).build();
+
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("ssn");
         this.contextualTerms.add("social");
         this.contextualTerms.add("ssid");
 
-        this.analyzer = new Analyzer(contextualTerms, ssn1);
+        this.analyzer = new Analyzer(contextualTerms, ssn1, ssn2);
 
     }
 
