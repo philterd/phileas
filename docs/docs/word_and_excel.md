@@ -263,6 +263,88 @@ are kept is redacted with the policy like any other text. `removeDocumentPropert
 `docProps/core.xml` (`dc:title`, `dc:subject`, `cp:keywords`, `cp:category`, and `dc:description`) and every property in
 `docProps/custom.xml`.
 
+## Redacted text output
+
+`OoxmlFilterService` can return a Word or Excel document's redacted plain text in place of the redacted document, for
+pipelines that need text, such as preparing documents for AI training or a search index:
+
+```java
+final FilterOptions options = FilterOptions.defaults().withOutput(FilterOptions.Output.TEXT);
+
+final BinaryDocumentFilterResult result = ooxmlFilterService.filter(policy, contextService, vectorService, context,
+        document, MimeType.APPLICATION_DOCX, options);
+
+for (final TextSegment segment : result.getText().getSegments()) {
+    System.out.println(segment.getLabel() + ": " + segment.getText());
+}
+```
+
+A call returns either the text or the document, not both. With text output, `getDocument()` returns `null`, no
+document is written, and the output `MimeType` is not checked; the document's type is read from its content. The text comes from the same walk and the same detection the document redaction uses, after the
+policy's settings are applied, so it holds what the redacted document would hold, and each value has the replacement
+the document would have. Like the document, the text is not included when the result is serialized to JSON. The
+segments and their statuses (`TEXT`, `NO_TEXT`, `NOT_SCANNED`) are described under
+[PDF redacted text output](filter_policies/pdf.md#redacted-text-output).
+
+### Word segments
+
+One paragraph per line, in these segments, each present when the document has that part. Segments are in the order
+their part first appears, with the metadata last:
+
+| Label | Content |
+|---|---|
+| `body` | The body, including tables and text boxes. Always present. |
+| `headers` | Header paragraphs. `NOT_SCANNED`, with no text, when `headersFooters` is `keep`. |
+| `footers` | Footer paragraphs. `NOT_SCANNED`, with no text, when `headersFooters` is `keep`. |
+| `footnotes` | Footnote paragraphs. |
+| `endnotes` | Endnote paragraphs. |
+| `comments` | Comment paragraphs, when `comments` is `redact`. With the default `remove`, comments are removed, so there is no segment. |
+| `tracked changes` | The deleted text of tracked changes, one line per paragraph with a deletion, when `trackedChanges` is `redact`. With the default `accept`, deletions are removed, so there is no segment; inserted text is part of the paragraphs it is in. |
+
+Runs `hiddenText` removes are not included. A text box's fallback copy for older versions of Word is not repeated,
+and the separator notes Word keeps above footnotes and endnotes are left out.
+Drawing text outside text boxes, hyperlink targets, field instructions, charts, and embedded objects are not included
+in the text.
+
+### Excel segments
+
+One segment per worksheet, in workbook order, labeled `sheet: ` and the worksheet's name (`sheet: People`). Each data
+row is a set of `header: value` lines, one per cell with text, with a blank line between rows:
+
+```
+Name: Row one
+Email: {{{REDACTED-email-address}}}
+Phone: {{{REDACTED-phone-number}}}
+
+Name: Row two
+Phone: none
+```
+
+A column's header is the text of the last header row: the sheet entry's `headerRows` under
+[column rules](#column-rules), or the first row otherwise. Under column rules the header row is not redacted, as in the
+document; without them the first row is redacted like any other. A column whose header cell is empty, or is a cell redaction does not
+read, is named by its letter (`B: free text`). Column rules give the same values as in the document: a `redact` column holds the rule's
+replacement, and a `filter` column is scanned with the rule's filters. Cells redaction does not scan are left out: an
+`ignore` column, boolean and error cells, and formula cells unless `formulaCaches` is `redact`. A value is the cell's
+stored value, as detection reads it (see [Limitations](#limitations)), so a date is its serial number. A line break in a
+cell is written as a space. The `worksheet` per-call option limits the text to that worksheet. Comments, shapes, charts,
+print headers and footers, pivot caches, and embedded objects are not included.
+
+### Metadata
+
+`withTextMetadata(true)` adds a last segment labeled `metadata`, one `key: value` line per property, redacted with the
+policy: `title`, `subject`, `keywords`, `category`, and `description` from `docProps/core.xml`, then each custom
+property by name. It follows `removeDocumentProperties`: with the default `true`, the document drops these properties,
+so the segment is `NOT_SCANNED` with no text. Authorship (`dc:creator`, `cp:lastModifiedBy`, `Company`, and `Manager`)
+is always cleared from the document and is never included. The segment is left out unless asked for.
+
+### Leftover check
+
+With text output, the policy's [leftover check](filter_policies/filter_policies.md#leftover-check) scans each segment's
+text whole, rather than the redacted document, leaving out values the redaction inserted. Each finding's `segment` is
+the label of its segment, with offsets into that segment's text. Text output with no text in any segment is reported as
+not performed (`unreadableOutput`).
+
 ## Limitations
 
 * In Word, a replacement is written in place of the redacted text, in the run that held its first character, and takes that run's formatting. The rest of the paragraph, including its formatting, hyperlinks, fields, tracked changes, and comment ranges, is unchanged. A value that spans runs is removed from the runs after the first.

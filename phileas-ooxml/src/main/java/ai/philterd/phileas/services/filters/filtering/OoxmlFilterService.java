@@ -46,6 +46,7 @@ import ai.philterd.phileas.services.ooxml.OfficeRedactionSpan;
 import ai.philterd.phileas.services.ooxml.OoxmlDocumentType;
 import ai.philterd.phileas.services.ooxml.OoxmlRedactionOptions;
 import ai.philterd.phileas.services.ooxml.OoxmlRedactionResult;
+import ai.philterd.phileas.services.ooxml.OoxmlTextResult;
 import ai.philterd.phileas.services.ooxml.TextFilter;
 import ai.philterd.phileas.services.ooxml.WordDocumentRedactor;
 import ai.philterd.phileas.services.ooxml.XlsxRedactor;
@@ -172,16 +173,21 @@ public class OoxmlFilterService extends BinaryFilterService {
         // One draw for the document, not one per paragraph or cell.
         final boolean reviewSampled = ReviewSampler.isSelected(policy);
 
-        final OoxmlDocumentType type = documentType(input, outputMimeType);
+        // A call for text has no output document, so its type is not checked.
+        final boolean textOutput = filterOptions != null && filterOptions.isTextOutput();
+        final OoxmlDocumentType type = documentType(input, textOutput ? null : outputMimeType);
 
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
         final long[] tokens = {0};
         final TextFilter textFilter = textFilter(policy, contextService, vectorService, context, incrementalRedactions, tokens);
         final ColumnRules columnRules = columnRules(policy, contextService, vectorService, context, incrementalRedactions, tokens);
 
-        final OoxmlRedactionResult result = type == OoxmlDocumentType.DOCX
-                ? WordDocumentRedactor.redact(input, textFilter, callOptions(policy), columnRules)
-                : XlsxRedactor.redact(input, textFilter, callOptions(policy), columnRules);
+        if (textOutput) {
+            return filterToText(policy, type, input, textFilter, columnRules, context, incrementalRedactions, tokens,
+                    reviewSampled, filterOptions);
+        }
+
+        final OoxmlRedactionResult result = redactDocument(type, input, textFilter, callOptions(policy), columnRules);
 
         for (final String warning : result.warnings()) {
             LOGGER.warn(warning);
@@ -274,6 +280,56 @@ public class OoxmlFilterService extends BinaryFilterService {
         }
 
         return LeftoverCheckResult.performed(findings);
+
+    }
+
+    /**
+     * Redacts the document and writes the redacted package. A call for text output does not call it.
+     * @param type The document's type.
+     * @param input The document.
+     * @param textFilter The policy's filter.
+     * @param options The call's redaction options.
+     * @param columnRules The policy's column rules, or {@code null} for none.
+     * @return The redacted document and its redactions.
+     * @throws Exception Thrown if the document cannot be redacted.
+     */
+    protected OoxmlRedactionResult redactDocument(final OoxmlDocumentType type, final byte[] input,
+                                                  final TextFilter textFilter, final OoxmlRedactionOptions options,
+                                                  final ColumnRules columnRules) throws Exception {
+        return type == OoxmlDocumentType.DOCX
+                ? WordDocumentRedactor.redact(input, textFilter, options, columnRules)
+                : XlsxRedactor.redact(input, textFilter, options, columnRules);
+    }
+
+    // The document's redacted text in place of the document, from the same detection the redaction uses.
+    private BinaryDocumentFilterResult filterToText(final Policy policy, final OoxmlDocumentType type, final byte[] input,
+                                                    final TextFilter textFilter, final ColumnRules columnRules,
+                                                    final String context, final List<IncrementalRedaction> incrementalRedactions,
+                                                    final long[] tokens, final boolean reviewSampled,
+                                                    final FilterOptions filterOptions) throws Exception {
+
+        final boolean metadata = filterOptions.isTextMetadata();
+        final OoxmlTextResult result = type == OoxmlDocumentType.DOCX
+                ? WordDocumentRedactor.redactToText(input, textFilter, callOptions(policy), metadata)
+                : XlsxRedactor.redactToText(input, textFilter, callOptions(policy), columnRules, metadata);
+
+        for (final String warning : result.warnings()) {
+            LOGGER.warn(warning);
+        }
+
+        final List<Span> spans = new ArrayList<>();
+        for (final OfficeRedactionSpan officeSpan : result.spans()) {
+            final Span span = officeSpan.toSpan();
+            if (span != null) {
+                spans.add(span);
+            }
+        }
+
+        final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, filterOptions)
+                ? runLeftoverCheck(() -> textLeftoverCheck(policy, result.text().parts(), filterOptions)) : null;
+
+        return new BinaryDocumentFilterResult(null, result.text().build(), context, new Explanation(spans, spans),
+                tokens[0], incrementalRedactions, reviewSampled, leftoverCheck, null);
 
     }
 

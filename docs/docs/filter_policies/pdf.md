@@ -120,3 +120,72 @@ open-ended ranges (`12-`, page 12 to the end). `assign(pages, policy)` without a
 
 `PdfFilterService.apply(policy, input, spans, outputMimeType, pagePolicies)` applies reviewed spans and draws each
 policy's bounding boxes on its pages in the same way.
+
+## Redacted Text Output
+
+`PdfFilterService` can return a PDF's redacted plain text in place of the redacted PDF, for pipelines that need text,
+such as preparing documents for AI training or a search index. Ask for it with `FilterOptions`:
+
+```java
+final FilterOptions options = FilterOptions.defaults().withOutput(FilterOptions.Output.TEXT);
+
+final BinaryDocumentFilterResult result = pdfFilterService.filter(policy, contextService, vectorService, context,
+        body, MimeType.APPLICATION_PDF, options);
+
+for (final TextSegment segment : result.getText().getSegments()) {
+    System.out.println(segment.getLabel() + ": " + segment.getText());
+}
+```
+
+A call returns either the text or the document, not both. With text output, `getDocument()` returns `null`, the
+output `MimeType` is ignored, and no page is rendered, so the call skips the cost of rendering pages to images. The
+redacted document stays the default. Like the document, the text is not included when the result is serialized to
+JSON.
+
+The text comes from the same lines and the same detection the document redaction uses, so it is the text Phileas
+checked. A redacted page's text cannot be read back from a redacted PDF, since the page is rendered to an image.
+
+`getText()` returns a `RedactedText` holding one `TextSegment` per page, in page order, labeled `page 1`, `page 2`, and
+so on. A page's lines are joined with a line break (`\n`); words a PDF places separately on one line are joined with a
+space. Each detected value is replaced with its strategy's replacement, as in text redaction (`{{{REDACTED-ssn}}}`
+with the default `REDACT` strategy). `config.pdf` settings such as `showReplacement` apply only to the document.
+`RedactedText.join(separator)` joins the segments that have text.
+
+Each segment has a status (`getStatus()`):
+
+* `TEXT`: the page's redacted text.
+* `NO_TEXT`: the page has no extractable text, such as a scanned page. Its text is empty, and its label is listed by
+  `RedactedText.getSegmentsWithoutText()`, so it can be treated as unprocessed. OCR is not performed.
+* `NOT_SCANNED`: the page's policy has no filters, such as a [page policy](#different-policies-for-different-pages)
+  with only bounding boxes. Its text is left out rather than returned unredacted.
+
+Text under a policy's `graphical.boundingBoxes` is left out of its page's text. A character counts as covered when its
+glyph touches a box, and when a line's characters cannot be matched to its glyphs one for one, the whole line is left
+out if any glyph is covered. A replacement that overlaps a box is kept, since it holds nothing from the document. A
+page whose text is all under boxes has status `TEXT` with empty text, since it had text to read.
+
+### Metadata
+
+The document information dictionary's text entries (such as `Author`, `Title`, `Subject`, `Keywords`, `Creator`,
+`Producer`, `CreationDate`, `ModDate`, and custom entries) are left out of the text by default. `withTextMetadata(true)` adds them as a last segment labeled `metadata`,
+one `key: value` line per entry, redacted with the policy passed to `filter`. Its status is `NO_TEXT` when the
+document has none, and `NOT_SCANNED` when that policy has no filters. XMP metadata is not included. The metadata's
+spans are not in the result's explanation, since they are not on a page.
+
+```java
+final FilterOptions options = FilterOptions.defaults()
+        .withOutput(FilterOptions.Output.TEXT)
+        .withTextMetadata(true);
+```
+
+### Leftover Check
+
+With text output, the policy's [leftover check](filter_policies.md#leftover-check) scans the returned text rather than
+a redacted document: each page's text whole, with the check built from that page's policy, and the metadata segment
+with the policy passed to `filter`. Values the redaction inserted are not reported. Each finding's `segment` is the
+label of the segment it is in, and its offsets are into that segment's text; `pageNumber` (from 0) and `lineNumber`
+are set for a page. Text output with no text in any segment is reported as not performed (`unreadableOutput`).
+
+Text output is also supported for [Word and Excel](../word_and_excel.md#redacted-text-output),
+[RTF](../rtf.md#redacted-text-output), [email](../email.md#redacted-text-output), and
+[CSV](../csv.md#redacted-text-output) documents.

@@ -44,7 +44,10 @@ public class Email {
         /** Attachments are deleted, including their filenames. */
         REMOVE("remove"),
 
-        /** PDF, Word, and Excel attachments are redacted with the policy; any other attachment is removed and reported. */
+        /**
+         * PDF, Word, Excel, RTF, CSV, and plain-text attachments are redacted with the policy; any other attachment is
+         * removed and reported.
+         */
         REDACT("redact");
 
         private final String value;
