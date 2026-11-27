@@ -255,6 +255,20 @@ public class RtfTextOutputTest {
     }
 
     @Test
+    public void aValueInSeveralParagraphsGetsOneDocumentScopedReplacement() throws Exception {
+
+        final Policy policy = new Gson().fromJson("{\"identifiers\":{\"emailAddress\":{\"emailAddressFilterStrategies\":"
+                + "[{\"strategy\":\"RANDOM_REPLACE\"}]}}}", Policy.class);
+
+        final List<Span> spans = filter(policy, doc("Mail " + EMAIL + ".\\par Or " + EMAIL + ".\\par{\\footnote\\pard " + EMAIL + "}\\par "),
+                FilterOptions.defaults()).getExplanation().appliedSpans();
+
+        Assertions.assertEquals(3, spans.size());
+        Assertions.assertEquals(1, spans.stream().map(Span::getReplacement).distinct().count(), spans.toString());
+
+    }
+
+    @Test
     public void theOutputTypeIsNotCheckedForText() throws Exception {
         Assertions.assertNotNull(SERVICE.filter(policy(null), new DefaultContextService(), new InMemoryVectorService(), "ctx",
                 bytes(doc("Body.\\par ")), MimeType.TEXT_PLAIN, TEXT).getText());

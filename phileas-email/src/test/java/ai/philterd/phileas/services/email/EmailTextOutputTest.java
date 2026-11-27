@@ -339,6 +339,24 @@ public class EmailTextOutputTest {
     }
 
     @Test
+    public void aValueInTheBodyAndAnAttachmentGetsOneDocumentScopedReplacement() throws Exception {
+
+        final Policy policy = new Gson().fromJson("{\"identifiers\":{\"phoneNumber\":{\"phoneNumberFilterStrategies\":"
+                + "[{\"strategy\":\"RANDOM_REPLACE\"}]}},\"config\":{\"email\":" + REDACT_ATTACHMENTS + "}}", Policy.class);
+        final MimeMessage message = message("Files", multipart("mixed", text("Call " + PHONE + ".", "plain"),
+                attachment("letter.docx", "application/octet-stream", EmailFixtures.docx("Or " + PHONE))));
+
+        final BinaryDocumentFilterResult result = filter(policy, message, TEXT);
+
+        final String body = segment(result, "body").getText();
+        final String attached = segment(result, "attachment: letter.docx / body").getText();
+        final String replacement = body.substring("Call ".length(), body.length() - 1);
+        Assertions.assertFalse(body.contains(PHONE) || attached.contains(PHONE), body + " / " + attached);
+        Assertions.assertEquals("Or " + replacement, attached);
+
+    }
+
+    @Test
     public void theOutputTypeIsNotCheckedForText() throws Exception {
         Assertions.assertNotNull(new EmailFilterService(new PhileasConfiguration(new Properties()), new DefaultContextService(),
                 new InMemoryVectorService(), null).filter(policy(null, null), new DefaultContextService(), new InMemoryVectorService(),

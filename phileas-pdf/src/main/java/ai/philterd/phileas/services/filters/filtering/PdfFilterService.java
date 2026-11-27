@@ -33,6 +33,7 @@ import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.LeftoverChecker;
 import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DocumentContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
@@ -218,10 +219,13 @@ public class PdfFilterService extends BinaryFilterService {
      * @param options The {@link FilterOptions} for this call.
      * @throws IllegalArgumentException before redaction if a page set extends beyond the document's last page.
      */
-    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
+    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService callerContextService,
                                              final VectorService vectorService, final String context,
                                              final byte[] input, final MimeType outputMimeType,
                                              final PdfPagePolicies pagePolicies, final FilterOptions options) throws Exception {
+
+        // One map of DOCUMENT-scoped replacements for the whole call, apart from the caller's context.
+        final ContextService contextService = DocumentContextService.forDocument(callerContextService);
 
         // One draw for the document, with the policy that also sets its rendering, not one per page or page policy.
         final boolean reviewSampled = ReviewSampler.isSelected(policy);

@@ -25,6 +25,7 @@ import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.anonymization.AnonymizationMethod;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DocumentContextService;
 import ai.philterd.phileas.services.generators.ReplacementGenerator;
 import ai.philterd.phileas.services.generators.ReplacementValidator;
 import com.google.gson.annotations.Expose;
@@ -455,8 +456,13 @@ public abstract class AbstractFilterStrategy {
 
         } else {
 
-            // DOCUMENT scope (the default): do not consult the context; anonymize directly.
-            replacement = service.anonymize(token);
+            // DOCUMENT scope (the default): the same value gets the same replacement throughout one filter call,
+            // from a map kept for that call only and never the caller's context. A filter used on its own, outside
+            // a filter call, has no such map.
+            final DocumentContextService document = DocumentContextService.of(contextService);
+            replacement = document != null
+                    ? document.computeDocumentReplacementIfAbsent(token, () -> service.anonymize(token))
+                    : service.anonymize(token);
 
         }
 

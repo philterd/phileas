@@ -21,6 +21,7 @@ import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DocumentContextService;
 import ai.philterd.phileas.utils.Encryption;
 import ai.philterd.phileas.utils.FormatPreservingEncryptionException;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -59,8 +60,12 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
             // PII re-scan runs against a throwaway context, so it never mutates this context and is safe
             // to run inside computeReplacementIfAbsent. A miss (no mapping and no accepted generator
             // output) returns null and falls through to the fallback strategy.
+            // In DOCUMENT scope the filter call's map does the same within one document.
+            final DocumentContextService document = mapReplaceContextScope ? null : DocumentContextService.of(contextService);
             final String resolved = mapReplaceContextScope
                     ? contextService.computeReplacementIfAbsent(token, filterType.getType(), () -> resolveMapReplacement(token, label))
+                    : document != null
+                    ? document.computeDocumentReplacementIfAbsent(token, () -> resolveMapReplacement(token, label))
                     : resolveMapReplacement(token, label);
 
             if(resolved != null) {
@@ -160,6 +165,8 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
         // already cached above by computeReplacementIfAbsent; only the fallback path reaches here.)
         if(mapReplaceContextScope) {
             contextService.putReplacement(token, replacement, filterType.getType());
+        } else if(Strings.CI.equals(strategy, MAP_REPLACE) && DocumentContextService.of(contextService) != null) {
+            DocumentContextService.of(contextService).putDocumentReplacement(token, replacement);
         }
 
         return new Replacement(replacement, salt);

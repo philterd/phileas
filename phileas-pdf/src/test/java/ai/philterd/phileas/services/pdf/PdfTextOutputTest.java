@@ -331,6 +331,21 @@ public class PdfTextOutputTest {
     }
 
     @Test
+    public void aValueOnSeveralPagesGetsOneDocumentScopedReplacement() throws Exception {
+
+        final Policy policy = policy("{\"identifiers\":{\"phoneNumber\":{\"phoneNumberFilterStrategies\":"
+                + "[{\"strategy\":\"RANDOM_REPLACE\"}]}}}");
+        final byte[] input = document(new String[]{"Call 212-555-0187 now."}, new String[]{"Or 212-555-0187 later."});
+
+        for (final FilterOptions options : new FilterOptions[]{FilterOptions.defaults(), TEXT}) {
+            final List<Span> spans = filter(service(), policy, input, options).getExplanation().appliedSpans();
+            Assertions.assertEquals(2, spans.size());
+            Assertions.assertEquals(spans.get(0).getReplacement(), spans.get(1).getReplacement());
+        }
+
+    }
+
+    @Test
     public void theTextIsNotSerialized() throws Exception {
 
         final BinaryDocumentFilterResult result = filter(service(), policy(SSN_AND_EMAIL),

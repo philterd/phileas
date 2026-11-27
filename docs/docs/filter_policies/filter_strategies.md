@@ -292,6 +292,17 @@ An example policy using the `RANDOM_REPLACE` filter strategy with a UUID:
 }
 ```
 
+#### Replacement scope {id="replacement-scope"}
+
+A strategy's `replacementScope` sets how long a replacement is kept, so that every occurrence of a value gets the same replacement and a reader can still tell which mentions refer to the same subject. It applies to `RANDOM_REPLACE`, to `MAP_REPLACE` values made by a generator, and to a random `SHIFT` of dates.
+
+| Value | Behavior |
+|---|---|
+| `DOCUMENT` (default) | Every occurrence of a value in one document gets the same replacement. A document is one filter call: the pages of a PDF, the parts of a Word, Excel, or RTF document, a message's body and attachments, and the cells of a CSV document share one set of replacements. The next document gets new ones, even when it is filtered in the same context. These replacements are kept only for the call and are never stored in the `ContextService`. |
+| `CONTEXT` | Every occurrence of a value in every document filtered with the same `ContextService` gets the same replacement, so the same subject keeps one replacement across documents. The replacements are kept in the `ContextService`. |
+
+Values are matched exactly, so `John Smith` and `J. Smith` get different replacements. A filter used on its own, rather than through a filter service, has no document, so under `DOCUMENT` each of its matches gets its own replacement.
+
 ### The `STATIC_REPLACE` Filter Strategy {id="static"}
 
 Replaces the identified text with a given static value. Available to all filter types.

@@ -8,7 +8,7 @@ A `MAP_REPLACE` strategy resolves a replacement in this order:
 2. **Generator.** If the value is not in the table and a `generator` is configured, the generator produces a replacement, which is validated before use (see [Generator output validation](#generator-output-validation)).
 3. **Fallback strategy.** If the value is not in the table and no generator produces an accepted value (none is configured, or it fails, times out, or returns invalid or rejected output), the strategy's `fallbackStrategy` is applied. A detected value is never left in the clear.
 
-Within a `CONTEXT`-scoped strategy (`replacementScope` set to `CONTEXT`), a repeated value resolves to the same replacement it received earlier in the context, and the generator is not invoked again for it.
+A repeated value resolves to the same replacement it received earlier, and the generator is not invoked again for it: within one document with the default `replacementScope` of `DOCUMENT`, and across the documents filtered in the same context with `CONTEXT`. See [replacement scope](../filter_policies/filter_strategies.md#replacement-scope).
 
 ## Lookup table
 

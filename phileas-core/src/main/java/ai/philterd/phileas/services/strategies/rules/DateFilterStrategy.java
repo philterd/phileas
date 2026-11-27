@@ -25,6 +25,7 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DocumentContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.utils.Encryption;
 import com.google.gson.annotations.Expose;
@@ -248,7 +249,8 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
      * Shifts a date by the strategy's days, months, and years, or by random amounts with shiftRandom. With
      * shiftRandom and the CONTEXT replacement scope, the random shift is chosen for the first date the context
      * sees and kept in the context as a number of days, so every date in the context moves by the same number of
-     * days and keeps its order and the days between it and the others.
+     * days and keeps its order and the days between it and the others. With the DOCUMENT scope the same holds for
+     * the dates of one filter call.
      */
     private LocalDate shift(final LocalDate date, final ContextService contextService) {
 
@@ -256,10 +258,18 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
             return date.plusDays(shiftDays).plusMonths(shiftMonths).plusYears(shiftYears);
         }
 
-        if(contextService != null && Strings.CI.equals(replacementScope, REPLACEMENT_SCOPE_CONTEXT)) {
+        if(DocumentContextService.hasContext(contextService) && Strings.CI.equals(replacementScope, REPLACEMENT_SCOPE_CONTEXT)) {
             // Kept in days rather than months and years: adding a month moves January 30 and January 31 both to
             // the end of February, so dates a day apart could come out the same.
             final String days = contextService.computeValueIfAbsent(CONTEXT_SHIFT_KEY, filterType.getType(),
+                    () -> String.valueOf(ChronoUnit.DAYS.between(date, randomShift(date))));
+            return date.plusDays(Long.parseLong(days));
+        }
+
+        // DOCUMENT scope: one shift for the filter call, kept with the document's replacements.
+        final DocumentContextService document = DocumentContextService.of(contextService);
+        if(document != null) {
+            final String days = document.computeDocumentReplacementIfAbsent(CONTEXT_SHIFT_KEY,
                     () -> String.valueOf(ChronoUnit.DAYS.between(date, randomShift(date))));
             return date.plusDays(Long.parseLong(days));
         }

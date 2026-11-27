@@ -320,6 +320,24 @@ public class OfficeTextOutputTest {
         Assertions.assertEquals("Body.", segment(result, "body").getText());
     }
 
+    @Test
+    public void aValueInSeveralPartsGetsOneDocumentScopedReplacement() throws Exception {
+
+        final Policy policy = policy("\"phoneNumber\":{\"phoneNumberFilterStrategies\":[{\"strategy\":\"RANDOM_REPLACE\"}]}", null);
+
+        final byte[] word = WordDocs.createWithHeaderFooter("Header " + PHONE, "Footer.", "Call " + PHONE + ".", "Or " + PHONE + ".");
+        final byte[] excel = SpreadsheetDocs.createXlsxWithSecondSheet(List.of(new String[]{"Phone"}, new String[]{PHONE}), "One",
+                List.of(new String[]{"Phone"}, new String[]{PHONE}), "Two");
+
+        for (final Object[] input : new Object[][]{{word, MimeType.APPLICATION_DOCX, 3}, {excel, MimeType.APPLICATION_XLSX, 2}}) {
+            final List<Span> spans = filter(policy, (byte[]) input[0], (MimeType) input[1], FilterOptions.defaults())
+                    .getExplanation().appliedSpans();
+            Assertions.assertEquals(input[2], spans.size());
+            Assertions.assertEquals(1, spans.stream().map(Span::getReplacement).distinct().count(), spans.toString());
+        }
+
+    }
+
     // --- Excel ---------------------------------------------------------------------------------
 
     @Test

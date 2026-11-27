@@ -32,6 +32,7 @@ import ai.philterd.phileas.policy.config.Word;
 import ai.philterd.phileas.services.LeftoverChecker;
 import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DocumentContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
@@ -124,10 +125,13 @@ public class RtfFilterService extends BinaryFilterService {
     }
 
     @Override
-    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
+    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService callerContextService,
                                              final VectorService vectorService, final String context,
                                              final byte[] input, final MimeType outputMimeType,
                                              final FilterOptions filterOptions) throws Exception {
+
+        // One map of DOCUMENT-scoped replacements for the whole call, apart from the caller's context.
+        final ContextService contextService = DocumentContextService.forDocument(callerContextService);
 
         // A call for text has no output document, so its type is not checked.
         if (filterOptions == null || !filterOptions.isTextOutput()) {

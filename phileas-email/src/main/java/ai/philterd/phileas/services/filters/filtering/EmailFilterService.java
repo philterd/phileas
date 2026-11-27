@@ -35,6 +35,7 @@ import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.LeftoverChecker;
 import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DocumentContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.csv.CsvRedactionOptions;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
@@ -166,10 +167,13 @@ public class EmailFilterService extends BinaryFilterService {
      * {@link ai.philterd.phileas.services.email.EncryptedEmailException}.
      */
     @Override
-    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
+    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService callerContextService,
                                              final VectorService vectorService, final String context,
                                              final byte[] input, final MimeType outputMimeType,
                                              final FilterOptions options) throws Exception {
+
+        // One map of DOCUMENT-scoped replacements for the whole call, apart from the caller's context.
+        final ContextService contextService = DocumentContextService.forDocument(callerContextService);
 
         final boolean textOutput = options != null && options.isTextOutput();
 
@@ -501,7 +505,8 @@ public class EmailFilterService extends BinaryFilterService {
 
         requireEmailOutput(outputMimeType);
 
-        final ContextService contextService = defaultContextService != null ? defaultContextService : new DefaultContextService();
+        final ContextService contextService = DocumentContextService.forDocument(
+                defaultContextService != null ? defaultContextService : new DefaultContextService());
         final VectorService vectorService = defaultVectorService != null ? defaultVectorService : new InMemoryVectorService();
 
         final EmailRedactor.FieldRedactor fieldRedactor = (index, text, html) -> {

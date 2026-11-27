@@ -37,6 +37,7 @@ import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.LeftoverChecker;
 import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DocumentContextService;
 import ai.philterd.phileas.services.csv.CsvDocument;
 import ai.philterd.phileas.services.csv.CsvRedactionOptions;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
@@ -181,10 +182,13 @@ public class CsvFilterService extends BinaryFilterService {
      * @param charset The document's character set, or {@code null} to use {@code config.csv} {@code encoding}.
      * @see #filter(Policy, ContextService, VectorService, String, byte[], MimeType, FilterOptions)
      */
-    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
+    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService callerContextService,
                                              final VectorService vectorService, final String context,
                                              final byte[] input, final MimeType outputMimeType,
                                              final FilterOptions filterOptions, final Charset charset) throws Exception {
+
+        // One map of DOCUMENT-scoped replacements for the whole call, apart from the caller's context.
+        final ContextService contextService = DocumentContextService.forDocument(callerContextService);
 
         final boolean textOutput = filterOptions != null && filterOptions.isTextOutput();
 

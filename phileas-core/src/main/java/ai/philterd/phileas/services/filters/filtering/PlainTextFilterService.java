@@ -25,6 +25,7 @@ import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.LeftoverChecker;
 import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DocumentContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
@@ -172,10 +173,13 @@ public class PlainTextFilterService extends TextFilterService {
 
     // Shared processing path used by both filter(...) overloads and a PreparedPolicy, after the
     // policy's filters and post-filters have been resolved.
-    private TextFilterResult filter(final Policy policy, final ContextService contextService,
+    private TextFilterResult filter(final Policy policy, final ContextService callerContextService,
                                     final VectorService vectorService, final List<Filter> filters,
                                     final List<PostFilter> postFilters, final String context,
                                     final String input, final FilterOptions options) throws Exception {
+
+        // One map of DOCUMENT-scoped replacements for the whole call, apart from the caller's context.
+        final ContextService contextService = DocumentContextService.forDocument(callerContextService);
 
         // Drawn once per request, here rather than per chunk, so splitting does not raise the chance of selection.
         final boolean reviewSampled = ReviewSampler.isSelected(policy);

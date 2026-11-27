@@ -34,6 +34,7 @@ import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.LeftoverChecker;
 import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DocumentContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
@@ -166,10 +167,13 @@ public class OoxmlFilterService extends BinaryFilterService {
     }
 
     @Override
-    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
+    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService callerContextService,
                                              final VectorService vectorService, final String context,
                                              final byte[] input, final MimeType outputMimeType,
                                              final FilterOptions filterOptions) throws Exception {
+
+        // One map of DOCUMENT-scoped replacements for the whole call, apart from the caller's context.
+        final ContextService contextService = DocumentContextService.forDocument(callerContextService);
 
         // One draw for the document, not one per paragraph or cell.
         final boolean reviewSampled = ReviewSampler.isSelected(policy);
@@ -396,9 +400,12 @@ public class OoxmlFilterService extends BinaryFilterService {
     }
 
     /** As {@link #apply(Policy, byte[], List, MimeType)}, with the context and vector services given. */
-    public byte[] apply(final Policy policy, final ContextService contextService, final VectorService vectorService,
+    public byte[] apply(final Policy policy, final ContextService callerContextService, final VectorService vectorService,
                         final String context, final byte[] input, final List<Span> spans,
                         final MimeType outputMimeType) throws Exception {
+
+        // One map of DOCUMENT-scoped replacements for the whole call, apart from the caller's context.
+        final ContextService contextService = DocumentContextService.forDocument(callerContextService);
 
         final OoxmlDocumentType type = documentType(input, outputMimeType);
 
