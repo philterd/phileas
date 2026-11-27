@@ -251,4 +251,53 @@ public class ItinFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterItinOneDigitToABox() throws Exception {
+
+        // An ITIN goes in the same one-digit-to-a-box SSN fields on Form 1040.
+        // https://github.com/philterd/phileas/issues/544
+        final String input = "Your social security number 9 1 2 7 0 1 2 3 4 Spouse";
+
+        final Filtered filtered = filter(false).filter(contextService, getPolicy(), "context", PIECE, input);
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 28, 45, FilterType.ITIN));
+        Assertions.assertEquals("9 1 2 7 0 1 2 3 4", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals(0.75, filtered.getSpans().get(0).getConfidence(), 0.0001);
+
+        // The SSN filter leaves it to the ITIN filter.
+        Assertions.assertEquals(0, ssnFilter().filter(contextService, getPolicy(), "context", PIECE, input).getSpans().size());
+
+    }
+
+    @Test
+    public void filterItinOneDigitToABoxOutsideValidRanges() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/544
+        for (final String itin : List.of("9 1 2 8 9 1 2 3 4", "9 1 2 9 3 1 2 3 4")) {
+            Assertions.assertEquals(1, filter(false).filter(contextService, getPolicy(), "context", PIECE, "itin " + itin).getSpans().size(), itin);
+            Assertions.assertEquals(0, filter(true).filter(contextService, getPolicy(), "context", PIECE, "itin " + itin).getSpans().size(), itin);
+        }
+
+        Assertions.assertEquals(1, filter(true).filter(contextService, getPolicy(), "context", PIECE, "itin 9 1 2 7 0 1 2 3 4").getSpans().size());
+
+    }
+
+    @Test
+    public void filterItinOneDigitToABoxNotMatched() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/544
+        final ItinFilter filter = filter(false);
+
+        for (final String input : List.of(
+                "8 1 2 7 0 1 2 3 4",
+                "9 1 2 7 0 1 2 3",
+                "9 1 2 7 0 1 2 3 4 5",
+                "1 9 1 2 7 0 1 2 3 4",
+                "9 1 2  7 0 1 2 3 4",
+                "9 1 2 7 0 1 2 3 4x")) {
+            Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, "the values are " + input + " here.").getSpans().size(), input);
+        }
+
+    }
+
 }
