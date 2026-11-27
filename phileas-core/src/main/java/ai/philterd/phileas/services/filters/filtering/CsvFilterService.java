@@ -171,6 +171,19 @@ public class CsvFilterService extends BinaryFilterService {
                                              final VectorService vectorService, final String context,
                                              final byte[] input, final MimeType outputMimeType,
                                              final FilterOptions filterOptions) throws Exception {
+        return filter(policy, contextService, vectorService, context, input, outputMimeType, filterOptions, null);
+    }
+
+    /**
+     * Filters a CSV document whose character set is known from outside it, such as an email attachment's declared
+     * charset. The document is read and written in that character set in place of {@code config.csv} {@code encoding}.
+     * @param charset The document's character set, or {@code null} to use {@code config.csv} {@code encoding}.
+     * @see #filter(Policy, ContextService, VectorService, String, byte[], MimeType, FilterOptions)
+     */
+    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
+                                             final VectorService vectorService, final String context,
+                                             final byte[] input, final MimeType outputMimeType,
+                                             final FilterOptions filterOptions, final Charset charset) throws Exception {
 
         final boolean textOutput = filterOptions != null && filterOptions.isTextOutput();
 
@@ -187,7 +200,7 @@ public class CsvFilterService extends BinaryFilterService {
                 context, incrementalRedactions, tokens);
 
         final Csv csv = policy.getConfig().getCsv();
-        final Decoded decoded = decode(input, csv.getCharset());
+        final Decoded decoded = decode(input, charset != null ? charset : csv.getCharset());
         final CsvDocument document = CsvDocument.parse(decoded.text(), csv.getDelimiter(), csv.getQuote(), limits);
         final Plan plan = plan(policy, document);
 
@@ -596,7 +609,7 @@ public class CsvFilterService extends BinaryFilterService {
                     .onUnmappableCharacter(CodingErrorAction.REPORT).decode(ByteBuffer.wrap(input)).toString();
         } catch (final CharacterCodingException e) {
             throw new IllegalArgumentException("The CSV document is not valid " + charset.name()
-                    + ". Set config.csv encoding to the document's encoding.", e);
+                    + ". Set config.csv encoding, or the declared charset, to the document's encoding.", e);
         }
         // UTF-16 reads the byte order from the mark and drops it, and writes big-endian with a mark, so the output
         // charset is chosen from the input's bytes. Other charsets leave a mark in the text.

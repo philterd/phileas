@@ -31,7 +31,7 @@ public final class EmailReport {
     /** Why an attachment was removed under {@code attachments: redact}. */
     public enum RemovalReason {
 
-        /** The attachment is not a type the redaction supports (PDF, Word, Excel). */
+        /** The attachment is not a type the redaction supports (PDF, Word, Excel, RTF, CSV, or plain text). */
         @SerializedName("unsupportedType")
         UNSUPPORTED_TYPE,
 
