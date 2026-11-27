@@ -23,6 +23,7 @@ import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.RedactedText;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
@@ -39,6 +40,7 @@ import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProce
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.pdf.PdfLine;
 import ai.philterd.phileas.services.pdf.PdfPagePolicies;
+import ai.philterd.phileas.services.pdf.PdfRedactedText;
 import ai.philterd.phileas.services.pdf.PdfRedactionOptions;
 import ai.philterd.phileas.services.pdf.PdfRedactor;
 import ai.philterd.phileas.services.pdf.PdfTextExtractor;
@@ -50,6 +52,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -257,6 +260,23 @@ public class PdfFilterService extends BinaryFilterService {
 
         long tokens = 0;
 
+        final boolean textOutput = options != null && options.isTextOutput();
+        final PdfRedactedText redactedText = textOutput ? new PdfRedactedText(pdfTextExtractor.getPageCount()) : null;
+        final Map<Integer, List<BoundingBox>> boxesByPage = new HashMap<>();
+
+        if (textOutput) {
+            // A page whose policy has no filters is not scanned, so its text is left out rather than returned as is.
+            for (int page = 0; page < pdfTextExtractor.getPageCount(); page++) {
+                final PdfPagePolicies.Assignment assignment = pagePolicies == null ? null : pagePolicies.assignmentFor(page + 1);
+                if (filtersByAssignment.get(assignment).isEmpty()) {
+                    redactedText.notScanned(page);
+                }
+            }
+            for (final BoundingBox box : boundingBoxes(policy, pagePolicies)) {
+                boxesByPage.computeIfAbsent(box.getPage() - 1, k -> new ArrayList<>()).add(box);
+            }
+        }
+
         // Process each line looking for sensitive information in each line.
         for (final PdfLine pdfLine : pdfLines) {
 
@@ -279,6 +299,15 @@ public class PdfFilterService extends BinaryFilterService {
 
                 // Add the incremental redactions to the list.
                 incrementalRedactions.addAll(textFilterResult.getIncrementalRedactions());
+
+                // Before the spans are moved to document offsets below. Text under a bounding box is left out.
+                if (textOutput) {
+                    redactedText.addLine(pdfLine.getPageNumber(), lineNumber, !pdfLine.getText().isBlank(),
+                            PdfRedactedText.redactLine(pdfLine.getText(), textFilterResult.getFilteredText(),
+                                    textFilterResult.getReplacedRanges(), textFilterResult.getExplanation().appliedSpans(),
+                                    pdfLine.coveredBy(boxesByPage.getOrDefault(pdfLine.getPageNumber(), List.of()))),
+                            pdfLine.getSeparatorAfter());
+                }
 
                 for (final Span span : textFilterResult.getExplanation().appliedSpans()) {
 
@@ -308,12 +337,30 @@ public class PdfFilterService extends BinaryFilterService {
 
         final List<Span> spansList = new ArrayList<>(nonRelativeSpans);
 
+        if (textOutput) {
+
+            if (options.isTextMetadata()) {
+                tokens += redactMetadata(policy, filtersByAssignment.get(null), postFiltersByAssignment.get(null),
+                        contextService, vectorService, context, pdfTextExtractor, redactedText, incrementalRedactions);
+            }
+
+            // The document is not rendered: the text is the output.
+            final RedactedText text = redactedText.build();
+
+            final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, options)
+                    ? runLeftoverCheck(() -> textLeftoverCheck(policy, pagePolicies, redactedText, options)) : null;
+
+            return new BinaryDocumentFilterResult(null, text, context, new Explanation(spansList, spansList), tokens,
+                    incrementalRedactions, reviewSampled, leftoverCheck, null);
+
+        }
+
         // Load the PDF config from the policy and apply to the PdfRedactionOptions that are used when
         // generating the new PDF document from the result of the redaction
         final PdfRedactionOptions pdfRedactionOptions = redactionOptions(policy.getConfig().getPdf());
 
-        final PdfRedactor redacter = new PdfRedactor(policy, boundingBoxes(policy, pagePolicies), spansList, pdfRedactionOptions);
-        final byte[] redacted = redacter.process(input, outputMimeType);
+        final byte[] redacted = render(policy, boundingBoxes(policy, pagePolicies), spansList, pdfRedactionOptions,
+                input, outputMimeType);
 
         // TODO: The identified vs the applied will actually be different
         // but we are setting the same here. Fix this at some point.
@@ -371,6 +418,96 @@ public class PdfFilterService extends BinaryFilterService {
 
             lineNumber++;
             offset += line.getText().length();
+
+        }
+
+        return LeftoverCheckResult.performed(findings);
+
+    }
+
+    /**
+     * Writes the redacted document. A call for text output does not call it.
+     * @param policy The policy whose {@code config.pdf} settings render the output.
+     * @param boundingBoxes The bounding boxes to draw.
+     * @param spans The spans to redact.
+     * @param pdfRedactionOptions The rendering options.
+     * @param input The input document.
+     * @param outputMimeType The output {@link MimeType}.
+     * @return The redacted document.
+     * @throws Exception Thrown if the document cannot be written.
+     */
+    protected byte[] render(final Policy policy, final List<BoundingBox> boundingBoxes, final List<Span> spans,
+                            final PdfRedactionOptions pdfRedactionOptions, final byte[] input,
+                            final MimeType outputMimeType) throws Exception {
+        return new PdfRedactor(policy, boundingBoxes, spans, pdfRedactionOptions).process(input, outputMimeType);
+    }
+
+    /*
+     * Redacts the document information entries, as "key: value" lines, with the document's policy, and sets them as
+     * the metadata segment. Their spans are not added to the explanation, since they are not in a page.
+     * Returns the tokens counted.
+     */
+    private long redactMetadata(final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
+                                final ContextService contextService, final VectorService vectorService,
+                                final String context, final PdfTextExtractor extractor,
+                                final PdfRedactedText redactedText,
+                                final List<IncrementalRedaction> incrementalRedactions) throws Exception {
+
+        if (filters.isEmpty()) {
+            redactedText.metadataNotScanned();
+            return 0;
+        }
+
+        final List<String> lines = new ArrayList<>();
+        for (final Map.Entry<String, String> entry : extractor.getDocumentInformation().entrySet()) {
+            // One line per entry, so a value's line breaks become spaces.
+            lines.add(entry.getKey() + ": " + entry.getValue().replaceAll("\\R", " "));
+        }
+        final String metadata = String.join(PdfRedactedText.LINE_SEPARATOR, lines);
+
+        if (metadata.isEmpty()) {
+            redactedText.setMetadata(new PdfRedactedText.Line("", List.of()));
+            return 0;
+        }
+
+        final TextFilterResult result = unstructuredDocumentProcessor.process(contextService, vectorService, policy,
+                filters, postFilters, context, 0, metadata);
+        incrementalRedactions.addAll(result.getIncrementalRedactions());
+        redactedText.setMetadata(new PdfRedactedText.Line(result.getFilteredText(), result.getReplacedRanges()));
+
+        return tokenCounter.countTokens(metadata);
+
+    }
+
+    /*
+     * Scans the text output, each page's text whole with the check built from its page's policy and the metadata
+     * with the document's, leaving out what the redaction inserted. A finding's offsets are into its segment.
+     */
+    private LeftoverCheckResult textLeftoverCheck(final Policy policy, final PdfPagePolicies pagePolicies,
+                                                  final PdfRedactedText redactedText,
+                                                  final FilterOptions options) throws Exception {
+
+        final List<PdfRedactedText.Part> parts = redactedText.parts();
+
+        if (parts.isEmpty()) {
+            return LeftoverCheckResult.notPerformed(LeftoverCheckResult.Reason.UNREADABLE_OUTPUT);
+        }
+
+        final LeftoverCheck.Using using = leftoverCheckUsing(policy);
+        final List<LeftoverFinding> findings = new ArrayList<>();
+
+        for (final PdfRedactedText.Part part : parts) {
+
+            final PdfPagePolicies.Assignment assignment = pagePolicies == null || part.pageNumber() < 0
+                    ? null : pagePolicies.assignmentFor(part.pageNumber() + 1);
+            final Policy partPolicy = assignment == null ? policy : assignment.policy();
+
+            for (final Span span : leftoverSpans(partPolicy, using, part.text())) {
+                if (!LeftoverChecker.isInserted(span, part.replacedRanges())) {
+                    findings.add(LeftoverChecker.finding(span, part.text(), options, Math.max(part.pageNumber(), 0),
+                            part.lineNumberAt(span.getCharacterStart()), 0).inSegment(part.label()));
+                }
+            }
 
         }
 

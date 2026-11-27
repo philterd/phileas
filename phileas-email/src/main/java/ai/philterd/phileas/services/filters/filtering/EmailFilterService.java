@@ -23,14 +23,20 @@ import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.RedactedText;
+import ai.philterd.phileas.model.filtering.RedactedTextBuilder;
+import ai.philterd.phileas.model.filtering.RedactionWarning;
+import ai.philterd.phileas.model.filtering.ReplacedRange;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
+import ai.philterd.phileas.model.filtering.TextSegment;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.config.LeftoverCheck;
 import ai.philterd.phileas.services.LeftoverChecker;
 import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
+import ai.philterd.phileas.services.csv.CsvRedactionOptions;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
@@ -38,6 +44,7 @@ import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
 import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.services.email.EmailFields;
 import ai.philterd.phileas.services.email.EmailRedactor;
+import ai.philterd.phileas.services.email.EmailText;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
@@ -45,9 +52,17 @@ import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Redacts email messages: {@code .eml} ({@code message/rfc822}) and Outlook {@code .msg}
@@ -68,6 +83,9 @@ public class EmailFilterService extends BinaryFilterService {
     private final TokenCounter tokenCounter;
     private final PdfFilterService pdfFilterService;
     private final OoxmlFilterService ooxmlFilterService;
+    private final RtfFilterService rtfFilterService;
+    private final CsvFilterService csvFilterService;
+    private final PlainTextFilterService plainTextFilterService;
 
     // Bound at construction for the no-service overloads; null for a warm, per-call instance.
     private final ContextService defaultContextService;
@@ -95,6 +113,9 @@ public class EmailFilterService extends BinaryFilterService {
                 phileasConfiguration.incrementalRedactionsEnabled());
         this.pdfFilterService = new PdfFilterService(phileasConfiguration, random, httpClient);
         this.ooxmlFilterService = new OoxmlFilterService(phileasConfiguration, random, httpClient, null);
+        this.rtfFilterService = new RtfFilterService(phileasConfiguration, null, null, random, httpClient);
+        this.csvFilterService = new CsvFilterService(phileasConfiguration, random, httpClient, CsvRedactionOptions.defaults());
+        this.plainTextFilterService = new PlainTextFilterService(phileasConfiguration, random, httpClient);
     }
 
     /** Creates a warm, reusable service whose context and vector services are supplied per call. */
@@ -150,7 +171,12 @@ public class EmailFilterService extends BinaryFilterService {
                                              final byte[] input, final MimeType outputMimeType,
                                              final FilterOptions options) throws Exception {
 
-        requireEmailOutput(outputMimeType);
+        final boolean textOutput = options != null && options.isTextOutput();
+
+        // A call for text has no output document, so its type is not checked.
+        if (!textOutput) {
+            requireEmailOutput(outputMimeType);
+        }
 
         // One draw for the message, not one per field or attachment.
         final boolean reviewSampled = ReviewSampler.isSelected(policy);
@@ -172,14 +198,15 @@ public class EmailFilterService extends BinaryFilterService {
 
         final List<RedactedAttachment> attachments = new ArrayList<>();
 
-        final EmailRedactor.AttachmentRedactor attachmentRedactor = (name, document, type) -> {
-            final BinaryFilterService service = attachmentService(type);
-            final BinaryDocumentFilterResult result = service.filter(policy, contextService, vectorService, context,
-                    document, type, options);
+        final EmailRedactor.AttachmentRedactor attachmentRedactor = (name, document, type, charset) -> {
+            final BinaryDocumentFilterResult result = redactAttachment(policy, contextService, vectorService, context,
+                    document, type, charset, options);
             tokens[0] += result.getTokens();
             incrementalRedactions.addAll(result.getIncrementalRedactions());
             attachments.add(new RedactedAttachment(name, result));
-            return result.getDocument();
+            // With text output the attachment's text is kept instead, and the message it would go in is not returned.
+            return textOutput ? new EmailRedactor.RedactedAttachment(document, null)
+                    : new EmailRedactor.RedactedAttachment(result.getDocument(), writtenCharset(policy, type, charset));
         };
 
         final EmailRedactor.Result result = EmailRedactor.redact(input, policy.getConfig().getEmail(),
@@ -197,21 +224,228 @@ public class EmailFilterService extends BinaryFilterService {
         // As with PDF and Word, the identified and applied spans are reported as the same list.
         final Explanation explanation = new Explanation(spans, spans);
 
+        if (textOutput) {
+            final RedactedTextBuilder text = text(result, attachments);
+            final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, options)
+                    ? runLeftoverCheck(() -> textLeftoverCheck(policy, text, attachments, options)) : null;
+            return new BinaryDocumentFilterResult(null, text.build(), context, explanation, tokens[0],
+                    incrementalRedactions, reviewSampled, leftoverCheck, result.report())
+                    .withWarnings(attachmentWarnings(attachments));
+        }
+
         final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, options)
                 ? runLeftoverCheck(() -> leftoverCheck(policy, result, attachments, options)) : null;
 
         return new BinaryDocumentFilterResult(result.document(), context, explanation, tokens[0], incrementalRedactions,
-                reviewSampled, leftoverCheck, result.report());
+                reviewSampled, leftoverCheck, result.report()).withWarnings(attachmentWarnings(attachments));
+
+    }
+
+    /** Segment labels of an email message's redacted text. */
+    public static final String HEADERS_LABEL = "headers";
+    public static final String BODY_LABEL = "body";
+    private static final String ATTACHMENT_PREFIX = "attachment: ";
+
+    /*
+     * The message's fields as text: the headers it keeps, one "Name: value" line each, and its bodies, the plain
+     * ones, or the HTML ones as visible text when it has no plain body. A nested message's segments are prefixed
+     * with its number, and each redacted attachment's segments with its name.
+     */
+    private static RedactedTextBuilder text(final EmailRedactor.Result result, final List<RedactedAttachment> attachments) {
+
+        final RedactedTextBuilder text = new RedactedTextBuilder();
+        text.ensure(HEADERS_LABEL);
+        text.ensure(BODY_LABEL);
+
+        final Set<Integer> withPlainBody = new HashSet<>();
+        for (final EmailRedactor.Field field : result.fields()) {
+            if (isBody(field) && !field.html()) {
+                withPlainBody.add(field.messageNumber());
+            }
+        }
+
+        for (final EmailRedactor.Field field : result.fields()) {
+            final String prefix = field.messageNumber() == 0 ? "" : "attached message " + field.messageNumber() + " / ";
+            if (isBody(field)) {
+                if (field.html() && withPlainBody.contains(field.messageNumber())) {
+                    continue;
+                }
+                final EmailText.Rendered body = field.html()
+                        ? EmailText.html(field.output(), field.replacedRanges())
+                        : EmailText.plain(field.output(), field.replacedRanges());
+                text.line(prefix + BODY_LABEL, body.text(), body.replacedRanges());
+            } else {
+                final String name = field.label() + ": ";
+                final List<ReplacedRange> ranges = new ArrayList<>();
+                for (final ReplacedRange range : field.replacedRanges()) {
+                    ranges.add(range.shift(name.length()));
+                }
+                text.line(prefix + HEADERS_LABEL, name + RedactedTextBuilder.flatten(field.output()), ranges);
+            }
+        }
+
+        for (final RedactedAttachment attachment : attachments) {
+            if (attachment.result().getText() != null) {
+                text.include(ATTACHMENT_PREFIX + attachment.name() + " / ", attachment.result().getText(), List.of());
+            }
+        }
+
+        return text;
+
+    }
+
+    // The redacted attachments' warnings, such as an Excel or CSV attachment's column rule that matched no column,
+    // marked as embedded since they are about content other than the message itself.
+    private static List<RedactionWarning> attachmentWarnings(final List<RedactedAttachment> attachments) {
+        final List<RedactionWarning> warnings = new ArrayList<>();
+        for (final RedactedAttachment attachment : attachments) {
+            for (final RedactionWarning warning : attachment.result().getWarnings()) {
+                warnings.add(warning.asEmbedded());
+            }
+        }
+        return warnings;
+    }
+
+    private static boolean isBody(final EmailRedactor.Field field) {
+        return field.label().startsWith("Body (");
+    }
+
+    /*
+     * Scans the message's own segments, and takes each attachment's check of its own text, naming the attachment
+     * in its findings. An attachment whose check was not performed is listed as unchecked.
+     */
+    private LeftoverCheckResult textLeftoverCheck(final Policy policy, final RedactedTextBuilder text,
+                                                  final List<RedactedAttachment> attachments,
+                                                  final FilterOptions options) throws Exception {
+
+        final List<RedactedTextBuilder.Part> own = text.parts().stream()
+                .filter(part -> !part.label().startsWith(ATTACHMENT_PREFIX)).toList();
+        final LeftoverCheckResult ownCheck = textLeftoverCheck(policy, own, options);
+
+        final List<LeftoverFinding> findings = new ArrayList<>(ownCheck.isPerformed() ? ownCheck.getFindings() : List.of());
+        final List<String> unchecked = new ArrayList<>();
+        for (final RedactedAttachment attachment : attachments) {
+            final LeftoverCheckResult check = attachment.result().getLeftoverCheck();
+            if (check.isPerformed()) {
+                for (final LeftoverFinding finding : check.getFindings()) {
+                    findings.add(finding.inAttachment(attachment.name()));
+                }
+            } else {
+                unchecked.add(attachment.name());
+            }
+        }
+
+        if (!ownCheck.isPerformed() && unchecked.size() == attachments.size()) {
+            return ownCheck;
+        }
+        return LeftoverCheckResult.performed(findings, unchecked);
 
     }
 
     /**
-     * The service that redacts an attachment: the PDF service for a PDF, and the Word and Excel service otherwise.
-     * @param type The attachment's {@link MimeType}, {@link MimeType#APPLICATION_PDF}, a Word, or an Excel type.
+     * The service that redacts an attachment: the PDF service for a PDF, the RTF service for an RTF document, the CSV
+     * service for a CSV document, and the Word and Excel service otherwise. A plain-text attachment is redacted as
+     * text, not by a {@link BinaryFilterService}.
+     * @param type The attachment's {@link MimeType}: PDF, Word, Excel, RTF, or CSV.
      * @return The {@link BinaryFilterService}.
      */
     protected BinaryFilterService attachmentService(final MimeType type) {
-        return type == MimeType.APPLICATION_PDF ? pdfFilterService : ooxmlFilterService;
+        if (type == MimeType.APPLICATION_PDF) {
+            return pdfFilterService;
+        }
+        if (type == MimeType.APPLICATION_RTF) {
+            return rtfFilterService;
+        }
+        if (type == MimeType.TEXT_CSV) {
+            return csvFilterService;
+        }
+        return ooxmlFilterService;
+    }
+
+    /** The label of a plain-text attachment's one segment of text output. */
+    public static final String PLAIN_TEXT_LABEL = "text";
+
+    /*
+     * Redacts one attachment with the policy: a CSV document in its declared charset, otherwise in config.csv's
+     * encoding; a plain-text one in its declared charset, otherwise UTF-8, written back in the same charset; and the
+     * others with their service. Text the charset cannot read or write is refused.
+     */
+    private BinaryDocumentFilterResult redactAttachment(final Policy policy, final ContextService contextService,
+                                                        final VectorService vectorService, final String context,
+                                                        final byte[] document, final MimeType type, final Charset charset,
+                                                        final FilterOptions options) throws Exception {
+
+        if (type == MimeType.TEXT_PLAIN) {
+            return redactPlainText(policy, contextService, vectorService, context, document, charset, options);
+        }
+
+        final BinaryFilterService service = attachmentService(type);
+        if (service instanceof CsvFilterService csv) {
+            return csv.filter(policy, contextService, vectorService, context, document, type, options, charset);
+        }
+        return service.filter(policy, contextService, vectorService, context, document, type, options);
+
+    }
+
+    // The character set a text attachment is written in: its declared one, or else the one it was read in.
+    private static Charset writtenCharset(final Policy policy, final MimeType type, final Charset declared) {
+        if (type == MimeType.TEXT_CSV) {
+            return declared != null ? declared : policy.getConfig().getCsv().getCharset();
+        }
+        if (type == MimeType.TEXT_PLAIN) {
+            return declared != null ? declared : StandardCharsets.UTF_8;
+        }
+        // RTF is written a byte per character, its own escapes carrying anything else.
+        if (type == MimeType.APPLICATION_RTF) {
+            return StandardCharsets.ISO_8859_1;
+        }
+        return null;
+    }
+
+    private BinaryDocumentFilterResult redactPlainText(final Policy policy, final ContextService contextService,
+                                                       final VectorService vectorService, final String context,
+                                                       final byte[] document, final Charset declared,
+                                                       final FilterOptions options) throws Exception {
+
+        final Charset charset = declared != null ? declared : StandardCharsets.UTF_8;
+        final String text;
+        try {
+            text = charset.newDecoder().onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT).decode(ByteBuffer.wrap(document)).toString();
+        } catch (final CharacterCodingException e) {
+            throw new IllegalArgumentException("The plain-text attachment is not valid " + charset.name() + ".", e);
+        }
+
+        final TextFilterResult result = plainTextFilterService.filter(policy, contextService, vectorService, context,
+                text, options);
+        final String redacted = result.getFilteredText();
+
+        if (options != null && options.isTextOutput()) {
+            final LeftoverCheckResult check = result.getLeftoverCheck();
+            final LeftoverCheckResult inSegment = check.isPerformed()
+                    ? LeftoverCheckResult.performed(check.getFindings().stream()
+                            .map(finding -> finding.inSegment(PLAIN_TEXT_LABEL)).toList())
+                    : check;
+            final RedactedText segments = new RedactedText(List.of(new TextSegment(PLAIN_TEXT_LABEL, redacted,
+                    redacted.isBlank() ? TextSegment.Status.NO_TEXT : TextSegment.Status.TEXT)));
+            return new BinaryDocumentFilterResult(null, segments, context, result.getExplanation(), result.getTokens(),
+                    result.getIncrementalRedactions(), false, inSegment, null);
+        }
+
+        final byte[] bytes;
+        try {
+            final ByteBuffer encoded = charset.newEncoder().onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT).encode(CharBuffer.wrap(redacted));
+            bytes = new byte[encoded.remaining()];
+            encoded.get(bytes);
+        } catch (final CharacterCodingException e) {
+            throw new IllegalArgumentException("The redacted plain-text attachment cannot be written in "
+                    + charset.name() + ".", e);
+        }
+
+        return new BinaryDocumentFilterResult(bytes, null, context, result.getExplanation(), result.getTokens(),
+                result.getIncrementalRedactions(), false, result.getLeftoverCheck(), null);
+
     }
 
     /*
@@ -258,8 +492,8 @@ public class EmailFilterService extends BinaryFilterService {
     /**
      * Re-applies spans to an email message by position: each span's {@link Span#getParagraphNumber()} is a field's
      * number and its offsets are into that field, as {@link #filter} returns them. Headers, attachments, and inline
-     * images are handled by the policy's {@code config.email}, and PDF, Word, and Excel attachments under
-     * {@code attachments: redact} are redacted with the policy. Uses the construction-bound context and vector
+     * images are handled by the policy's {@code config.email}, and the PDF, Word, Excel, RTF, CSV, and plain-text
+     * attachments {@code attachments: redact} redacts are redacted with the policy. Uses the construction-bound context and vector
      * services when there are any, otherwise new in-memory ones.
      */
     @Override
@@ -280,10 +514,9 @@ public class EmailFilterService extends BinaryFilterService {
             return EmailFields.replace(text, EmailFields.resolve(fieldSpans, text.length()), FALLBACK_REPLACEMENT);
         };
 
-        final EmailRedactor.AttachmentRedactor attachmentRedactor = (name, document, type) -> {
-            final BinaryFilterService service = attachmentService(type);
-            return service.filter(policy, contextService, vectorService, "default", document, type).getDocument();
-        };
+        final EmailRedactor.AttachmentRedactor attachmentRedactor = (name, document, type, charset) ->
+                new EmailRedactor.RedactedAttachment(redactAttachment(policy, contextService, vectorService, "default",
+                        document, type, charset, FilterOptions.defaults()).getDocument(), writtenCharset(policy, type, charset));
 
         return EmailRedactor.redact(input, policy.getConfig().getEmail(), fieldRedactor, attachmentRedactor).document();
 

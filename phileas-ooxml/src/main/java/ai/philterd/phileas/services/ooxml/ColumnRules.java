@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.model.filtering.RedactionWarning;
 import ai.philterd.phileas.policy.Tabular;
 import ai.philterd.phileas.services.strategies.ColumnFilterStrategy;
 
@@ -40,5 +41,13 @@ public interface ColumnRules {
      * @return The replacement.
      */
     String replace(List<ColumnFilterStrategy> strategies, String value);
+
+    /**
+     * Receives a warning about the rules from a workbook embedded in the document being redacted, such as a header
+     * that matches no column, so the call can report it. The default drops it.
+     * @param warning The warning, marked as embedded.
+     */
+    default void warn(final RedactionWarning warning) {
+    }
 
 }

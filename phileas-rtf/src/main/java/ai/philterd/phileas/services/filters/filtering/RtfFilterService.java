@@ -129,12 +129,26 @@ public class RtfFilterService extends BinaryFilterService {
                                              final byte[] input, final MimeType outputMimeType,
                                              final FilterOptions filterOptions) throws Exception {
 
-        requireRtf(outputMimeType);
+        // A call for text has no output document, so its type is not checked.
+        if (filterOptions == null || !filterOptions.isTextOutput()) {
+            requireRtf(outputMimeType);
+        }
 
         final boolean reviewSampled = ReviewSampler.isSelected(policy);
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
         final long[] tokens = {0};
         final Word word = policy.getConfig().getWord();
+
+        if (filterOptions != null && filterOptions.isTextOutput()) {
+            final RtfRedactor.TextResult result = RtfRedactor.redactToText(input,
+                    textFilter(policy, contextService, vectorService, context, incrementalRedactions, tokens), word,
+                    filterOptions.isTextMetadata());
+            final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, filterOptions)
+                    ? runLeftoverCheck(() -> textLeftoverCheck(policy, result.text().parts(), filterOptions)) : null;
+            return new BinaryDocumentFilterResult(null, result.text().build(), context,
+                    new Explanation(result.spans(), result.spans()), tokens[0], incrementalRedactions, reviewSampled,
+                    leftoverCheck, null);
+        }
 
         final RtfRedactor.Result result = RtfRedactor.redact(input,
                 textFilter(policy, contextService, vectorService, context, incrementalRedactions, tokens), word);

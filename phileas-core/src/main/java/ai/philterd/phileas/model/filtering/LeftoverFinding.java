@@ -41,6 +41,9 @@ public final class LeftoverFinding {
     private final Integer row;
     private final Integer column;
 
+    // For a check of text output, the label of the segment the finding is in; otherwise null, and left out of JSON.
+    private final String segment;
+
     // In-process only, and only when asked for.
     private final transient String matchedText;
 
@@ -92,10 +95,12 @@ public final class LeftoverFinding {
         this.attachment = attachment;
         this.row = null;
         this.column = null;
+        this.segment = null;
         this.matchedText = matchedText;
     }
 
-    private LeftoverFinding(final LeftoverFinding finding, final String attachment, final Integer row, final Integer column) {
+    private LeftoverFinding(final LeftoverFinding finding, final String attachment, final Integer row, final Integer column,
+                            final String segment) {
         this.filterType = finding.filterType;
         this.classification = finding.classification;
         this.characterStart = finding.characterStart;
@@ -107,6 +112,7 @@ public final class LeftoverFinding {
         this.attachment = attachment;
         this.row = row;
         this.column = column;
+        this.segment = segment;
         this.matchedText = finding.matchedText;
     }
 
@@ -162,7 +168,7 @@ public final class LeftoverFinding {
      * @return A copy of this finding with the attachment set.
      */
     public LeftoverFinding inAttachment(final String attachment) {
-        return new LeftoverFinding(this, attachment, row, column);
+        return new LeftoverFinding(this, attachment, row, column, segment);
     }
 
     /**
@@ -172,13 +178,31 @@ public final class LeftoverFinding {
      * @return A copy of this finding with the row and column set.
      */
     public LeftoverFinding inField(final int row, final int column) {
-        return new LeftoverFinding(this, attachment, row, column);
+        return new LeftoverFinding(this, attachment, row, column, segment);
     }
 
     /**
      * For a CSV document, the row of the field the finding is in, counting from 1.
      * @return The row, or {@code null} when the finding is not in a CSV document.
      */
+    /**
+     * This finding, placed in a segment of text output.
+     * @param segment The segment's label.
+     * @return A copy of this finding with the segment set.
+     */
+    public LeftoverFinding inSegment(final String segment) {
+        return new LeftoverFinding(this, attachment, row, column, segment);
+    }
+
+    /**
+     * For a check of text output, the label of the segment the finding is in. The finding's offsets are then
+     * into that segment's text.
+     * @return The segment's label, or {@code null} when the check was of a document.
+     */
+    public String getSegment() {
+        return segment;
+    }
+
     public Integer getRow() {
         return row;
     }

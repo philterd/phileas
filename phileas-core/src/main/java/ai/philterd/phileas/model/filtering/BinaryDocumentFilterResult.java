@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public final class BinaryDocumentFilterResult extends AbstractFilterResult {
@@ -27,6 +28,12 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
 
     // Null unless the document is an email message.
     private final EmailReport email;
+
+    // Null unless the call asked for text. Transient, as the document is, so the text does not reach a log.
+    private transient final RedactedText text;
+
+    // Null when there are none, so a result without warnings serializes as before.
+    private final List<RedactionWarning> warnings;
 
     public BinaryDocumentFilterResult(byte[] document, String context, Explanation explanation, long tokens, List<IncrementalRedaction> incrementalRedactions) {
         this(document, context, explanation, tokens, incrementalRedactions, false);
@@ -46,10 +53,23 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
     public BinaryDocumentFilterResult(byte[] document, String context, Explanation explanation, long tokens,
                                       List<IncrementalRedaction> incrementalRedactions, boolean reviewSampled,
                                       LeftoverCheckResult leftoverCheck, EmailReport email) {
+        this(document, null, context, explanation, tokens, incrementalRedactions, reviewSampled, leftoverCheck, email);
+    }
+
+    /**
+     * A result holding the redacted document or the document's redacted text.
+     * @param document The redacted document, or {@code null} when the call asked for text.
+     * @param text The redacted text, or {@code null} when the call asked for the document.
+     */
+    public BinaryDocumentFilterResult(byte[] document, RedactedText text, String context, Explanation explanation,
+                                      long tokens, List<IncrementalRedaction> incrementalRedactions,
+                                      boolean reviewSampled, LeftoverCheckResult leftoverCheck, EmailReport email) {
         super(context, explanation, tokens, incrementalRedactions, reviewSampled, leftoverCheck);
 
         this.document = document;
+        this.text = text;
         this.email = email;
+        this.warnings = null;
 
     }
 
@@ -64,6 +84,8 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
                 append(reviewSampled).
                 append(leftoverCheck).
                 append(email).
+                append(text).
+                append(warnings).
                 toHashCode();
 
     }
@@ -83,8 +105,49 @@ public final class BinaryDocumentFilterResult extends AbstractFilterResult {
 
     }
 
+    private BinaryDocumentFilterResult(final BinaryDocumentFilterResult result, final List<RedactionWarning> warnings) {
+        super(result.context, result.explanation, result.tokens, result.incrementalRedactions, result.reviewSampled,
+                result.leftoverCheck);
+        this.document = result.document;
+        this.text = result.text;
+        this.email = result.email;
+        this.warnings = warnings == null || warnings.isEmpty() ? null : List.copyOf(new LinkedHashSet<>(warnings));
+    }
+
+    /**
+     * This result with warnings about the policy, such as column rules that matched no column. Repeated warnings
+     * are reported once.
+     * @param warnings The warnings.
+     * @return A copy of this result with the warnings.
+     */
+    public BinaryDocumentFilterResult withWarnings(final List<RedactionWarning> warnings) {
+        return new BinaryDocumentFilterResult(this, warnings);
+    }
+
+    /**
+     * Warnings about the policy for this document, such as a column rule whose header matches no column. Each holds
+     * only values from the policy. Serialized as {@code warnings}, which is left out when there are none.
+     * @return The warnings, empty when there are none.
+     */
+    public List<RedactionWarning> getWarnings() {
+        return warnings == null ? List.of() : warnings;
+    }
+
+    /**
+     * The redacted document.
+     * @return The document, or {@code null} when the call asked for text.
+     */
     public byte[] getDocument() {
         return document;
+    }
+
+    /**
+     * The document's redacted plain text, when the call asked for it with
+     * {@code FilterOptions.withOutput(Output.TEXT)}.
+     * @return The {@link RedactedText}, or {@code null} when the call asked for the document.
+     */
+    public RedactedText getText() {
+        return text;
     }
 
     /**

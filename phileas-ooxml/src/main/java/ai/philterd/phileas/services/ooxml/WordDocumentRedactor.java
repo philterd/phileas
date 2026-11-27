@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.model.filtering.ReplacedRange;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -155,6 +156,162 @@ public final class WordDocumentRedactor {
             EmbeddedObjectRedactor.process(pkg, filter, rules, options, options.wordRemovesUninspectableObjects(), true,
                     captured, new Order(captured.size()));
             return new OoxmlRedactionResult(pkg.save(), captured);
+        }
+    }
+
+    /** Segment labels of a Word document's redacted text. */
+    public static final String BODY_LABEL = "body";
+    public static final String HEADERS_LABEL = "headers";
+    public static final String FOOTERS_LABEL = "footers";
+    public static final String FOOTNOTES_LABEL = "footnotes";
+    public static final String ENDNOTES_LABEL = "endnotes";
+    public static final String COMMENTS_LABEL = "comments";
+    public static final String TRACKED_CHANGES_LABEL = "tracked changes";
+
+    private static final String MC = "http://schemas.openxmlformats.org/markup-compatibility/2006";
+
+    /**
+     * Redacts the document's text without producing a document: the body, headers, footers, footnotes, endnotes,
+     * and comments, one paragraph per line, then the deleted text of tracked changes, one line per paragraph that
+     * has any. Each paragraph is detected once, as {@link #redact} detects it, after the policy's settings for
+     * comments, tracked changes, and hidden text are applied, so text the redaction removes is not included.
+     * Headers and footers the options keep are left unscanned and left out. Drawings, hyperlink targets, field
+     * instructions, charts, and embedded objects are not included.
+     * @param metadata Whether to add the document properties the options keep, redacted, as a last segment.
+     */
+    public static OoxmlTextResult redactToText(final byte[] input, final TextFilter filter,
+                                               final OoxmlRedactionOptions options, final boolean metadata) throws IOException {
+        try (OoxmlPackage pkg = new OoxmlPackage(input)) {
+
+            final OfficeRedactedText text = new OfficeRedactedText();
+            final List<OfficeRedactionSpan> captured = new ArrayList<>();
+            final Order order = new Order();
+            text.ensure(BODY_LABEL);
+
+            if (pkg.mainPart() == null) {
+                return new OoxmlTextResult(text, captured, List.of());
+            }
+
+            final Map<String, String> properties = metadata && !options.wordRemovesDocumentProperties()
+                    ? AuthorshipCleaner.contentProperties(pkg) : Map.of();
+
+            prepare(pkg, options);
+
+            final boolean redactHeadersFooters = options.wordRedactsHeadersFooters();
+            int paragraphIndex = 0;
+            for (final Target t : enumerateTargets(pkg)) {
+                final String label = label(pkg, t);
+                // Numbered as on redaction, so a span's paragraph is the same in both.
+                final int currentIndex = paragraphIndex++;
+                if (t.headerFooter() && !redactHeadersFooters) {
+                    text.notScanned(label);
+                    continue;
+                }
+                // A fallback is a copy of content shown in its alternative, such as a text box, so it is left out.
+                if (nearestAncestor(t.paragraph(), MC, "Fallback") != null || isSeparatorNote(t.paragraph())) {
+                    continue;
+                }
+                final String original = ownText(t.paragraph());
+                if (original.isEmpty()) {
+                    text.line(label, "", List.of());
+                    continue;
+                }
+                final TextFilterResult result = filter.apply(original);
+                if (result.getFilteredText().equals(original)) {
+                    text.line(label, original, List.of());
+                    continue;
+                }
+                final OfficeSpanMath.Applied applied = OfficeSpanMath.applyRangesTracked(original,
+                        OfficeSpanMath.ranges(OfficeSpanMath.validSpans(result, original)));
+                text.line(label, applied.text(), applied.replacedRanges());
+                OfficeSpanMath.capture(result, original, currentIndex, null, captured, order);
+            }
+
+            deletedText(pkg, filter, text, captured, order);
+
+            if (metadata) {
+                if (options.wordRemovesDocumentProperties()) {
+                    text.notScanned(OfficeRedactedText.METADATA_LABEL);
+                } else {
+                    text.metadata(properties, filter, captured, order);
+                }
+            }
+
+            return new OoxmlTextResult(text, captured, List.of());
+
+        }
+    }
+
+    // A paragraph of the separator notes Word keeps for the line above the notes, which hold no text of the document.
+    private static boolean isSeparatorNote(final Element paragraph) {
+        Element note = nearestAncestor(paragraph, W, "footnote");
+        if (note == null) {
+            note = nearestAncestor(paragraph, W, "endnote");
+        }
+        if (note == null) {
+            return false;
+        }
+        final String type = note.getAttributeNS(W, "type");
+        return !type.isEmpty() && !"normal".equals(type);
+    }
+
+    // The segment a paragraph's text goes in, by its part.
+    private static String label(final OoxmlPackage pkg, final Target t) {
+        if (t.part().getPartName().equals(pkg.mainPart().getPartName())) {
+            return BODY_LABEL;
+        }
+        final String type = t.part().getContentType();
+        if (type.endsWith(".header+xml")) {
+            return HEADERS_LABEL;
+        }
+        if (type.endsWith(".footer+xml")) {
+            return FOOTERS_LABEL;
+        }
+        if (type.endsWith(".footnotes+xml")) {
+            return FOOTNOTES_LABEL;
+        }
+        if (type.endsWith(".endnotes+xml")) {
+            return ENDNOTES_LABEL;
+        }
+        return t.headerFooter() ? HEADERS_LABEL : COMMENTS_LABEL;
+    }
+
+    // Each tracked deletion detected leaf by leaf, as scanDeletedText does, and joined into a line per paragraph.
+    private static void deletedText(final OoxmlPackage pkg, final TextFilter filter, final OfficeRedactedText text,
+                                    final List<OfficeRedactionSpan> captured, final Order order) {
+        for (final PackagePart part : pkg.allParts(pkg.mainPart())) {
+            final Document d = pkg.dom(part);
+            if (d == null) {
+                continue;
+            }
+            Element paragraph = null;
+            final StringBuilder line = new StringBuilder();
+            final List<ReplacedRange> ranges = new ArrayList<>();
+            for (final Element deleted : descendants(d, W, "delText")) {
+                final String original = deleted.getTextContent();
+                if (original == null || original.isEmpty()) {
+                    continue;
+                }
+                final Element owner = nearestAncestor(deleted, W, "p");
+                if (paragraph != null && owner != paragraph && !line.isEmpty()) {
+                    text.line(TRACKED_CHANGES_LABEL, line.toString(), List.copyOf(ranges));
+                    line.setLength(0);
+                    ranges.clear();
+                }
+                paragraph = owner;
+                final TextFilterResult result = filter.apply(original);
+                final OfficeSpanMath.Applied applied = OfficeSpanMath.asWritten(result, original);
+                if (!result.getFilteredText().equals(original)) {
+                    OfficeSpanMath.capture(result, original, -1, null, captured, order);
+                }
+                for (final ReplacedRange range : applied.replacedRanges()) {
+                    ranges.add(range.shift(line.length()));
+                }
+                line.append(applied.text());
+            }
+            if (!line.isEmpty()) {
+                text.line(TRACKED_CHANGES_LABEL, line.toString(), List.copyOf(ranges));
+            }
         }
     }
 

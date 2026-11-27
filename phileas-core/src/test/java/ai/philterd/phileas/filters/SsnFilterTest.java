@@ -492,4 +492,83 @@ public class SsnFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterSsnOneDigitToABox() throws Exception {
+
+        // The SSN fields on Form 1040 are one digit to a box, so the text of a filled form reads
+        // 5 1 2 4 8 7 3 2 9. https://github.com/philterd/phileas/issues/544
+        final SsnFilter filter = new SsnFilter(getSsnFilterConfiguration());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Your social security number 5 1 2 4 8 7 3 2 9 Spouse");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 28, 45, FilterType.SSN));
+        Assertions.assertEquals("5 1 2 4 8 7 3 2 9", filtered.getSpans().get(0).getText());
+
+        for (final String ssn : List.of("5\t1\t2\t4\t8\t7\t3\t2\t9", "5 1 2 4 8 7 3 2 9", "1 2 3 4 5 6 7 8 9")) {
+            final Filtered spaced = filter.filter(contextService, getPolicy(), "context", PIECE, "ssn " + ssn + ".");
+            Assertions.assertEquals(1, spaced.getSpans().size(), ssn);
+            Assertions.assertEquals(ssn, spaced.getSpans().get(0).getText());
+        }
+
+    }
+
+    @Test
+    public void filterSsnOneDigitToABoxKeepsTheRangeChecks() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/544
+        final SsnFilter filter = new SsnFilter(getSsnFilterConfiguration());
+
+        // Area 000, area 666, group 00, serial 0000, and a value beginning with 9 (an ITIN).
+        for (final String excluded : List.of("0 0 0 4 5 6 7 8 9", "6 6 6 4 5 6 7 8 9", "1 2 3 0 0 6 7 8 9", "1 2 3 4 5 0 0 0 0", "9 1 2 7 0 1 2 3 4")) {
+            Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, "ssn " + excluded + ".").getSpans().size(), excluded);
+        }
+
+    }
+
+    @Test
+    public void filterSsnOneDigitToABoxNotPartOfALongerRun() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/544
+        final SsnFilter filter = new SsnFilter(getSsnFilterConfiguration());
+
+        for (final String input : List.of(
+                "5 1 2 4 8 7 3 2",
+                "5 1 2 4 8 7 3 2 9 1",
+                "1 5 1 2 4 8 7 3 2 9",
+                "5 1 2 4 8 7 3 2 9 5 1 2 4 8 7 3 2 9",
+                "5 1  2 4 8 7 3 2 9",
+                "5 1 2 4 8 7 3 2 9a",
+                "a5 1 2 4 8 7 3 2 9",
+                "15 1 2 4 8 7 3 2 9")) {
+            Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, "the values are " + input + " here.").getSpans().size(), input);
+        }
+
+    }
+
+    @Test
+    public void filterSsnOneDigitToABoxHasALowerConfidence() throws Exception {
+
+        // Any nine single digits written this way match, such as a row of scores, so the spaced form
+        // starts at a lower confidence, which a strategy condition can tell apart from the other forms.
+        // https://github.com/philterd/phileas/issues/544
+        final SsnFilter filter = new SsnFilter(getSsnFilterConfiguration());
+
+        Assertions.assertEquals(0.75, filter.filter(contextService, getPolicy(), "context", PIECE, "ssn 5 1 2 4 8 7 3 2 9").getSpans().get(0).getConfidence(), 0.0001);
+        Assertions.assertEquals(0.90, filter.filter(contextService, getPolicy(), "context", PIECE, "ssn 512-48-7329").getSpans().get(0).getConfidence(), 0.0001);
+
+        final SsnFilterStrategy strategy = new SsnFilterStrategy();
+        strategy.setConditions("confidence >= 0.9");
+
+        final SsnFilter conditional = new SsnFilter(new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(strategy))
+                .withWindowSize(windowSize)
+                .build());
+
+        final List<Span> spans = conditional.filter(contextService, getPolicy(), "context", PIECE, "scores 1 2 3 4 5 6 7 8 9 and ssn 512-48-7329").getSpans();
+        Assertions.assertEquals(2, spans.size());
+        Assertions.assertFalse(spans.stream().filter(s -> s.getText().equals("1 2 3 4 5 6 7 8 9")).findFirst().orElseThrow().isApplied());
+        Assertions.assertTrue(spans.stream().filter(s -> s.getText().equals("512-48-7329")).findFirst().orElseThrow().isApplied());
+
+    }
+
 }

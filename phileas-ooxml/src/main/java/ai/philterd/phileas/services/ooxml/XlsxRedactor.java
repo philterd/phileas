@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.model.filtering.RedactionWarning;
+import ai.philterd.phileas.model.filtering.ReplacedRange;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Tabular;
@@ -88,7 +90,7 @@ public final class XlsxRedactor {
     public static OoxmlRedactionResult redact(final byte[] input, final TextFilter filter,
                                               final OoxmlRedactionOptions options, final ColumnRules rules) throws IOException {
         try (OoxmlPackage pkg = new OoxmlPackage(input)) {
-            final List<String> warnings = new ArrayList<>();
+            final List<RedactionWarning> warnings = new ArrayList<>();
             final List<OfficeRedactionSpan> captured = redactOpen(pkg, filter, options, rules, warnings);
             final Order order = new Order(captured.size());
             scanChartEmbeddings(pkg, options.getWorksheet(), filter, rules, options, true, captured, order);
@@ -264,7 +266,17 @@ public final class XlsxRedactor {
 
     static List<OfficeRedactionSpan> redactOpen(final OoxmlPackage pkg, final TextFilter filter,
                                                 final OoxmlRedactionOptions options, final ColumnRules rules,
-                                                final List<String> warnings) {
+                                                final List<RedactionWarning> warnings) {
+        return redactOpen(pkg, filter, options, rules, warnings, null);
+    }
+
+    /*
+     * With cellText, each cell's text as redaction leaves it is also added to the text, and the passes beyond the
+     * cells, whose content the text does not include, are skipped. The package is then not to be saved.
+     */
+    private static List<OfficeRedactionSpan> redactOpen(final OoxmlPackage pkg, final TextFilter filter,
+                                                        final OoxmlRedactionOptions options, final ColumnRules rules,
+                                                        final List<RedactionWarning> warnings, final CellText cellText) {
         final List<OfficeRedactionSpan> captured = new ArrayList<>();
         final Order order = new Order();
         final PackagePart workbook = pkg.mainPart();
@@ -285,6 +297,12 @@ public final class XlsxRedactor {
         PackagePart currentPart = null;
         int cellIndex = 0;
         boolean anyCellRedacted = false;
+
+        if (cellText != null) {
+            for (final Worksheet sheet : worksheets(pkg, worksheet)) {
+                cellText.sheet(sheet.name());
+            }
+        }
 
         for (final CellRef c : enumerateCells(pkg, worksheet)) {
             final int currentIndex = cellIndex++;
@@ -310,8 +328,10 @@ public final class XlsxRedactor {
             }
             if (fullColumns.contains(c.column())) {
                 if (header) {
+                    emit(cellText, c, plan, original, List.of());
                     continue; // the column's header label is kept
                 }
+                emit(cellText, c, plan, COLUMN_REPLACEMENT, whole(COLUMN_REPLACEMENT));
                 setCellText(cell, COLUMN_REPLACEMENT);
                 pkg.markDirty(c.part());
                 anyCellRedacted = true;
@@ -322,6 +342,7 @@ public final class XlsxRedactor {
             TextFilter cellFilter = filter;
             if (plan.hasRules()) {
                 if (header) {
+                    emit(cellText, c, plan, original, List.of());
                     continue; // header rows are never redacted under column rules
                 }
                 final Handling handling = plan.handling(c.column());
@@ -330,6 +351,7 @@ public final class XlsxRedactor {
                 }
                 if (handling.kind() == Handling.Kind.REDACT) {
                     final String replacement = rules.replace(handling.strategies(), original);
+                    emit(cellText, c, plan, replacement, whole(replacement));
                     setCellText(cell, replacement);
                     pkg.markDirty(c.part());
                     anyCellRedacted = true;
@@ -347,7 +369,14 @@ public final class XlsxRedactor {
             final String contextHeader = options.isUseHeaderContext() && !header ? columnHeaders.get(c.column()) : null;
             final DetectedCell detected = detectCell(original, contextHeader, cellFilter);
             if (detected.filteredText().equals(original)) {
+                emit(cellText, c, plan, original, List.of());
                 continue;
+            }
+            if (cellText != null) {
+                final OfficeSpanMath.Applied applied = OfficeSpanMath.applyRangesTracked(original,
+                        OfficeSpanMath.ranges(detected.spans()));
+                emit(cellText, c, plan, detected.filteredText(),
+                        applied.text().equals(detected.filteredText()) ? applied.replacedRanges() : List.of());
             }
             setCellText(cell, detected.filteredText());
             pkg.markDirty(c.part());
@@ -357,6 +386,10 @@ public final class XlsxRedactor {
             for (final Span s : sorted) {
                 captured.add(OfficeSpanMath.entity(s, original, currentIndex, null, order));
             }
+        }
+
+        if (cellText != null) {
+            return captured;
         }
 
         if (options.excelRedactsPrintHeadersFooters()) {
@@ -375,6 +408,96 @@ public final class XlsxRedactor {
         }
         pruneUnusedSharedStrings(pkg);
         return captured;
+    }
+
+    private static void emit(final CellText cellText, final CellRef c, final SheetPlan plan, final String text,
+                             final List<ReplacedRange> replacedRanges) {
+        if (cellText != null) {
+            cellText.cell(c, plan, text, replacedRanges);
+        }
+    }
+
+    private static List<ReplacedRange> whole(final String text) {
+        return text.isEmpty() ? List.of() : List.of(new ReplacedRange(0, text.length()));
+    }
+
+    /** The label of a worksheet's segment in the redacted text. */
+    public static String sheetLabel(final String sheetName) {
+        return "sheet: " + sheetName;
+    }
+
+    /**
+     * Redacts the workbook's cells without producing a document, as {@link #redact} redacts them, and returns
+     * their text: one segment per worksheet, in workbook order, with each data row as {@code header: value}
+     * lines, one per cell with text, and a blank line between rows. A column's header is the text of the last
+     * header row (the sheet entry's {@code headerRows}, or the first row without one), as redaction leaves it,
+     * or the column's letter when that cell is empty. Cells redaction does not scan, such as an ignored column, a
+     * boolean or error cell, or a formula cell unless {@code formulaCaches} is {@code redact}, are left out, as are
+     * comments, shapes, charts, print headers and footers, pivot caches, and embedded objects.
+     * @param metadata Whether to add the document properties the options keep, redacted, as a last segment.
+     */
+    public static OoxmlTextResult redactToText(final byte[] input, final TextFilter filter,
+                                               final OoxmlRedactionOptions options, final ColumnRules rules,
+                                               final boolean metadata) throws IOException {
+        try (OoxmlPackage pkg = new OoxmlPackage(input)) {
+            final OfficeRedactedText text = new OfficeRedactedText();
+            final Map<String, String> properties = metadata && !options.excelRemovesDocumentProperties()
+                    ? AuthorshipCleaner.contentProperties(pkg) : Map.of();
+            final List<RedactionWarning> warnings = new ArrayList<>();
+            final List<OfficeRedactionSpan> captured = redactOpen(pkg, filter, options, rules, warnings, new CellText(text));
+            if (metadata) {
+                if (options.excelRemovesDocumentProperties()) {
+                    text.notScanned(OfficeRedactedText.METADATA_LABEL);
+                } else {
+                    text.metadata(properties, filter, captured, new Order(captured.size()));
+                }
+            }
+            return new OoxmlTextResult(text, captured, warnings);
+        }
+    }
+
+    // Renders cells as "header: value" lines, a segment per worksheet.
+    private static final class CellText {
+
+        private final OfficeRedactedText text;
+        private final Map<String, Map<Integer, OfficeSpanMath.Applied>> headers = new HashMap<>();
+        private final Map<String, Integer> lastRows = new HashMap<>();
+
+        private CellText(final OfficeRedactedText text) {
+            this.text = text;
+        }
+
+        void sheet(final String name) {
+            text.ensure(sheetLabel(name));
+        }
+
+        void cell(final CellRef c, final SheetPlan plan, final String value, final List<ReplacedRange> ranges) {
+            if (plan.isHeader(c)) {
+                if (plan.isLastHeaderRow(c)) {
+                    headers.computeIfAbsent(c.sheet(), k -> new HashMap<>())
+                            .put(c.column(), new OfficeSpanMath.Applied(OfficeRedactedText.flatten(value), ranges));
+                }
+                return;
+            }
+            final String label = sheetLabel(c.sheet());
+            final Integer lastRow = lastRows.put(c.sheet(), c.row());
+            if (lastRow != null && lastRow != c.row()) {
+                text.line(label, "", List.of());
+            }
+            final OfficeSpanMath.Applied header = headers.getOrDefault(c.sheet(), Map.of()).get(c.column());
+            final String name = header == null || header.text().isBlank()
+                    ? SpreadsheetColumn.indexToLetter(c.column()) : header.text();
+            final String prefix = name + HEADER_CONTEXT_SEPARATOR;
+            final List<ReplacedRange> lineRanges = new ArrayList<>();
+            if (header != null && !header.text().isBlank()) {
+                lineRanges.addAll(header.replacedRanges());
+            }
+            for (final ReplacedRange range : ranges) {
+                lineRanges.add(range.shift(prefix.length()));
+            }
+            text.line(label, prefix + OfficeRedactedText.flatten(value), lineRanges);
+        }
+
     }
 
     private static List<OfficeRedactionSpan> detectOpen(final OoxmlPackage pkg, final TextFilter filter,
@@ -570,7 +693,7 @@ public final class XlsxRedactor {
         }
 
         static SheetPlan of(final OoxmlPackage pkg, final PackagePart part, final String name, final ColumnRules rules,
-                            final List<String> headerStrings, final List<String> warnings) {
+                            final List<String> headerStrings, final List<RedactionWarning> warnings) {
             final Tabular.Sheet entry = rules == null || rules.tabular() == null ? null : rules.tabular().sheetFor(name);
             if (entry == null) {
                 return new SheetPlan(rules, null);
@@ -1078,9 +1201,14 @@ public final class XlsxRedactor {
                 return null;
             }
             // The column rules apply as they do to the outer workbook. A header that matches no column here is
-            // not reported, since an embedded workbook often holds only some of the columns.
-            final List<OfficeRedactionSpan> redacted = redactOpen(pkg, filter, options.forEmbedded(),
-                    rules, new ArrayList<>());
+            // passed to the call marked as embedded, since an embedded workbook often holds only some of the columns.
+            final List<RedactionWarning> warnings = new ArrayList<>();
+            final List<OfficeRedactionSpan> redacted = redactOpen(pkg, filter, options.forEmbedded(), rules, warnings);
+            if (rules != null) {
+                for (final RedactionWarning warning : warnings) {
+                    rules.warn(warning.asEmbedded());
+                }
+            }
             final byte[] output = pkg.save();
             spans.addAll(redacted);
             return output;

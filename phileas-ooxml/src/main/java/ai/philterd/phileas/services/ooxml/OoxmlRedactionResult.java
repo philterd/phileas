@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 package ai.philterd.phileas.services.ooxml;
+import ai.philterd.phileas.model.filtering.RedactionWarning;
 import java.util.List;
 
 /**
  * A redacted document, the redactions made in it, and warnings about the policy, such as a column rule whose
  * header matches no column.
  */
-public record OoxmlRedactionResult(byte[] document, List<OfficeRedactionSpan> spans, List<String> warnings) {
+public record OoxmlRedactionResult(byte[] document, List<OfficeRedactionSpan> spans, List<RedactionWarning> warnings) {
 
     public OoxmlRedactionResult(final byte[] document, final List<OfficeRedactionSpan> spans) {
         this(document, spans, List.of());

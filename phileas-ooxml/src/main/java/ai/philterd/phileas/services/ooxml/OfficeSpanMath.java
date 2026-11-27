@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.model.filtering.ReplacedRange;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 
@@ -130,6 +131,43 @@ final class OfficeSpanMath {
             sb.replace(r.start(), r.end(), nz(r.replacement()));
         }
         return sb.toString();
+    }
+
+    /** Text with replacements applied, and where each replacement is in it. */
+    record Applied(String text, List<ReplacedRange> replacedRanges) {
+    }
+
+    /** As {@link #applyRanges}, also reporting where each replacement lands. The ranges must not overlap. */
+    static Applied applyRangesTracked(final String original, final List<ReplacementRange> ranges) {
+        final List<ReplacementRange> sorted = new ArrayList<>(ranges);
+        sorted.sort(Comparator.comparingInt(ReplacementRange::start));
+        final StringBuilder sb = new StringBuilder(original.length());
+        final List<ReplacedRange> replaced = new ArrayList<>();
+        int copiedTo = 0;
+        for (final ReplacementRange r : sorted) {
+            if (r.start() < copiedTo || r.end() > original.length() || r.end() <= r.start()) {
+                continue;
+            }
+            sb.append(original, copiedTo, r.start());
+            final int start = sb.length();
+            sb.append(nz(r.replacement()));
+            replaced.add(new ReplacedRange(start, sb.length()));
+            copiedTo = r.end();
+        }
+        sb.append(original, copiedTo, original.length());
+        return new Applied(sb.toString(), replaced);
+    }
+
+    /**
+     * A leaf's text as a redactor that writes the filter's output writes it, with where its replacements are.
+     * When the spans do not rebuild that output, the ranges are left empty.
+     */
+    static Applied asWritten(final TextFilterResult result, final String original) {
+        if (result.getFilteredText().equals(original)) {
+            return new Applied(original, List.of());
+        }
+        final Applied applied = applyRangesTracked(original, ranges(validSpans(result, original)));
+        return applied.text().equals(result.getFilteredText()) ? applied : new Applied(result.getFilteredText(), List.of());
     }
 
     static String nz(final String s) {

@@ -17,6 +17,7 @@ package ai.philterd.phileas.policy;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.ColumnFilter;
+import ai.philterd.phileas.model.filtering.RedactionWarning;
 import ai.philterd.phileas.services.FilterPolicyLoader;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
@@ -248,8 +249,7 @@ public class TabularTest {
         Assertions.assertNull(resolved.ruleFor(1));
 
         // An unmatched header is a warning, not an error.
-        Assertions.assertEquals(1, resolved.warnings().size());
-        Assertions.assertTrue(resolved.warnings().get(0).contains("'Missing'"), resolved.warnings().get(0));
+        Assertions.assertEquals(List.of(RedactionWarning.unmatchedHeader("Missing", sheet.getWorksheet())), resolved.warnings());
 
     }
 

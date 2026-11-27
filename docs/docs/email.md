@@ -16,7 +16,7 @@ Detection is the same as for text, using the policy's filters, strategies, and c
 </dependency>
 ```
 
-It brings in `phileas-pdf` and `phileas-ooxml`, which redact attachments, Jakarta Mail (Eclipse Angus) for MIME, and Apache POI's HSMF for Outlook messages.
+It brings in `phileas-pdf`, `phileas-ooxml`, and `phileas-rtf`, which redact attachments, Jakarta Mail (Eclipse Angus) for MIME, and Apache POI's HSMF for Outlook messages.
 
 ## Redacting a message
 
@@ -68,7 +68,7 @@ Spans in redacted attachments are not part of the message's explanation.
 
 ### Applying spans
 
-`apply(policy, input, spans, outputMimeType)` applies a list of spans, for example ones a reviewer accepted or added, by their field number and offsets. Headers, attachments, and inline images are handled by the policy's `config.email`, and PDF, Word, and Excel attachments under `attachments: redact` are redacted with the policy.
+`apply(policy, input, spans, outputMimeType)` applies a list of spans, for example ones a reviewer accepted or added, by their field number and offsets. Headers, attachments, and inline images are handled by the policy's `config.email`, and the attachments `attachments: redact` redacts are redacted with the policy.
 
 ## Email settings in the policy
 
@@ -97,12 +97,22 @@ The policy's `config.email` decides what happens beyond the text. The defaults m
 | `headers.removeIdentity` | `true` | Removes `Bcc`, `Reply-To`, `Sender`, and every header beginning `Resent-`. |
 | `headers.removeDate` | `false` | Removes the `Date` header, whatever its format, without relying on a date identifier. |
 | `headers.removeSubject` | `false` | Removes the `Subject` header instead of redacting it. |
-| `attachments` | `keep` | `keep` leaves attachments as they are, uninspected, and reports them. `remove` deletes them, including their filenames. `redact` redacts each PDF, Word (`.docx`), and Excel (`.xlsx`) attachment with the same policy, and removes and reports any other attachment and any that cannot be redacted. |
+| `attachments` | `keep` | `keep` leaves attachments as they are, uninspected, and reports them. `remove` deletes them, including their filenames. `redact` redacts each PDF, Word (`.docx`), Excel (`.xlsx`), RTF, CSV, and plain-text attachment with the same policy, and removes and reports any other attachment and any that cannot be redacted. |
 | `inlineImages` | `keep` | `keep` leaves images embedded in the body as they are, uninspected, and reports them. `remove` deletes them and points each `cid:` reference to them at `about:blank`. Independent of `attachments`. |
 
 Header names match without regard to case. A removed header is removed entirely, in the message and in every nested message, and is not scanned. A message without a `Date` or `Message-ID` is written without one; none is generated.
 
-Under `attachments: remove`, a forwarded message attached as a file is removed too. Under `keep` and `redact`, it is redacted as a nested message. An attachment is recognized as PDF, Word, or Excel by its media type or filename extension, or, for `application/octet-stream` without an extension, by its content. PDF attachments are redacted as by `PdfFilterService`, with the policy's `config.pdf`, so a page with a redaction is flattened to an image.
+Under `attachments: remove`, a forwarded message attached as a file is removed too. Under `keep` and `redact`, it is redacted as a nested message. An attachment's type is recognized by its media type or filename extension, or, for `application/octet-stream` without an extension, by its content:
+
+| Type | Recognized by | Redacted as |
+|---|---|---|
+| PDF | `application/pdf`, `.pdf`, or content starting with `%PDF-` | By `PdfFilterService`, with the policy's `config.pdf`, so a page with a redaction is flattened to an image. |
+| Word, Excel | Their media types, `.docx` or `.xlsx`, or their content | By `OoxmlFilterService`, with `config.word` and `config.excel` and the policy's column rules. |
+| RTF | `application/rtf` or `text/rtf`, `.rtf`, or content starting with `{\rtf` | By `RtfFilterService`, with `config.word`. |
+| CSV | `text/csv` or `.csv` | By `CsvFilterService`, field by field, with `config.csv` (`delimiter`, `quote`) and the policy's column rules. |
+| Plain text | `text/plain` on an attachment (a part with an attachment disposition or a filename) | By `PlainTextFilterService`. A plain-text body part is redacted as body text, as before. |
+
+A CSV attachment is read and written in the `charset` its part declares, or, without one, in `config.csv`'s `encoding`. A plain-text attachment is read and written in its declared `charset`, or UTF-8. A redacted attachment keeps its filename and media type. A CSV or plain-text part that declared no `charset` is labeled with the one it was written in, and a `text/rtf` part with `ISO-8859-1`, since RTF is written a byte per character; otherwise mail would label it UTF-8. An attachment its service refuses, such as a malformed RTF document, a CSV document over a [limit](csv.md#limits), or text not valid in its character set, is removed and reported as `redactionFailed`, never kept unredacted. Older binary formats such as `.doc` and `.xls`, images, and archives are removed and reported as `unsupportedType`. A redacted Excel or CSV attachment's [column rule warnings](word_and_excel.md#unmatched-column-rules), such as a rule whose header matches no column, are returned by the message's `getWarnings()`, marked as embedded.
 
 A `config.email` that is not an object, has an unknown key, has a header setting that is not `true` or `false`, or has an `attachments` or `inlineImages` value outside its list is refused when the policy is loaded. Values are case-sensitive. In PhiSQL:
 
@@ -134,3 +144,27 @@ The policy's [leftover check](filter_policies/filter_policies.md#leftover-check)
 * A redacted attachment whose output has no readable text, such as a PDF whose pages were all flattened to images, or whose check failed, is listed in `uncheckedAttachments` (`getUncheckedAttachments()`). Nothing in it was checked.
 
 Attachments and inline images that were kept are not checked; the email report lists them.
+
+## Redacted text output
+
+`EmailFilterService` can return the message's redacted plain text in place of the redacted message. Ask for it with
+`FilterOptions.defaults().withOutput(FilterOptions.Output.TEXT)`; `getText()` then returns the text as labeled
+segments and `getDocument()` returns `null`. A call returns either the text or the document, not both, and the output
+`MimeType` is not checked. The text comes from the same walk and the same detection the document redaction uses, so
+each value has the replacement the document would have, and it is not included when the result is serialized to JSON.
+The segments and their statuses (`TEXT`, `NO_TEXT`, `NOT_SCANNED`) are described under
+[PDF redacted text output](filter_policies/pdf.md#redacted-text-output). The policy's
+[leftover check](filter_policies/filter_policies.md#leftover-check) scans each segment's text, leaving out values the
+redaction inserted, and each finding's `segment` is the label of its segment, with offsets into that segment's text.
+
+| Label | Content |
+|---|---|
+| `headers` | The headers that are redacted and kept (`Subject`, `From`, `To`, and `Cc`), one `Name: value` line each. A header the policy removes is not included, and other headers, which are not scanned, are not included either. Always present. |
+| `body` | The text bodies. When a message has a plain text body, its HTML bodies are not included; an HTML-only body is its visible text, with a line break at each block element and without scripts and styles. Always present. |
+| `attached message N / headers`, `attached message N / body` | The same, for the Nth message attached to the message. |
+| `attachment: <name> / <segment>` | Each attachment `attachments: redact` redacts, as its service returns its text, such as `attachment: report.pdf / page 1` or `attachment: people.csv / rows`. A plain-text attachment is one segment, `attachment: <name> / text`. |
+
+Attachments that are kept are not scanned and are not included, and an attachment that is removed is not included;
+`getEmail()` reports both as for the document. Each redacted attachment is redacted once, to text. The leftover check
+scans the message's own segments and takes each attachment's check of its own text, with `attachment` set on its
+findings; an attachment whose check was not performed is listed in `uncheckedAttachments`. `withTextMetadata(true)` is passed to the attachments; a message has no metadata segment of its own.
