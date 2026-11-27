@@ -185,7 +185,7 @@ public final class EmailRedactor {
         message.writeTo(out);
 
         return new Result(out.toByteArray(), walk.fields, new EmailReport(walk.uninspectedAttachments,
-                walk.uninspectedInlineImages, walk.removedAttachments, walk.droppedSignatures));
+                walk.uninspectedInlineImages, walk.removedAttachments, walk.removedInlineImages, walk.droppedSignatures));
 
     }
 
@@ -243,6 +243,7 @@ public final class EmailRedactor {
         private final List<EmailReport.Part> uninspectedAttachments = new ArrayList<>();
         private final List<EmailReport.Part> uninspectedInlineImages = new ArrayList<>();
         private final List<EmailReport.Part> removedAttachments = new ArrayList<>();
+        private final List<EmailReport.Part> removedInlineImages = new ArrayList<>();
         private final List<EmailReport.Part> droppedSignatures = new ArrayList<>();
         private final Set<String> removedContentIds = new LinkedHashSet<>();
 
@@ -387,6 +388,7 @@ public final class EmailRedactor {
 
             if ("message/rfc822".equals(type)) {
                 if (settings.getAttachments() == Email.Attachments.REMOVE && isAttachment(part)) {
+                    removedAttachments.add(reportPart(part, messageNumber, EmailReport.RemovalReason.POLICY));
                     return Outcome.REMOVE;
                 }
                 final int number = ++messages;
@@ -404,6 +406,7 @@ public final class EmailRedactor {
 
             if (isInlineImage(part, type)) {
                 if (settings.getInlineImages() == Email.InlineImages.REMOVE) {
+                    removedInlineImages.add(reportPart(part, messageNumber, null));
                     return Outcome.REMOVE;
                 }
                 uninspectedInlineImages.add(reportPart(part, messageNumber, null));
@@ -512,6 +515,7 @@ public final class EmailRedactor {
             switch (settings.getAttachments()) {
 
                 case REMOVE -> {
+                    removedAttachments.add(reportPart(part, messageNumber, EmailReport.RemovalReason.POLICY));
                     return Outcome.REMOVE;
                 }
 

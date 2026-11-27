@@ -72,7 +72,7 @@ Spans in redacted attachments are not part of the message's explanation.
 
 ## Email settings in the policy
 
-The policy's `config.email` decides what happens beyond the text. The defaults match Philter Desktop's, so a policy without `config.email` redacts email as Philter Desktop does:
+The policy's `config.email` decides what happens beyond the text. These are the defaults, so a policy without `config.email` removes attachments and inline images:
 
 ```json
 {
@@ -84,8 +84,8 @@ The policy's `config.email` decides what happens beyond the text. The defaults m
             "removeDate": false,
             "removeSubject": false
          },
-         "attachments": "keep",
-         "inlineImages": "keep"
+         "attachments": "remove",
+         "inlineImages": "remove"
       }
    }
 }
@@ -97,8 +97,8 @@ The policy's `config.email` decides what happens beyond the text. The defaults m
 | `headers.removeIdentity` | `true` | Removes `Bcc`, `Reply-To`, `Sender`, and every header beginning `Resent-`. |
 | `headers.removeDate` | `false` | Removes the `Date` header, whatever its format, without relying on a date identifier. |
 | `headers.removeSubject` | `false` | Removes the `Subject` header instead of redacting it. |
-| `attachments` | `keep` | `keep` leaves attachments as they are, uninspected, and reports them. `remove` deletes them, including their filenames. `redact` redacts each PDF, Word (`.docx`), Excel (`.xlsx`), RTF, CSV, and plain-text attachment with the same policy, and removes and reports any other attachment and any that cannot be redacted. |
-| `inlineImages` | `keep` | `keep` leaves images embedded in the body as they are, uninspected, and reports them. `remove` deletes them and points each `cid:` reference to them at `about:blank`. Independent of `attachments`. |
+| `attachments` | `remove` | `remove` deletes attachments, including their filenames, and reports them. `keep` leaves them as they are, uninspected and unredacted, and reports them. `redact` redacts each PDF, Word (`.docx`), Excel (`.xlsx`), RTF, CSV, and plain-text attachment with the same policy, and removes and reports any other attachment and any that cannot be redacted. |
+| `inlineImages` | `remove` | `remove` deletes images embedded in the body, points each `cid:` reference to them at `about:blank`, and reports them. `keep` leaves them as they are, uninspected, and reports them. Independent of `attachments`. |
 
 Header names match without regard to case. A removed header is removed entirely, in the message and in every nested message, and is not scanned. A message without a `Date` or `Message-ID` is written without one; none is generated.
 
@@ -130,7 +130,8 @@ CONFIGURE EMAIL (
 
 * `getUninspectedAttachments()`: attachments kept under `attachments: keep`.
 * `getUninspectedInlineImages()`: inline images kept under `inlineImages: keep`.
-* `getRemovedAttachments()`: attachments removed under `attachments: redact` because they could not be redacted, each with a reason: `unsupportedType`, or `redactionFailed` for a supported type that could not be read, such as a damaged file.
+* `getRemovedAttachments()`: attachments removed, each with a reason: `policy` for every attachment under `attachments: remove`, including a forwarded message attached as a file; under `attachments: redact`, `unsupportedType`, or `redactionFailed` for a supported type that could not be read, such as a damaged file.
+* `getRemovedInlineImages()`: inline images removed under `inlineImages: remove`.
 * `getDroppedSignatures()`: signature parts dropped from signed messages.
 
 Each entry has the part's `fileName` (or `null`), `contentType`, and `messageNumber`: 0 for the message itself, otherwise the nested message's number, counting from 1 in document order. When serialized to JSON, the report is `email`.

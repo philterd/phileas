@@ -182,9 +182,15 @@ public class EmailTextOutputTest {
         Assertions.assertFalse(all.contains("not inspected"), all);
 
         // Kept attachments are not scanned, so they are not in the text, and the report still lists them.
-        final BinaryDocumentFilterResult kept = filter(policy(null, null), message, TEXT);
+        final BinaryDocumentFilterResult kept = filter(policy("{\"attachments\":\"keep\"}", null), message, TEXT);
         Assertions.assertEquals(List.of("headers", "body"), labels(kept));
         Assertions.assertEquals(4, kept.getEmail().getUninspectedAttachments().size());
+
+        // By default attachments are removed, so they are not in the text either, and the report lists them as removed.
+        final BinaryDocumentFilterResult removed = filter(policy(null, null), message, TEXT);
+        Assertions.assertEquals(List.of("headers", "body"), labels(removed));
+        Assertions.assertEquals(4, removed.getEmail().getRemovedAttachments().size());
+        Assertions.assertTrue(removed.getEmail().getUninspectedAttachments().isEmpty());
 
     }
 

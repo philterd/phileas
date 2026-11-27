@@ -390,6 +390,9 @@ public class SchemaConformanceTest {
     private static final String AUTO_DEFAULT = "the bundled lists default to auto (philterd/phileas#441); "
             + "the schema still declares medium";
 
+    private static final String EMAIL_REMOVE_DEFAULT = "email attachments and inline images default to remove; "
+            + "the schema still declares keep";
+
     /**
      * Defaults Phileas has changed ahead of the schema, with why. Each is asserted to still differ, so the
      * entry goes once the schema's default matches.
@@ -400,7 +403,9 @@ public class SchemaConformanceTest {
             "filterFirstName.sensitivity", AUTO_DEFAULT,
             "filterHospital.sensitivity", AUTO_DEFAULT,
             "filterState.sensitivity", AUTO_DEFAULT,
-            "filterSurname.sensitivity", AUTO_DEFAULT);
+            "filterSurname.sensitivity", AUTO_DEFAULT,
+            "email.attachments", EMAIL_REMOVE_DEFAULT,
+            "email.inlineImages", EMAIL_REMOVE_DEFAULT);
 
     /** Defaults the model takes from an environment variable when it is set. */
     private static final Map<String, String> ENVIRONMENT_DEFAULTS = Map.of(

@@ -178,6 +178,7 @@ public class EmailFilterServiceTest {
         Assertions.assertFalse(all.contains(SSN), all);
         Assertions.assertTrue(all.contains("Final-Recipient: rfc822; {{{REDACTED-email-address}}}"), all);
         Assertions.assertTrue(result.getEmail().getUninspectedAttachments().isEmpty());
+        Assertions.assertTrue(result.getEmail().getRemovedAttachments().isEmpty());
 
         // The report is serialized with the result.
         Assertions.assertTrue(result.toString().contains("\"email\":{\"uninspectedAttachments\":[]"), result.toString());
@@ -292,7 +293,7 @@ public class EmailFilterServiceTest {
     @Test
     public void keepsAttachmentsAndReportsThemUninspected() throws Exception {
 
-        final BinaryDocumentFilterResult result = filter(policy(null), bytes(withAttachments()));
+        final BinaryDocumentFilterResult result = filter(policy("{\"attachments\":\"keep\"}"), bytes(withAttachments()));
 
         final List<String> names = result.getEmail().getUninspectedAttachments().stream()
                 .map(EmailReport.Part::getFileName).toList();
@@ -311,7 +312,11 @@ public class EmailFilterServiceTest {
         for (final String name : List.of("report.pdf", "letter.docx", "sheet.xlsx", "archive.zip")) {
             Assertions.assertFalse(eml.contains(name), name);
         }
-        Assertions.assertFalse(result.getEmail().hasNotices());
+        Assertions.assertEquals(List.of("report.pdf", "letter.docx", "sheet.xlsx", "archive.zip"),
+                result.getEmail().getRemovedAttachments().stream().map(EmailReport.Part::getFileName).toList());
+        Assertions.assertTrue(result.getEmail().getRemovedAttachments().stream()
+                .allMatch(part -> part.getReason() == EmailReport.RemovalReason.POLICY));
+        Assertions.assertTrue(result.getEmail().getUninspectedAttachments().isEmpty());
         Assertions.assertTrue(allText(parse(result.getDocument())).contains("Attached."));
 
     }
@@ -349,10 +354,13 @@ public class EmailFilterServiceTest {
         forwarded.setDisposition(Part.ATTACHMENT);
         final MimeMessage input = message("Outer", multipart("mixed", text("Outer.", "plain"), forwarded));
 
-        final MimeMessage output = parse(filter(policy("{\"attachments\":\"remove\"}"), bytes(input)).getDocument());
+        final BinaryDocumentFilterResult result = filter(policy("{\"attachments\":\"remove\"}"), bytes(input));
+        final MimeMessage output = parse(result.getDocument());
 
         Assertions.assertFalse(allText(output).contains("Inner."));
         Assertions.assertTrue(allText(output).contains("Outer."));
+        Assertions.assertEquals(List.of("message/rfc822"),
+                result.getEmail().getRemovedAttachments().stream().map(EmailReport.Part::getContentType).toList());
 
     }
 
@@ -476,18 +484,78 @@ public class EmailFilterServiceTest {
         Assertions.assertFalse(all.contains("cid:"), all);
         Assertions.assertTrue(all.contains("about:blank"), all);
         Assertions.assertFalse(new String(result.getDocument(), StandardCharsets.UTF_8).contains("image/png"));
-        Assertions.assertFalse(result.getEmail().hasNotices());
+        Assertions.assertEquals(List.of("image/png"),
+                result.getEmail().getRemovedInlineImages().stream().map(EmailReport.Part::getContentType).toList());
+        Assertions.assertTrue(result.getEmail().getUninspectedInlineImages().isEmpty());
 
     }
 
     @Test
     public void keepsInlineImagesAndReportsThemUninspected() throws Exception {
 
-        final BinaryDocumentFilterResult result = filter(policy(null), bytes(withInlineImage()));
+        final BinaryDocumentFilterResult result = filter(policy("{\"inlineImages\":\"keep\"}"), bytes(withInlineImage()));
 
         Assertions.assertEquals(1, result.getEmail().getUninspectedInlineImages().size());
         Assertions.assertEquals("image/png", result.getEmail().getUninspectedInlineImages().get(0).getContentType());
         Assertions.assertTrue(allText(parse(result.getDocument())).contains("cid:image001.png@01D9A1B2.C3D4E5F0"));
+        Assertions.assertTrue(result.getEmail().getRemovedInlineImages().isEmpty());
+
+    }
+
+    private static MimeMessage withAttachmentAndInlineImage() throws Exception {
+        final MimeBodyPart image = new MimeBodyPart();
+        image.setDataHandler(new jakarta.activation.DataHandler(new jakarta.mail.util.ByteArrayDataSource(
+                new byte[]{(byte) 0x89, 'P', 'N', 'G'}, "image/png")));
+        image.setContentID("<image001.png@01D9A1B2.C3D4E5F0>");
+        image.setDisposition(Part.INLINE);
+        final MimeBodyPart related = multipart("related",
+                text("<p>Logo <img src=\"cid:image001.png@01D9A1B2.C3D4E5F0\"></p>", "html"), image);
+        return message("Files", multipart("mixed", related,
+                attachment("report.pdf", "application/pdf", EmailFixtures.pdf("SSN " + SSN))));
+    }
+
+    @Test
+    public void removesAttachmentsAndInlineImagesWithoutEmailSettings() throws Exception {
+
+        final BinaryDocumentFilterResult result = filter(policy(null), bytes(withAttachmentAndInlineImage()));
+        final String eml = new String(result.getDocument(), StandardCharsets.UTF_8);
+        final String all = allText(parse(result.getDocument()));
+
+        Assertions.assertTrue(attachments(parse(result.getDocument())).isEmpty());
+        Assertions.assertFalse(eml.contains("report.pdf"), eml);
+        Assertions.assertFalse(eml.contains("image/png"), eml);
+        Assertions.assertFalse(all.contains("cid:"), all);
+        Assertions.assertTrue(all.contains("about:blank"), all);
+
+        final EmailReport report = result.getEmail();
+        Assertions.assertEquals(List.of("report.pdf"),
+                report.getRemovedAttachments().stream().map(EmailReport.Part::getFileName).toList());
+        Assertions.assertEquals(EmailReport.RemovalReason.POLICY, report.getRemovedAttachments().get(0).getReason());
+        Assertions.assertEquals(List.of("image/png"),
+                report.getRemovedInlineImages().stream().map(EmailReport.Part::getContentType).toList());
+        Assertions.assertTrue(report.getUninspectedAttachments().isEmpty());
+        Assertions.assertTrue(report.getUninspectedInlineImages().isEmpty());
+        Assertions.assertTrue(report.hasNotices());
+
+    }
+
+    @Test
+    public void keepsAttachmentsAndInlineImagesWhenTheyAreSetToKeep() throws Exception {
+
+        final BinaryDocumentFilterResult result = filter(policy("{\"attachments\":\"keep\",\"inlineImages\":\"keep\"}"),
+                bytes(withAttachmentAndInlineImage()));
+
+        Assertions.assertEquals(List.of("report.pdf"),
+                attachments(parse(result.getDocument())).stream().map(EmailFilterServiceTest::fileName).toList());
+        Assertions.assertTrue(allText(parse(result.getDocument())).contains("cid:image001.png@01D9A1B2.C3D4E5F0"));
+
+        final EmailReport report = result.getEmail();
+        Assertions.assertEquals(List.of("report.pdf"),
+                report.getUninspectedAttachments().stream().map(EmailReport.Part::getFileName).toList());
+        Assertions.assertEquals(List.of("image/png"),
+                report.getUninspectedInlineImages().stream().map(EmailReport.Part::getContentType).toList());
+        Assertions.assertTrue(report.getRemovedAttachments().isEmpty());
+        Assertions.assertTrue(report.getRemovedInlineImages().isEmpty());
 
     }
 

@@ -23,19 +23,29 @@ import java.util.List;
 
 /**
  * What the redaction of an email message left uninspected or took out beyond the policy's text redaction, so a
- * caller can warn about it: attachments and inline images kept without being inspected, attachments removed
- * because they could not be redacted, and signatures dropped because redacting invalidates them.
+ * caller can warn about it: attachments and inline images kept without being inspected, attachments and inline
+ * images removed, and signatures dropped because redacting invalidates them.
  */
 public final class EmailReport {
 
-    /** Why an attachment was removed under {@code attachments: redact}. */
+    /** Why an attachment was removed. */
     public enum RemovalReason {
 
-        /** The attachment is not a type the redaction supports (PDF, Word, Excel, RTF, CSV, or plain text). */
+        /** The policy removes attachments ({@code attachments: remove}, the default). */
+        @SerializedName("policy")
+        POLICY,
+
+        /**
+         * Under {@code attachments: redact}, the attachment is not a type the redaction supports (PDF, Word, Excel,
+         * RTF, CSV, or plain text).
+         */
         @SerializedName("unsupportedType")
         UNSUPPORTED_TYPE,
 
-        /** The attachment is a supported type but could not be redacted, such as a damaged file. */
+        /**
+         * Under {@code attachments: redact}, the attachment is a supported type but could not be redacted, such as a
+         * damaged file.
+         */
         @SerializedName("redactionFailed")
         REDACTION_FAILED
 
@@ -100,13 +110,16 @@ public final class EmailReport {
     private final List<Part> uninspectedAttachments;
     private final List<Part> uninspectedInlineImages;
     private final List<Part> removedAttachments;
+    private final List<Part> removedInlineImages;
     private final List<Part> droppedSignatures;
 
     public EmailReport(final List<Part> uninspectedAttachments, final List<Part> uninspectedInlineImages,
-                       final List<Part> removedAttachments, final List<Part> droppedSignatures) {
+                       final List<Part> removedAttachments, final List<Part> removedInlineImages,
+                       final List<Part> droppedSignatures) {
         this.uninspectedAttachments = List.copyOf(uninspectedAttachments);
         this.uninspectedInlineImages = List.copyOf(uninspectedInlineImages);
         this.removedAttachments = List.copyOf(removedAttachments);
+        this.removedInlineImages = List.copyOf(removedInlineImages);
         this.droppedSignatures = List.copyOf(droppedSignatures);
     }
 
@@ -127,11 +140,20 @@ public final class EmailReport {
     }
 
     /**
-     * Attachments removed under {@code attachments: redact} because they could not be redacted.
+     * Attachments removed: every attachment under {@code attachments: remove}, the default, and those
+     * {@code attachments: redact} could not redact.
      * @return The attachments, each with its {@link RemovalReason}.
      */
     public List<Part> getRemovedAttachments() {
         return removedAttachments;
+    }
+
+    /**
+     * Inline images removed under {@code inlineImages: remove}, the default.
+     * @return The images.
+     */
+    public List<Part> getRemovedInlineImages() {
+        return removedInlineImages;
     }
 
     /**
@@ -148,7 +170,7 @@ public final class EmailReport {
      */
     public boolean hasNotices() {
         return !uninspectedAttachments.isEmpty() || !uninspectedInlineImages.isEmpty()
-                || !removedAttachments.isEmpty() || !droppedSignatures.isEmpty();
+                || !removedAttachments.isEmpty() || !removedInlineImages.isEmpty() || !droppedSignatures.isEmpty();
     }
 
     @Override

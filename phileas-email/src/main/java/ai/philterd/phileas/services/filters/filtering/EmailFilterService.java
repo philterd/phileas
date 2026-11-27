@@ -72,7 +72,7 @@ import java.util.Set;
  * which other headers are removed and what happens to attachments and inline images. Spans are returned with offsets
  * relative to their field and {@link Span#getParagraphNumber()} set to the field's number, and {@link #apply}
  * re-applies such spans by position. The result's {@link BinaryDocumentFilterResult#getEmail()} lists attachments and
- * images left uninspected, attachments removed because they could not be redacted, and dropped signatures.
+ * images left uninspected, attachments and images removed, and dropped signatures.
  */
 public class EmailFilterService extends BinaryFilterService {
 

@@ -32,7 +32,7 @@ public class EmailConfigTest {
     }
 
     @Test
-    public void defaultsMatchPhilterDesktopWhenAbsent() {
+    public void defaultsRemoveAttachmentsAndInlineImagesWhenAbsent() {
 
         final Email email = new Gson().fromJson("{}", Policy.class).getConfig().getEmail();
 
@@ -40,8 +40,8 @@ public class EmailConfigTest {
         Assertions.assertTrue(email.getHeaders().isRemoveIdentity());
         Assertions.assertFalse(email.getHeaders().isRemoveDate());
         Assertions.assertFalse(email.getHeaders().isRemoveSubject());
-        Assertions.assertEquals(Email.Attachments.KEEP, email.getAttachments());
-        Assertions.assertEquals(Email.InlineImages.KEEP, email.getInlineImages());
+        Assertions.assertEquals(Email.Attachments.REMOVE, email.getAttachments());
+        Assertions.assertEquals(Email.InlineImages.REMOVE, email.getInlineImages());
 
     }
 
@@ -53,7 +53,7 @@ public class EmailConfigTest {
         Assertions.assertTrue(email.getHeaders().isRemoveTechnical());
         Assertions.assertTrue(email.getHeaders().isRemoveDate());
         Assertions.assertEquals(Email.Attachments.REDACT, email.getAttachments());
-        Assertions.assertEquals(Email.InlineImages.KEEP, email.getInlineImages());
+        Assertions.assertEquals(Email.InlineImages.REMOVE, email.getInlineImages());
 
     }
 
@@ -61,7 +61,7 @@ public class EmailConfigTest {
     public void roundTrips() {
 
         final String json = "{\"headers\":{\"removeTechnical\":false,\"removeIdentity\":false,\"removeDate\":true,"
-                + "\"removeSubject\":true},\"attachments\":\"remove\",\"inlineImages\":\"remove\"}";
+                + "\"removeSubject\":true},\"attachments\":\"keep\",\"inlineImages\":\"keep\"}";
 
         final JsonObject written = JsonParser.parseString(new Gson().toJson(load(json)))
                 .getAsJsonObject().getAsJsonObject("config").getAsJsonObject("email");

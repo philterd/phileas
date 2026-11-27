@@ -41,7 +41,7 @@ public class Email {
         /** Attachments are left as they are, uninspected, and reported. */
         KEEP("keep"),
 
-        /** Attachments are deleted, including their filenames. */
+        /** Attachments are deleted, including their filenames, and reported. The default. */
         REMOVE("remove"),
 
         /**
@@ -78,7 +78,7 @@ public class Email {
         /** Inline images are left as they are, uninspected, and reported. */
         KEEP("keep"),
 
-        /** Inline images are deleted and the references to them neutralized. */
+        /** Inline images are deleted, the references to them neutralized, and reported. The default. */
         REMOVE("remove");
 
         private final String value;
@@ -172,11 +172,11 @@ public class Email {
 
     @SerializedName("attachments")
     @Expose
-    private Attachments attachments = Attachments.KEEP;
+    private Attachments attachments = Attachments.REMOVE;
 
     @SerializedName("inlineImages")
     @Expose
-    private InlineImages inlineImages = InlineImages.KEEP;
+    private InlineImages inlineImages = InlineImages.REMOVE;
 
     public Headers getHeaders() {
         return headers == null ? new Headers() : headers;
@@ -187,7 +187,7 @@ public class Email {
     }
 
     public Attachments getAttachments() {
-        return attachments == null ? Attachments.KEEP : attachments;
+        return attachments == null ? Attachments.REMOVE : attachments;
     }
 
     public void setAttachments(final Attachments attachments) {
@@ -195,7 +195,7 @@ public class Email {
     }
 
     public InlineImages getInlineImages() {
-        return inlineImages == null ? InlineImages.KEEP : inlineImages;
+        return inlineImages == null ? InlineImages.REMOVE : inlineImages;
     }
 
     public void setInlineImages(final InlineImages inlineImages) {
