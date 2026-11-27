@@ -58,7 +58,9 @@ not joined. The [ITIN filter](itin.md) detects nine such digits beginning with 9
 
 Any nine single digits written this way match, such as a row of scores in a table, so these spans
 have a confidence of `0.75` instead of the `0.9` of the other forms. A strategy condition can tell
-them apart: a strategy with the condition `confidence >= 0.9` applies only to the other forms.
+them apart: a strategy with the condition `confidence >= 0.9` applies only to the other forms. Words
+near a value, such as an `SSN` label, do not raise its confidence, so such a condition also leaves
+an SSN written one digit to a box in a form field unredacted.
 
 `LAST_4` and `TRUNCATE` count the spaces as characters, so they leave fewer digits of a spaced value
 visible: `LAST_4` keeps only the last two digits.
