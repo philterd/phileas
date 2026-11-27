@@ -87,7 +87,7 @@ Pass `CsvRedactionOptions` to the service's constructor:
 
 ## Column rules
 
-The policy's [column rules](word_and_excel.md#column-rules) apply to a CSV document as to one worksheet: the `tabular` sheet entry without a `worksheet` applies, and an entry that names a worksheet does not. Under column rules, the entry's `headerRows` decide which rows are header rows, and header rows are never redacted. A `header` rule is matched against the last header row's value, trimmed.
+The policy's [column rules](word_and_excel.md#column-rules) apply to a CSV document as to one worksheet: the `tabular` sheet entry without a `worksheet` applies, and an entry that names a worksheet does not. Under column rules, the entry's `headerRows` decide which rows are header rows, and header rows are never redacted. A `header` rule is matched against the last header row's value, trimmed. A `header` rule that matches no column is returned by `BinaryDocumentFilterResult.getWarnings()` and logged, as for [Excel](word_and_excel.md#unmatched-column-rules): with `unlistedColumns: ignore`, the column is left unredacted and the leftover check does not report it.
 
 ## Leftover check
 

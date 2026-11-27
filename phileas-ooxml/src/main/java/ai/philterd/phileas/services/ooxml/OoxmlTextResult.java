@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.model.filtering.RedactionWarning;
 import java.util.List;
 
 /**
@@ -23,5 +24,5 @@ import java.util.List;
  * @param spans The redactions, as {@link OoxmlRedactionResult#spans()} reports them.
  * @param warnings Warnings, such as a column rule that matched no column.
  */
-public record OoxmlTextResult(OfficeRedactedText text, List<OfficeRedactionSpan> spans, List<String> warnings) {
+public record OoxmlTextResult(OfficeRedactedText text, List<OfficeRedactionSpan> spans, List<RedactionWarning> warnings) {
 }

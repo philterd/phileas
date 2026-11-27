@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.ooxml;
 
+import ai.philterd.phileas.model.filtering.RedactionWarning;
 import ai.philterd.phileas.model.filtering.ReplacedRange;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
@@ -89,7 +90,7 @@ public final class XlsxRedactor {
     public static OoxmlRedactionResult redact(final byte[] input, final TextFilter filter,
                                               final OoxmlRedactionOptions options, final ColumnRules rules) throws IOException {
         try (OoxmlPackage pkg = new OoxmlPackage(input)) {
-            final List<String> warnings = new ArrayList<>();
+            final List<RedactionWarning> warnings = new ArrayList<>();
             final List<OfficeRedactionSpan> captured = redactOpen(pkg, filter, options, rules, warnings);
             final Order order = new Order(captured.size());
             scanChartEmbeddings(pkg, options.getWorksheet(), filter, rules, options, true, captured, order);
@@ -265,7 +266,7 @@ public final class XlsxRedactor {
 
     static List<OfficeRedactionSpan> redactOpen(final OoxmlPackage pkg, final TextFilter filter,
                                                 final OoxmlRedactionOptions options, final ColumnRules rules,
-                                                final List<String> warnings) {
+                                                final List<RedactionWarning> warnings) {
         return redactOpen(pkg, filter, options, rules, warnings, null);
     }
 
@@ -275,7 +276,7 @@ public final class XlsxRedactor {
      */
     private static List<OfficeRedactionSpan> redactOpen(final OoxmlPackage pkg, final TextFilter filter,
                                                         final OoxmlRedactionOptions options, final ColumnRules rules,
-                                                        final List<String> warnings, final CellText cellText) {
+                                                        final List<RedactionWarning> warnings, final CellText cellText) {
         final List<OfficeRedactionSpan> captured = new ArrayList<>();
         final Order order = new Order();
         final PackagePart workbook = pkg.mainPart();
@@ -442,7 +443,7 @@ public final class XlsxRedactor {
             final OfficeRedactedText text = new OfficeRedactedText();
             final Map<String, String> properties = metadata && !options.excelRemovesDocumentProperties()
                     ? AuthorshipCleaner.contentProperties(pkg) : Map.of();
-            final List<String> warnings = new ArrayList<>();
+            final List<RedactionWarning> warnings = new ArrayList<>();
             final List<OfficeRedactionSpan> captured = redactOpen(pkg, filter, options, rules, warnings, new CellText(text));
             if (metadata) {
                 if (options.excelRemovesDocumentProperties()) {
@@ -692,7 +693,7 @@ public final class XlsxRedactor {
         }
 
         static SheetPlan of(final OoxmlPackage pkg, final PackagePart part, final String name, final ColumnRules rules,
-                            final List<String> headerStrings, final List<String> warnings) {
+                            final List<String> headerStrings, final List<RedactionWarning> warnings) {
             final Tabular.Sheet entry = rules == null || rules.tabular() == null ? null : rules.tabular().sheetFor(name);
             if (entry == null) {
                 return new SheetPlan(rules, null);
@@ -1200,9 +1201,14 @@ public final class XlsxRedactor {
                 return null;
             }
             // The column rules apply as they do to the outer workbook. A header that matches no column here is
-            // not reported, since an embedded workbook often holds only some of the columns.
-            final List<OfficeRedactionSpan> redacted = redactOpen(pkg, filter, options.forEmbedded(),
-                    rules, new ArrayList<>());
+            // passed to the call marked as embedded, since an embedded workbook often holds only some of the columns.
+            final List<RedactionWarning> warnings = new ArrayList<>();
+            final List<OfficeRedactionSpan> redacted = redactOpen(pkg, filter, options.forEmbedded(), rules, warnings);
+            if (rules != null) {
+                for (final RedactionWarning warning : warnings) {
+                    rules.warn(warning.asEmbedded());
+                }
+            }
             final byte[] output = pkg.save();
             spans.addAll(redacted);
             return output;

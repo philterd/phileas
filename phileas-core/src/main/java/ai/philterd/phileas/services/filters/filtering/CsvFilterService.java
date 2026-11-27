@@ -26,6 +26,7 @@ import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.RedactedTextBuilder;
+import ai.philterd.phileas.model.filtering.RedactionWarning;
 import ai.philterd.phileas.model.filtering.ReplacedRange;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
@@ -204,7 +205,7 @@ public class CsvFilterService extends BinaryFilterService {
         final CsvDocument document = CsvDocument.parse(decoded.text(), csv.getDelimiter(), csv.getQuote(), limits);
         final Plan plan = plan(policy, document);
 
-        for (final String warning : plan.warnings()) {
+        for (final RedactionWarning warning : plan.warnings()) {
             LOGGER.warn(warning);
         }
 
@@ -290,7 +291,7 @@ public class CsvFilterService extends BinaryFilterService {
             final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, filterOptions)
                     ? runLeftoverCheck(() -> textLeftoverCheck(policy, text.parts(), filterOptions)) : null;
             return new BinaryDocumentFilterResult(null, text.build(), context, new Explanation(spans, spans), tokens[0],
-                    incrementalRedactions, reviewSampled, leftoverCheck, null);
+                    incrementalRedactions, reviewSampled, leftoverCheck, null).withWarnings(plan.warnings());
         }
 
         final String output = document.write(values);
@@ -300,7 +301,7 @@ public class CsvFilterService extends BinaryFilterService {
                 ? runLeftoverCheck(() -> leftoverCheck(policy, csv, output, plan, replaced, document, filterOptions)) : null;
 
         return new BinaryDocumentFilterResult(bytes, context, new Explanation(spans, spans), tokens[0],
-                incrementalRedactions, reviewSampled, leftoverCheck);
+                incrementalRedactions, reviewSampled, leftoverCheck).withWarnings(plan.warnings());
 
     }
 
@@ -346,7 +347,7 @@ public class CsvFilterService extends BinaryFilterService {
     // --- rules -------------------------------------------------------------------------------------
 
     // The header rows and, when the policy has a tabular entry for a CSV, its rules resolved against the headers.
-    private record Plan(int headerRows, Map<Integer, String> headers, Tabular.ResolvedColumns rules, List<String> warnings) {
+    private record Plan(int headerRows, Map<Integer, String> headers, Tabular.ResolvedColumns rules, List<RedactionWarning> warnings) {
 
         String header(final int column) {
             final String header = headers.get(column);

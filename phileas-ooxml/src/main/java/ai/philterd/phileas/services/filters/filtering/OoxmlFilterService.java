@@ -24,6 +24,7 @@ import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.LeftoverCheckResult;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.RedactionWarning;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
@@ -180,7 +181,10 @@ public class OoxmlFilterService extends BinaryFilterService {
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
         final long[] tokens = {0};
         final TextFilter textFilter = textFilter(policy, contextService, vectorService, context, incrementalRedactions, tokens);
-        final ColumnRules columnRules = columnRules(policy, contextService, vectorService, context, incrementalRedactions, tokens);
+        // Warnings from workbooks embedded in the document, which the column rules pass on as they are redacted.
+        final List<RedactionWarning> embeddedWarnings = new ArrayList<>();
+        final ColumnRules columnRules = columnRules(policy, contextService, vectorService, context, incrementalRedactions,
+                tokens, embeddedWarnings);
 
         if (textOutput) {
             return filterToText(policy, type, input, textFilter, columnRules, context, incrementalRedactions, tokens,
@@ -188,10 +192,7 @@ public class OoxmlFilterService extends BinaryFilterService {
         }
 
         final OoxmlRedactionResult result = redactDocument(type, input, textFilter, callOptions(policy), columnRules);
-
-        for (final String warning : result.warnings()) {
-            LOGGER.warn(warning);
-        }
+        final List<RedactionWarning> warnings = warnings(result.warnings(), embeddedWarnings);
 
         final List<Span> spans = new ArrayList<>();
         for (final OfficeRedactionSpan officeSpan : result.spans()) {
@@ -208,8 +209,18 @@ public class OoxmlFilterService extends BinaryFilterService {
                 ? runLeftoverCheck(() -> leftoverCheck(policy, type, result, filterOptions, columnRules)) : null;
 
         return new BinaryDocumentFilterResult(result.document(), context, explanation, tokens[0], incrementalRedactions,
-                reviewSampled, leftoverCheck);
+                reviewSampled, leftoverCheck).withWarnings(warnings);
 
+    }
+
+    // The document's own warnings, then its embedded workbooks', each logged.
+    private static List<RedactionWarning> warnings(final List<RedactionWarning> own, final List<RedactionWarning> embedded) {
+        final List<RedactionWarning> warnings = new ArrayList<>(own);
+        warnings.addAll(embedded);
+        for (final RedactionWarning warning : warnings) {
+            LOGGER.warn(warning);
+        }
+        return warnings;
     }
 
     /*
@@ -313,9 +324,7 @@ public class OoxmlFilterService extends BinaryFilterService {
                 ? WordDocumentRedactor.redactToText(input, textFilter, callOptions(policy), metadata)
                 : XlsxRedactor.redactToText(input, textFilter, callOptions(policy), columnRules, metadata);
 
-        for (final String warning : result.warnings()) {
-            LOGGER.warn(warning);
-        }
+        final List<RedactionWarning> warnings = warnings(result.warnings(), List.of());
 
         final List<Span> spans = new ArrayList<>();
         for (final OfficeRedactionSpan officeSpan : result.spans()) {
@@ -329,7 +338,7 @@ public class OoxmlFilterService extends BinaryFilterService {
                 ? runLeftoverCheck(() -> textLeftoverCheck(policy, result.text().parts(), filterOptions)) : null;
 
         return new BinaryDocumentFilterResult(null, result.text().build(), context, new Explanation(spans, spans),
-                tokens[0], incrementalRedactions, reviewSampled, leftoverCheck, null);
+                tokens[0], incrementalRedactions, reviewSampled, leftoverCheck, null).withWarnings(warnings);
 
     }
 
@@ -401,7 +410,8 @@ public class OoxmlFilterService extends BinaryFilterService {
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
         final long[] tokens = new long[1];
         final TextFilter textFilter = textFilter(policy, contextService, vectorService, context, incrementalRedactions, tokens);
-        final ColumnRules columnRules = columnRules(policy, contextService, vectorService, context, incrementalRedactions, tokens);
+        final ColumnRules columnRules = columnRules(policy, contextService, vectorService, context, incrementalRedactions,
+                tokens, new ArrayList<>());
 
         return type == OoxmlDocumentType.DOCX
                 ? WordDocumentRedactor.applySpans(input, officeSpans, callOptions(policy), textFilter, columnRules)
@@ -438,7 +448,7 @@ public class OoxmlFilterService extends BinaryFilterService {
      */
     private ColumnRules columnRules(final Policy policy, final ContextService contextService, final VectorService vectorService,
                                     final String context, final List<IncrementalRedaction> incrementalRedactions,
-                                    final long[] tokens) {
+                                    final long[] tokens, final List<RedactionWarning> embeddedWarnings) {
 
         final Tabular tabular = policy.getTabular();
         if (tabular == null) {
@@ -462,6 +472,11 @@ public class OoxmlFilterService extends BinaryFilterService {
                 } catch (final Exception e) {
                     throw new IllegalStateException("Unable to build the filters of a tabular column rule.", e);
                 }
+            }
+
+            @Override
+            public void warn(final RedactionWarning warning) {
+                embeddedWarnings.add(warning);
             }
 
             @Override
