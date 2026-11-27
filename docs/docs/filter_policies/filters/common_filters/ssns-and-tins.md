@@ -46,6 +46,25 @@ When `splitting` is enabled with the `newline` method, a wrapped identifier fall
 and is not detected at the default `overlap` of `0`. Set an `overlap` at least as long as the
 identifier to keep it detectable.
 
+### One digit to a box
+
+The SSN fields on Form 1040 are combs, one digit to a box, so the text of a filled form reads
+`5 1 2 4 8 7 3 2 9`. Nine digits with one horizontal whitespace character (a space, a tab, or a
+non-breaking space) between each are detected, with the same exclusions: an area of `0 0 0` or
+`6 6 6` or one beginning with `9`, a group of `0 0`, and a serial of `0 0 0 0`. The span covers the
+nine digits and the spaces between them. A match may not be part of a longer run of digits written
+this way, so eight or ten such digits produce no span, and digits with two spaces between them are
+not joined. The [ITIN filter](itin.md) detects nine such digits beginning with 9 the same way.
+
+Any nine single digits written this way match, such as a row of scores in a table, so these spans
+have a confidence of `0.75` instead of the `0.9` of the other forms. A strategy condition can tell
+them apart: a strategy with the condition `confidence >= 0.9` applies only to the other forms. Words
+near a value, such as an `SSN` label, do not raise its confidence, so such a condition also leaves
+an SSN written one digit to a box in a form field unredacted.
+
+`LAST_4` and `TRUNCATE` count the spaces as characters, so they leave fewer digits of a spaced value
+visible: `LAST_4` keeps only the last two digits.
+
 ### Required Parameters
 
 This filter has no required parameters.

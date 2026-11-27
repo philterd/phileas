@@ -185,7 +185,7 @@ Each entry in `sheets` applies to the worksheet named by `worksheet`, compared c
 
 A rule picks its column by exactly one of:
 
-* `header`: the displayed text of the column's cell in the last header row, trimmed. A formula is matched by its result, rich text as plain text, a boolean as `TRUE` or `FALSE`, and a merged cell by the value of its top-left cell. A number or date is matched by its stored value, as described under [Limitations](#limitations), so a date header shown as `1/1/2025` is matched as `45658`. When several columns have the header, the rule applies to all of them. A header that matches no column is logged as a warning, so one policy can cover workbooks whose columns differ.
+* `header`: the displayed text of the column's cell in the last header row, trimmed. A formula is matched by its result, rich text as plain text, a boolean as `TRUE` or `FALSE`, and a merged cell by the value of its top-left cell. A number or date is matched by its stored value, as described under [Limitations](#limitations), so a date header shown as `1/1/2025` is matched as `45658`. When several columns have the header, the rule applies to all of them. A header that matches no column is not an error, so one policy can cover workbooks whose columns differ; it is reported as a [warning](#unmatched-column-rules).
 * `index`: the column's position, counting from 1 (column A is 1).
 
 When a header rule and an index rule pick the same column, the more protective one applies: `redact`, then `filter`, then `ignore`. Two `filter` rules scan the column with the filters of both, and of two `redact` rules the one listed first applies.
@@ -200,7 +200,7 @@ Detection in `filter` and `identifiers` columns is probabilistic, as it is elsew
 
 `strategies` and `unlistedStrategies` take the [filter strategies](filter_policies/filter_strategies.md) every filter supports (`REDACT`, `MASK`, `RANDOM_REPLACE`, `STATIC_REPLACE`, `CRYPTO_REPLACE`, `FPE_ENCRYPT_REPLACE`, `HASH_SHA256_REPLACE`, `LAST_4`, `TRUNCATE`, `ABBREVIATE`, and `MAP_REPLACE`) with their options, including `replacementScope`. They cannot have a `condition`, since a rule replaces every cell. `CRYPTO_REPLACE` and `FPE_ENCRYPT_REPLACE` use the policy's `crypto` and `fpe` keys. `%t` in `redactionFormat` is `full-column`, and each replaced cell is reported as a span with the classification `full-column`.
 
-Column rules apply to cells: those of the workbook, and those of every workbook embedded in it or in a Word document, including the source workbook a chart keeps. An embedded workbook's worksheets are matched to sheet entries by their own names. The `fullyRedactedColumns` and `worksheet` options do not apply to embedded workbooks, and a header that matches no column in one is not reported.
+Column rules apply to cells: those of the workbook, and those of every workbook embedded in it or in a Word document, including the source workbook a chart keeps. An embedded workbook's worksheets are matched to sheet entries by their own names. The `fullyRedactedColumns` and `worksheet` options do not apply to embedded workbooks, and a header that matches no column in one is reported as a warning marked as embedded.
 
 Other content, such as comments, print headers and footers, shapes, chart labels and cached chart values, and pivot caches, is scanned with every filter in `identifiers`. Charts and pivot caches keep copies of the values in the columns they are built from, and those copies are scanned, not replaced by column. A value in a `redact` column that no filter detects, such as a partial SSN, is replaced in its cell but can remain in a chart label or a pivot cache built from that column. A value in an `ignore` column or a header row is scanned there and can be redacted.
 
@@ -209,6 +209,15 @@ The `fullyRedactedColumns` and `worksheet` options override the rules for a call
 The [leftover check](filter_policies/filter_policies.md#leftover-check) does not scan header rows or ignored columns, since the redaction leaves them as they are.
 
 A policy that is not what the schema allows, such as an unknown key or action, a `redact` rule without `strategies`, or two rules for the same header, is refused when it loads.
+
+### Unmatched column rules
+
+A `header` rule that matches no column does nothing, and the column follows its sheet entry's `unlistedColumns`, which can leave sensitive values in the output:
+
+* With `unlistedColumns: ignore`, the column is left unchanged, and the leftover check, which skips ignored columns, does not report it. A `redact` rule for `SSN` on a workbook whose header reads `Social Security` leaves that column as it was.
+* With the default `unlistedColumns: identifiers`, the column is scanned with every filter, so values only the rule would replace, such as a partial SSN, can remain.
+
+Each such rule is returned as a warning by `BinaryDocumentFilterResult.getWarnings()`, and logged. A warning (`RedactionWarning`) has the code `unmatched-header` (`getCode()`), the rule's `header`, the sheet entry's `worksheet` when the entry names one, and whether it is about an embedded workbook (`isEmbedded()`), which includes an Excel or CSV attachment of an [email message](email.md#the-email-report). It holds only values from the policy, never the document's sheet names or cell text. A rule that matches no column on several worksheets is reported once, and an `index` rule is never reported. A serialized result has `warnings` only when there are any. [Text output](#redacted-text-output) has the warnings of the worksheets it includes; it does not include embedded workbooks, so it has none of theirs. Review the output of a document with warnings, or fix the policy.
 
 ## What is redacted
 

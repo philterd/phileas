@@ -31,8 +31,9 @@ import java.util.regex.Pattern;
 
 /**
  * Detects U.S. Individual Taxpayer Identification Numbers (ITIN): nine digits beginning with 9, in the
- * same forms the SSN filter accepts (hyphenated {@code 9XX-XX-XXXX}, single-space separated, or
- * unformatted). The SSN filter never matches a value beginning with 9, so the two do not overlap.
+ * same forms the SSN filter accepts (hyphenated {@code 9XX-XX-XXXX}, single-space separated,
+ * unformatted, or one digit to a box). The SSN filter never matches a value beginning with 9, so the
+ * two do not overlap.
  *
  * <p>Adoption Taxpayer Identification Numbers ({@code 9XX-93-XXXX}) are detected as ITINs unless
  * {@code onlyValidRanges} is set.</p>
@@ -56,13 +57,19 @@ public class ItinFilter extends RegexFilter {
         final Pattern itinPattern = Pattern.compile("(?<!\\w)" + IdentifierSeparators.join("9\\d{2}", "\\d{2}", "\\d{4}") + "(?!\\w)");
         final FilterPattern itin1 = new FilterPattern.FilterPatternBuilder(itinPattern, 0.90).build();
 
+        // One digit to a box: an ITIN goes in the same SSN fields on Form 1040. See issue #544.
+        final String digit = "\\d";
+        final Pattern spacedPattern = Pattern.compile(IdentifierSeparators.spacedDigits(
+                "9", digit, digit, digit, digit, digit, digit, digit, digit));
+        final FilterPattern itin2 = new FilterPattern.FilterPatternBuilder(spacedPattern, IdentifierSeparators.SPACED_DIGITS_CONFIDENCE).build();
+
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("itin");
         this.contextualTerms.add("tin");
         this.contextualTerms.add("taxpayer");
         this.contextualTerms.add("tax");
 
-        this.analyzer = new Analyzer(contextualTerms, itin1);
+        this.analyzer = new Analyzer(contextualTerms, itin1, itin2);
 
     }
 

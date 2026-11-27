@@ -4,7 +4,7 @@
 
 This filter identifies US Individual Taxpayer Identification Numbers (ITIN). An ITIN has the same shape as an SSN but always begins with 9, such as `912-70-1234`. Detected values are reported with the span type `itin`.
 
-The filter accepts the same forms as the [SSN filter](ssns-and-tins.md): hyphenated (`912-70-1234`), separated by a single space (`912 70 1234`), or unformatted (`912701234`). The same hyphen substitutes and line-wrap handling apply, so `912-` at the end of one line followed by `70-1234` on the next is detected as one ITIN.
+The filter accepts the same forms as the [SSN filter](ssns-and-tins.md): hyphenated (`912-70-1234`), separated by a single space (`912 70 1234`), unformatted (`912701234`), or [one digit to a box](ssns-and-tins.md#one-digit-to-a-box) (`9 1 2 7 0 1 2 3 4`, with a confidence of `0.75`). The same hyphen substitutes and line-wrap handling apply, so `912-` at the end of one line followed by `70-1234` on the next is detected as one ITIN. `onlyValidRanges` applies to every form.
 
 The SSN filter never reports a value beginning with 9, so when both the `itin` and `ssn` filters are enabled an ITIN is reported only as `itin` and an SSN only as `ssn`.
 
