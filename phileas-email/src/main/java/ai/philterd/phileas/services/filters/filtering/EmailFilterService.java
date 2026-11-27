@@ -25,6 +25,7 @@ import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.RedactedText;
 import ai.philterd.phileas.model.filtering.RedactedTextBuilder;
+import ai.philterd.phileas.model.filtering.RedactionWarning;
 import ai.philterd.phileas.model.filtering.ReplacedRange;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
@@ -228,14 +229,15 @@ public class EmailFilterService extends BinaryFilterService {
             final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, options)
                     ? runLeftoverCheck(() -> textLeftoverCheck(policy, text, attachments, options)) : null;
             return new BinaryDocumentFilterResult(null, text.build(), context, explanation, tokens[0],
-                    incrementalRedactions, reviewSampled, leftoverCheck, result.report());
+                    incrementalRedactions, reviewSampled, leftoverCheck, result.report())
+                    .withWarnings(attachmentWarnings(attachments));
         }
 
         final LeftoverCheckResult leftoverCheck = LeftoverChecker.isDue(policy, options)
                 ? runLeftoverCheck(() -> leftoverCheck(policy, result, attachments, options)) : null;
 
         return new BinaryDocumentFilterResult(result.document(), context, explanation, tokens[0], incrementalRedactions,
-                reviewSampled, leftoverCheck, result.report());
+                reviewSampled, leftoverCheck, result.report()).withWarnings(attachmentWarnings(attachments));
 
     }
 
@@ -290,6 +292,18 @@ public class EmailFilterService extends BinaryFilterService {
 
         return text;
 
+    }
+
+    // The redacted attachments' warnings, such as an Excel or CSV attachment's column rule that matched no column,
+    // marked as embedded since they are about content other than the message itself.
+    private static List<RedactionWarning> attachmentWarnings(final List<RedactedAttachment> attachments) {
+        final List<RedactionWarning> warnings = new ArrayList<>();
+        for (final RedactedAttachment attachment : attachments) {
+            for (final RedactionWarning warning : attachment.result().getWarnings()) {
+                warnings.add(warning.asEmbedded());
+            }
+        }
+        return warnings;
     }
 
     private static boolean isBody(final EmailRedactor.Field field) {

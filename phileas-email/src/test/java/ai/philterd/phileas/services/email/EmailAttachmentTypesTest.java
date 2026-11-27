@@ -21,6 +21,7 @@ import ai.philterd.phileas.model.filtering.EmailReport;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.LeftoverFinding;
 import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.RedactionWarning;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.config.LeftoverCheck;
@@ -293,6 +294,28 @@ public class EmailAttachmentTypesTest {
         };
         final BinaryDocumentFilterResult unchecked = filter(failing, policy, message, FilterOptions.defaults());
         Assertions.assertEquals(List.of("people.csv"), unchecked.getLeftoverCheck().getUncheckedAttachments());
+
+    }
+
+    @Test
+    public void anAttachmentsColumnRuleWarningIsOnTheMessagesResult() throws Exception {
+
+        // The rule's header matches no column of either attachment, so each reports it, and the message reports it once.
+        final String tabular = ",\"tabular\":{\"sheets\":[{\"unlistedColumns\":\"ignore\",\"columns\":["
+                + "{\"header\":\"Social Security\",\"action\":\"redact\",\"strategies\":[{}]}]}]}";
+        final MimeMessage message = message(
+                attachment("people.csv", "text/csv", ("SSN\r\n" + SSN + "\r\n").getBytes(StandardCharsets.UTF_8)),
+                attachment("sheet.xlsx", MimeType.APPLICATION_XLSX.getValue(), EmailFixtures.xlsx("Write to " + EMAIL)));
+        final RedactionWarning expected = RedactionWarning.unmatchedHeader("Social Security", null).asEmbedded();
+
+        for (final FilterOptions options : new FilterOptions[]{FilterOptions.defaults(),
+                FilterOptions.defaults().withOutput(FilterOptions.Output.TEXT)}) {
+            final BinaryDocumentFilterResult result = filter(service(), policy("redact", "", tabular), message, options);
+            Assertions.assertEquals(List.of(expected), result.getWarnings());
+        }
+
+        // A kept attachment is not redacted, so its rules are not applied and it has no warnings.
+        Assertions.assertTrue(filter(policy("keep", "", tabular), message).getWarnings().isEmpty());
 
     }
 
