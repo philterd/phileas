@@ -2,7 +2,9 @@
 
 ## Filter
 
-This filter identifies US passport numbers in text.
+This filter identifies US passport numbers in text. A value that matches one of the filter's two-digit prefix patterns needs the word `passport` within `windowSize` tokens before it. A nine-digit number is identified without it.
+
+Spans from this filter have the classification `US`, which is also the `%l` of a redaction format. It means the value has the shape of a US passport number, not that the US issued it: other countries' nine-digit passport numbers are labelled `US` too.
 
 ### Required Parameters
 

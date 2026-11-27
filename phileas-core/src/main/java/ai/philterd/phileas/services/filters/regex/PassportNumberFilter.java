@@ -31,6 +31,9 @@ import java.util.regex.Pattern;
 
 public class PassportNumberFilter extends RegexFilter {
 
+    private final FilterPattern passportUSNumeric;
+    private final CueWords cueWords;
+
     public PassportNumberFilter(FilterConfiguration filterConfiguration) {
         super(FilterType.PASSPORT_NUMBER, filterConfiguration);
 
@@ -72,11 +75,16 @@ public class PassportNumberFilter extends RegexFilter {
         // All-numeric 9-digit US passport book number. Its confidence (0.55) is set above the
         // driver's-license 9-digit shape (0.50) so a bare 9-digit number resolves to the passport
         // type when both filters are enabled. Registered last so a number that also matches a
-        // specific prefix pattern above keeps that higher-confidence, more-specific match.
-        final FilterPattern passportUSNumeric = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b[0-9]{9}\\b"), 0.55).withClassification("US").build();
+        // specific prefix pattern above, after a cue word, keeps that higher-confidence,
+        // more-specific match.
+        this.passportUSNumeric = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b[0-9]{9}\\b"), 0.55).withClassification("US").build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("passport");
+        // A cue word ends at punctuation, so the hyphenated forms are cue words of their own.
+        this.contextualTerms.add("passport-number");
+        this.contextualTerms.add("passport-no.");
+        this.cueWords = new CueWords(contextualTerms, null, true);
 
         this.analyzer = new Analyzer(contextualTerms,
                 passportUS01,
@@ -105,6 +113,16 @@ public class PassportNumberFilter extends RegexFilter {
                 passportUS80,
                 passportUS90,
                 passportUSNumeric);
+
+    }
+
+    @Override
+    protected boolean accepts(final String input, final int characterStart, final int characterEnd,
+                              final FilterPattern filterPattern) {
+
+        // A prefix pattern matches any 6 to 10 character token starting with those digits, such as an order
+        // or invoice number, so it counts only after a cue word such as "passport".
+        return filterPattern == passportUSNumeric || cueWords.precede(input, characterStart, windowSize);
 
     }
 
